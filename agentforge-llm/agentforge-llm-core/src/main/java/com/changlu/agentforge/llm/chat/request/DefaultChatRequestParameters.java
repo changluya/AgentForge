@@ -1,5 +1,7 @@
 package com.changlu.agentforge.llm.chat.request;
 
+import com.changlu.agentforge.llm.agent.tool.ToolSpecification;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -17,6 +19,9 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
     private final Double topP;
     private final List<String> stopSequences;
     private final Map<String, Object> customParameters;
+    private final List<ToolSpecification> tools;
+    private final ToolChoice toolChoice;
+    private final String toolChoiceName;
 
     private DefaultChatRequestParameters(Builder builder) {
         this.modelName = builder.modelName;
@@ -25,6 +30,9 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         this.topP = builder.topP;
         this.stopSequences = immutableList(builder.stopSequences);
         this.customParameters = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(builder.customParameters));
+        this.tools = immutableToolList(builder.tools);
+        this.toolChoice = builder.toolChoice;
+        this.toolChoiceName = builder.toolChoiceName;
     }
 
     public static Builder builder() {
@@ -64,6 +72,22 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         if (parameters.customParameters() != null) {
             builder.customParameters(parameters.customParameters());
         }
+        if (parameters.tools() != null && !parameters.tools().isEmpty()) {
+            builder.tools(parameters.tools());
+        }
+        if (parameters.toolChoice() != null) {
+            builder.toolChoice(parameters.toolChoice());
+        }
+        if (parameters.toolChoiceName() != null) {
+            builder.toolChoiceName(parameters.toolChoiceName());
+        }
+    }
+
+    private static List<ToolSpecification> immutableToolList(List<ToolSpecification> values) {
+        if (values == null || values.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(new ArrayList<ToolSpecification>(values));
     }
 
     private static List<String> immutableList(List<String> values) {
@@ -103,6 +127,21 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         return customParameters;
     }
 
+    @Override
+    public List<ToolSpecification> tools() {
+        return tools;
+    }
+
+    @Override
+    public ToolChoice toolChoice() {
+        return toolChoice;
+    }
+
+    @Override
+    public String toolChoiceName() {
+        return toolChoiceName;
+    }
+
     public static final class Builder {
         private String modelName;
         private Double temperature;
@@ -110,6 +149,9 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         private Double topP;
         private List<String> stopSequences;
         private final Map<String, Object> customParameters = new LinkedHashMap<String, Object>();
+        private List<ToolSpecification> tools;
+        private ToolChoice toolChoice;
+        private String toolChoiceName;
 
         private Builder() {
         }
@@ -150,6 +192,31 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
             if (customParameters != null) {
                 this.customParameters.putAll(customParameters);
             }
+            return this;
+        }
+
+        public Builder tools(List<ToolSpecification> tools) {
+            this.tools = tools == null ? null : new ArrayList<ToolSpecification>(tools);
+            return this;
+        }
+
+        public Builder tool(ToolSpecification tool) {
+            if (tool != null) {
+                if (this.tools == null) {
+                    this.tools = new ArrayList<ToolSpecification>();
+                }
+                this.tools.add(tool);
+            }
+            return this;
+        }
+
+        public Builder toolChoice(ToolChoice toolChoice) {
+            this.toolChoice = toolChoice;
+            return this;
+        }
+
+        public Builder toolChoiceName(String toolChoiceName) {
+            this.toolChoiceName = toolChoiceName;
             return this;
         }
 

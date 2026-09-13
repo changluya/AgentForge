@@ -111,13 +111,16 @@ customHeaders
 
 ### 2.3 消息映射
 
-release_1.x 当前支持三种标准文本消息：
+release_1.x 支持以下标准消息：
 
-| AgentForge | OpenAI role | content |
+| AgentForge | OpenAI role | content / 关键字段 |
 |---|---|---|
 | `SystemMessage` | `system` | `message.text()` |
-| `UserMessage` | `user` | `message.text()` |
-| `AiMessage` | `assistant` | `message.text()` |
+| `UserMessage`（单文本） | `user` | `message.text()` |
+| `UserMessage`（多 `Content`） | `user` | `content[]`，逐条 `TextContent` 映射为 `{"type":"text","text":...}` |
+| `AiMessage`（纯文本） | `assistant` | `message.text()` |
+| `AiMessage`（含工具调用） | `assistant` | `content`（可为 `null`） + `tool_calls[]` |
+| `ToolExecutionResultMessage` | `tool` | `tool_call_id = message.id()`，`content = message.text()` |
 
 例如：
 
@@ -145,20 +148,38 @@ ChatRequest.builder()
 }
 ```
 
-当前 `OpenAiChatModel.toOpenAiRole(...)` 对以下消息**尚未实现 wire mapping**：
+助手发起工具调用与回填工具结果的 wire 形态：
 
-```text
-ToolExecutionResultMessage
-CustomMessage
+```json
+{
+  "messages": [
+    {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "call_1",
+          "type": "function",
+          "function": {
+            "name": "getWeather",
+            "arguments": "{\"city\":\"hangzhou\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_1",
+      "content": "{\"temperature\":22}"
+    }
+  ]
+}
 ```
 
-遇到这些类型会抛出：
+对应 Core 类型：`AiMessage.from(ToolExecutionRequest)` 生成 `assistant.tool_calls`；
+`ToolExecutionResultMessage.from(id, toolName, result)` 生成 `role=tool` 消息，`id` 用于关联。
 
-```text
-IllegalArgumentException: Unsupported message type: ...
-```
-
-这意味着 Core 已经为 Tool Result 建模，但 OpenAI Tool Calling 的完整发送协议属于后续阶段。
+`CustomMessage` 当前仍未实现 wire mapping，遇到会抛出 `IllegalArgumentException`。
 
 ### 2.4 参数映射
 
@@ -169,6 +190,8 @@ IllegalArgumentException: Unsupported message type: ...
 | `maxTokens` | `max_tokens` | 非空才发送 |
 | `topP` | `top_p` | 非空才发送 |
 | `stopSequences` | `stop` | 非空才发送 |
+| `tools` | `tools[]` | 每项 `{"type":"function","function":{name,description,parameters,strict}}` |
+| `toolChoice` | `tool_choice` | `AUTO→"auto"`、`NONE→"none"`、`REQUIRED→"required"`、`SPECIFIC→{"type":"function","function":{"name":X}}` |
 | `customParameters` | 原样顶层写入 | 通用字段写入后会覆盖同名 custom 字段 |
 
 构建顺序是：
@@ -177,6 +200,7 @@ IllegalArgumentException: Unsupported message type: ...
 1. payload.putAll(customParameters)
 2. 写入 model/messages
 3. 写入 temperature/max_tokens/top_p/stop
+4. 写入 tools/tool_choice
 ```
 
 因此标准字段拥有最终优先级。例如 `customParameters` 中即使写入了另一个 `model`，最终仍会被 `modelName` 覆盖。
@@ -275,6 +299,7 @@ ChatResponse {
 | OpenAI 字段 | AgentForge 字段 |
 |---|---|
 | `choices[0].message.content` | `ChatResponse.aiMessage().text()` |
+| `choices[0].message.tool_calls[]` | `ChatResponse.aiMessage().toolExecutionRequests()` |
 | `usage.prompt_tokens` | `TokenUsage.inputTokens()` |
 | `usage.completion_tokens` | `TokenUsage.outputTokens()` |
 | `usage.total_tokens` | `TokenUsage.totalTokens()` |
@@ -283,7 +308,12 @@ ChatResponse {
 | `model` | `metadata["model"]` |
 | `created` | `metadata["created"]` |
 
+`tool_calls[]` 的映射规则：`id -> ToolExecutionRequest.id`，`function.name -> name`，
+`function.arguments -> arguments`（原始 JSON 字符串，不重新格式化）。
+
 如果 `content` 是 String，直接读取；如果 Provider 返回 content blocks 数组，当前实现会遍历 block，并拼接其中的 `text` 字段。
+当 `tool_calls` 非空且 `content` 为空时，`AiMessage.text()` 返回 `null`；两者同时存在时，`AiMessage` 同时携带
+`text` 与 `toolExecutionRequests`。
 
 ### 3.3 finish_reason 映射
 
@@ -350,9 +380,11 @@ SSE comment (:...)
 
 ```text
 choices[0].delta.content
+choices[0].delta.tool_calls[]
+choices[0].finish_reason
 ```
 
-并立即回调：
+文本 `delta.content` 立即回调：
 
 ```java
 handler.onPartialResponse(partial);
@@ -360,18 +392,48 @@ handler.onPartialResponse(partial);
 
 同时在本地 `StringBuilder` 聚合完整文本。
 
+### 4.2.1 Delta 工具调用聚合
+
+`delta.tool_calls[]` 不直接回调，而是按 `index` 分桶累加，与 LangChain4j
+`OpenAiStreamingResponseBuilder` 的行为一致：
+
+```text
+chunk: {"index":0,"id":"call_1","function":{"name":"getWeather","arguments":""}}
+chunk: {"index":0,"function":{"arguments":"{\"city\":"}}
+chunk: {"index":0,"function":{"arguments":"\"hangzhou\"}"}}
+        │
+        ▼  merge by index
+ToolExecutionRequest(id=call_1, name=getWeather, arguments={"city":"hangzhou"})
+```
+
+规则：
+
+| delta 字段 | 处理方式 |
+|---|---|
+| `index` | 分桶键；缺失时走兜底策略（见下） |
+| `id` | 覆盖式写入当前桶（首个 chunk 携带完整 id） |
+| `function.name` | 追加到 name |
+| `function.arguments` | 追加到 arguments，保留原始 JSON 文本 |
+
+兜底策略：部分 OpenAI-compatible 网关不下发 `index`。此时以“出现一个新的非空 `id`”作为
+新一次工具调用的起点，内部维护一个 fallback 计数器递增分桶，避免把同一次调用的 arguments
+增量错误拆成多次调用。
+
 ### 4.3 最终响应
 
 流结束后，Provider 构造标准：
 
 ```java
 ChatResponse.builder()
-        .aiMessage(AiMessage.from(fullText))
+        .aiMessage(AiMessage.from(fullText, toolExecutionRequests))
         .finishReason(finishReason)
         .tokenUsage(tokenUsage)
         .metadata(metadata)
         .build();
 ```
+
+其中 `toolExecutionRequests` 由 4.2.1 的按 index 聚合结果转换而来。没有工具调用时退化为
+`AiMessage.from(fullText)`；有工具调用且没有文本时 `text` 为 `null`。
 
 然后：
 
@@ -421,18 +483,23 @@ LlmException("OpenAI request failed", cause)
 
 ### 5.3 当前协议差距
 
-release_1.x 当前没有完整映射以下 Chat Completions 能力：
+已经落地的 Chat Completions 能力：
+
+- `tool` role 的 `tool_call_id` 请求映射；
+- `tools` / `tool_choice`（含 `SPECIFIC`）强类型请求对象；
+- `tool_calls` 非流式响应解析与流式 delta 按 `index` 聚合；
+- `UserMessage` 多 `Content` → `content[]` 数组。
+
+release_1.x 当前仍未映射以下 Chat Completions 能力：
 
 - `developer` role；
-- `tool` role；
-- `tools` / `tool_choice` 强类型对象；
-- `tool_calls` 响应强类型解析；
-- multimodal content；
+- 图片 / 音频等多模态 `content` 类型（Core 目前只有 `TextContent`）；
+- 流式 `onPartialToolCall` 增量回调（当前只在最终响应暴露完整工具调用）；
 - refusal；
 - logprobs；
 - structured outputs；
 - audio；
-- provider reasoning 参数；
+- provider reasoning 参数（`AiMessage.thinking()` 字段位已保留，尚未接线到 `reasoning_content`）；
 - 多 `choices`。
 
 `customParameters` 可以临时透传部分请求字段，但如果返回结构需要框架理解，就仍然需要正式扩展 Core / Provider 类型。

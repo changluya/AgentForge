@@ -2,8 +2,7 @@ package com.changlu.agentforge.llm.anthropic;
 
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
-import com.changlu.agentforge.llm.chat.message.ChatMessage;
-import com.changlu.agentforge.llm.chat.message.ChatMessageType;
+import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequestParameters;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
@@ -110,47 +109,28 @@ public final class AnthropicChatModel implements ChatModel {
         putIfNotNull(payload, "top_p", parameters.topP());
         putIfNotNull(payload, "stop_sequences", parameters.stopSequences());
 
-        String system = collectSystemMessages(request.messages());
+        String system = AnthropicProtocol.collectSystemMessages(request.messages());
         if (!system.isEmpty()) {
             payload.put("system", system);
         }
-        payload.put("messages", toAnthropicMessages(request.messages()));
+        payload.put("messages", AnthropicProtocol.serializeMessages(request.messages()));
+        if (parameters.tools() != null && !parameters.tools().isEmpty()) {
+            payload.put("tools", AnthropicProtocol.serializeTools(parameters.tools()));
+        }
+        putIfNotNull(payload, "tool_choice", AnthropicProtocol.toolChoice(parameters));
         return payload;
-    }
-
-    private static String collectSystemMessages(List<ChatMessage> messages) {
-        StringBuilder system = new StringBuilder();
-        for (ChatMessage message : messages) {
-            if (message.type() == ChatMessageType.SYSTEM) {
-                if (system.length() > 0) system.append("\n\n");
-                system.append(message.text());
-            }
-        }
-        return system.toString();
-    }
-
-    private static List<Map<String, Object>> toAnthropicMessages(List<ChatMessage> messages) {
-        ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        for (ChatMessage message : messages) {
-            if (message.type() == ChatMessageType.SYSTEM) {
-                continue;
-            }
-            LinkedHashMap<String, Object> item = new LinkedHashMap<String, Object>();
-            item.put("role", message.type() == ChatMessageType.AI ? "assistant" : "user");
-            item.put("content", message.text());
-            result.add(item);
-        }
-        if (result.isEmpty()) {
-            throw new IllegalArgumentException("Anthropic request requires at least one user/assistant message");
-        }
-        return result;
     }
 
     private static ChatResponse parseResponse(String body) {
         Map<String, Object> root = Json.parseObject(body);
-        String text = extractText(root.get("content"));
+        List<Object> contentBlocks = Json.array(root.get("content"));
+        String text = AnthropicProtocol.extractText(contentBlocks);
+        List<ToolExecutionRequest> toolExecutionRequests = AnthropicProtocol.extractToolUses(contentBlocks);
+        AiMessage aiMessage = toolExecutionRequests.isEmpty()
+                ? AiMessage.from(text)
+                : AiMessage.from(text.isEmpty() ? null : text, toolExecutionRequests);
         ChatResponse.Builder response = ChatResponse.builder()
-                .aiMessage(AiMessage.from(text))
+                .aiMessage(aiMessage)
                 .finishReason(mapFinishReason(root.get("stop_reason")))
                 .metadata("id", root.get("id"))
                 .metadata("model", root.get("model"))
@@ -163,22 +143,6 @@ public final class AnthropicChatModel implements ChatModel {
             response.tokenUsage(TokenUsage.of(input, output));
         }
         return response.build();
-    }
-
-    private static String extractText(Object contentValue) {
-        List<Object> blocks = Json.array(contentValue);
-        if (blocks == null) {
-            return contentValue == null ? "" : String.valueOf(contentValue);
-        }
-        StringBuilder text = new StringBuilder();
-        for (Object blockValue : blocks) {
-            Map<String, Object> block = Json.object(blockValue);
-            if (block == null) continue;
-            if ("text".equals(Json.string(block.get("type"))) && block.get("text") != null) {
-                text.append(String.valueOf(block.get("text")));
-            }
-        }
-        return text.toString();
     }
 
     private static FinishReason mapFinishReason(Object reasonValue) {

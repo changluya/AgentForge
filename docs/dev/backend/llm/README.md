@@ -22,8 +22,9 @@
 agentforge-llm
 ├── agentforge-llm-core
 │   ├── ChatModel / StreamingChatModel
-│   ├── ChatMessage
-│   ├── ChatRequest / ChatRequestParameters
+│   ├── ChatMessage（AiMessage / UserMessage + Content / ToolExecutionRequest / ToolExecutionResultMessage ...）
+│   ├── ChatRequest / ChatRequestParameters（tools / toolChoice / toolChoiceName）
+│   ├── ToolSpecification / ToolParameters / ToolChoice
 │   ├── ChatResponse / TokenUsage / FinishReason
 │   ├── HttpTransport / JdkHttpTransport
 │   └── LlmException / Json
@@ -31,7 +32,9 @@ agentforge-llm
 │   ├── OpenAiChatModel
 │   └── OpenAiStreamingChatModel
 └── agentforge-llm-anthropic
-    └── AnthropicChatModel
+    ├── AnthropicChatModel
+    ├── AnthropicStreamingChatModel
+    └── AnthropicProtocol（Blocking / Streaming 共享 wire mapping）
 ```
 
 设计原则是：**Core 只定义稳定、Provider-neutral 的 LLM 边界；OpenAI、Anthropic 等模块只负责协议转换，不把供应商 SDK 类型泄露到上层。**
@@ -80,11 +83,30 @@ ChatResponse + TokenUsage + FinishReason
 
 ```text
 com.changlu.agentforge.llm
+├── agent
+│   └── tool
+│       ├── ToolSpecification.java     // 工具（函数）声明：name/description/parameters/strict
+│       └── ToolParameters.java        // JSON-Schema 风格参数定义（纯 Map，无第三方依赖）
 ├── chat
 │   ├── ChatModel.java
 │   ├── StreamingChatModel.java
 │   ├── message
+│   │   ├── ChatMessage.java
+│   │   ├── ChatMessageType.java
+│   │   ├── SystemMessage.java
+│   │   ├── UserMessage.java           // name + List<Content>
+│   │   ├── AiMessage.java             // text + thinking + toolExecutionRequests + attributes
+│   │   ├── ToolExecutionRequest.java  // 模型发起的一次工具调用（id/name/arguments）
+│   │   ├── ToolExecutionResultMessage.java
+│   │   ├── CustomMessage.java
+│   │   ├── Content.java               // 多模态内容基接口
+│   │   ├── ContentType.java
+│   │   └── TextContent.java
 │   ├── request
+│   │   ├── ChatRequest.java
+│   │   ├── ChatRequestParameters.java // 新增 tools() / toolChoice() / toolChoiceName()
+│   │   ├── DefaultChatRequestParameters.java
+│   │   └── ToolChoice.java            // AUTO / NONE / REQUIRED / SPECIFIC
 │   └── response
 ├── exception
 │   └── LlmException.java
@@ -214,6 +236,23 @@ Core 当前抽象的通用参数为：
 | `topP()` | `Double` | nucleus sampling 参数 |
 | `stopSequences()` | `List<String>` | 停止序列 |
 | `customParameters()` | `Map<String,Object>` | Provider 特有扩展字段 |
+| `tools()` | `List<ToolSpecification>` | 本次请求允许模型调用的工具声明 |
+| `toolChoice()` | `ToolChoice` | `AUTO` / `NONE` / `REQUIRED` / `SPECIFIC` |
+| `toolChoiceName()` | `String` | `SPECIFIC` 时指定的工具名 |
+
+`tools()` / `toolChoice()` / `toolChoiceName()` 均以接口默认方法提供（返回 `null`），因此已有
+`ChatRequestParameters` 实现无需改动即可编译。`DefaultChatRequestParameters` 提供对应 Builder
+方法：`tools(List)`、`tool(ToolSpecification)`、`toolChoice(ToolChoice)`、`toolChoiceName(String)`。
+
+Function Calling 请求侧映射：
+
+```text
+DefaultChatRequestParameters.tools()/toolChoice()
+        │
+        ├── OpenAI      -> payload.tools[]（type=function） + payload.tool_choice
+        └── Anthropic   -> payload.tools[]（input_schema）  + payload.tool_choice
+```
+
 
 Core 不强行规定每个 Provider 必须支持全部字段。Provider 应明确完成以下三种处理之一：
 
@@ -289,14 +328,18 @@ public interface ChatMessage {
 | 类型 | 实现类 | 当前语义 |
 |---|---|---|
 | `SYSTEM` | `SystemMessage` | 系统指令 |
-| `USER` | `UserMessage` | 用户输入 |
-| `AI` | `AiMessage` | 模型输出 / 历史助手消息 |
+| `USER` | `UserMessage` | 用户输入，可携带 `name` 与多模态 `List<Content>` |
+| `AI` | `AiMessage` | 模型输出 / 历史助手消息，可携带 `thinking` 与 `toolExecutionRequests` |
 | `TOOL_EXECUTION_RESULT` | `ToolExecutionResultMessage` | 工具执行结果 |
 | `CUSTOM` | `CustomMessage` | Provider 特有消息 |
 
-前三类继承 `AbstractTextMessage`；`ToolExecutionResultMessage` 当前也是文本结果，但额外携带 `id / toolName / isError / attributes`；`CustomMessage` 不具备强制文本语义。
+`SystemMessage` 继续继承 `AbstractTextMessage`。`AiMessage`、`UserMessage` 已改为直接实现
+`ChatMessage`：`AiMessage` 承载 `text / thinking / toolExecutionRequests / attributes`，`UserMessage`
+承载 `name / List<Content>`；`ToolExecutionResultMessage` 额外携带 `id / toolName / isError / attributes`；
+`CustomMessage` 不具备强制文本语义。
 
-详细消息设计见本文 **第 6 章：ChatMessage 消息体系设计**。
+详细消息设计见本文 **第 6 章：ChatMessage 消息体系设计**，Function Calling 调用链见
+**第 7 章：Function Calling（工具调用）设计**。
 
 ### 3.2 ChatResponse
 
@@ -559,19 +602,26 @@ Agent/Tool 核心流程必须理解       -> Core 强类型模型
 
 ### 5.3 当前已知边界
 
-release_1.x 当前属于 LLM 基础层第一阶段，已实现重点是“文本 Chat + OpenAI Streaming + Provider-neutral Core”。以下能力尚未完全进入统一协议：
+release_1.x 的 LLM 基础层已完成“文本 Chat + Function Calling（Blocking / Streaming）+ OpenAI / Anthropic
+双协议 + Provider-neutral Core”。以下能力已经落地：
 
-- 多模态 `Content` 层；
-- Tool Specification / Tool Call 强类型对象；
-- Provider tool-result 的完整 wire mapping；
-- Structured Output / JSON Schema 强类型参数；
-- reasoning/thinking 强类型协议；
+- Function Calling：`AiMessage.toolExecutionRequests()` + `ToolExecutionRequest`；
+- Tool 声明：`ToolSpecification` / `ToolParameters`（JSON-Schema 风格，纯 `Map`）/ `ToolChoice`；
+- OpenAI / Anthropic 的 tool 请求发送链路与 tool-result wire mapping；
+- OpenAI 流式 `tool_calls` delta 按 `index` 聚合；
+- `AnthropicStreamingChatModel`（含 `tool_use` `input_json_delta` 聚合）；
+- `AiMessage.thinking()` 字段与 `attributes` 扩展位；
+- `UserMessage` 的 `name` + `List<Content>` 多模态建模（当前提供 `TextContent`）。
+
+以下能力仍未进入统一协议，属于后续阶段：
+
+- `ImageContent` / `AudioContent` / `VideoContent` / `PdfFileContent` 等多模态 `Content` 实现与 Provider wire mapping；
+- 流式过程暴露 `onPartialToolCall(...)` 增量回调（当前仅最终 `ChatResponse` 暴露完整工具调用）；
+- Structured Output / JSON Schema 强类型参数绑定与运行时校验；
+- `thinking` 的 Provider 级强类型协议（当前只保留字段位）；
 - Prompt Cache；
-- Anthropic StreamingChatModel；
 - retry / backoff / rate-limit policy；
 - metrics / tracing / request-id 标准化。
-
-其中 `ToolExecutionResultMessage` 已经提前建立 Core 消息模型，但当前 Provider adapter 尚未完整实现 Tool Calling 发送链路。
 
 ### 5.4 兼容性原则
 
@@ -593,14 +643,17 @@ release_1.x 后续扩展遵循：
 
 ### 6.1 本次补齐范围
 
-AgentForge 当前 LLM Core 已具备 `SystemMessage`、`UserMessage`、`AiMessage`，本次继续补齐：
+AgentForge LLM Core 已具备 `SystemMessage`、`UserMessage`、`AiMessage`、`ToolExecutionResultMessage`、
+`CustomMessage`，本次继续补齐 Function Calling 与多模态内容建模的 Core 侧结构：
 
-- `ToolExecutionResultMessage`
-- `CustomMessage`
-- `ChatMessageType.TOOL_EXECUTION_RESULT`
-- `ChatMessageType.CUSTOM`
+- `ToolExecutionRequest`（模型发起的工具调用）
+- `AiMessage` 扩展：`thinking` / `toolExecutionRequests` / `attributes`
+- `UserMessage` 改造为 `name` + `List<Content>`
+- `Content` / `ContentType` / `TextContent` 多模态内容基座（当前先落地 `TEXT`）
+- `ToolSpecification` / `ToolParameters` / `ToolChoice` 请求侧工具声明
 
-设计参考 LangChain4j 当前主线的消息模型，同时保持 AgentForge 现阶段 Java 8 bytecode 兼容与 text-first 的实现边界。
+设计参考 LangChain4j 当前主线的消息模型，同时保持 AgentForge 现阶段 Java 8 bytecode 兼容与
+Provider-neutral 的实现边界。
 
 ### 6.2 ToolExecutionResultMessage
 
@@ -614,7 +667,9 @@ AgentForge 当前 LLM Core 已具备 `SystemMessage`、`UserMessage`、`AiMessag
 
 同时提供构造器、`builder()`、`toBuilder()`、`from(...)` 和 `toolExecutionResultMessage(...)` 工厂方法。
 
-当前版本暂不引入 LangChain4j 新版的 `Content` / `TextContent` / `ImageContent` 多模态层，避免在 Tool Calling 正式实现前扩大 LLM Core 的依赖面。后续进入 Multimodal Message 阶段后，可以在不改变消息类型语义的情况下继续扩展。
+Core 的多模态 `Content` 层已在本次起步：新增 `Content` / `ContentType` / `TextContent`，`UserMessage`
+已改为 `name + List<Content>`（见 **6.5**）。`ImageContent` / `AudioContent` / `VideoContent` /
+`PdfFileContent` 及对应 Provider wire mapping 尚未实现，可在不改变消息类型语义的前提下继续扩展。
 
 ### 6.3 CustomMessage
 
@@ -637,3 +692,210 @@ CustomMessage message = CustomMessage.from(attributes);
 3. 新消息类型不引入第三方依赖；
 4. `attributes` 使用防御性复制并以只读 Map 暴露；
 5. Provider 若不支持 `CustomMessage`，应显式拒绝，而不是静默降级为普通 user message。
+
+### 6.5 UserMessage 与 Content
+
+`UserMessage` 参考 LangChain4j `public class UserMessage implements ChatMessage { String name; List<Content> contents; }`：
+
+```java
+public final class UserMessage implements ChatMessage {
+    private final String name;
+    private final List<Content> contents;
+}
+```
+
+- `name` 可为空；不是所有 Provider 都支持用户昵称，Provider 可忽略；
+- `contents` 至少一条，构建后不可变；
+- `Content` 为多模态内容基接口，`type()` 返回 `ContentType`；当前实现 `TextContent`，
+  后续 `ImageContent` / `AudioContent` / `VideoContent` / `PdfFileContent` 可在不改语义的情况下扩展。
+
+保留的历史兼容访问器：
+
+| 方法 | 语义 |
+|---|---|
+| `text()` | 单一 `TextContent` 时返回文本；否则抛 `UnsupportedOperationException` |
+| `hasSingleText()` | 是否只有一条 `TextContent` |
+| `singleText()` | 只有一条 `TextContent` 时返回，否则抛异常 |
+
+多种构造入口，覆盖旧的纯文本用法与新的多内容用法：
+
+```java
+UserMessage.from("hello");
+UserMessage.from("alice", "hello");
+UserMessage.from(TextContent.from("describe this"), TextContent.from("..."));
+UserMessage.from("alice", Arrays.<Content>asList(TextContent.from("hi")));
+```
+
+Provider 侧的映射规则：当 `UserMessage` 只包含一条文本时，直接下发字符串 content；
+当包含多条 `Content` 时，映射成 Provider 的内容块数组（OpenAI 的 `content[]`、Anthropic 的 `content[]`）。
+
+---
+
+## 7. Function Calling（工具调用）设计
+
+### 7.1 Core 侧模型
+
+模型返回的工具调用统一收敛到 `AiMessage`，不散落在各 Provider 实现里：
+
+```java
+public final class AiMessage implements ChatMessage {
+    private final String text;
+    private final String thinking;
+    private final List<ToolExecutionRequest> toolExecutionRequests;
+    private final Map<String, Object> attributes;
+}
+```
+
+`ToolExecutionRequest` 描述一次调用：`id` / `name` / `arguments`（`arguments` 为原始 JSON 字符串）。
+
+常用 API：
+
+```java
+AiMessage.from("hello");                                  // 纯文本
+AiMessage.from(new ToolExecutionRequest(...));            // 纯工具调用，text() 为 null
+AiMessage.from("thinking out loud", toolRequests);        // 文本 + 工具调用
+
+message.hasToolExecutionRequests();
+message.toolExecutionRequests();
+```
+
+当 `AiMessage.hasToolExecutionRequests()` 为真时，应用侧应执行这些工具，并在下一轮以
+`ToolExecutionResultMessage.from(id, toolName, result)` 回填，`id` 必须与被调用的
+`ToolExecutionRequest.id()` 一致，用于关联。
+
+### 7.2 请求侧工具声明
+
+```java
+ToolParameters parameters = ToolParameters.builder()
+        .addProperty("city", "string", "city name", true)
+        .build();
+
+ToolSpecification weather = ToolSpecification.builder()
+        .name("getWeather")
+        .description("query weather of a city")
+        .parameters(parameters)
+        .build();
+
+ChatRequest request = ChatRequest.builder()
+        .message(UserMessage.from("weather in Hangzhou?"))
+        .parameters(DefaultChatRequestParameters.builder()
+                .tool(weather)
+                .toolChoice(ToolChoice.AUTO)
+                .build())
+        .build();
+```
+
+`ToolChoice` 与两个 Provider wire 字段的映射：
+
+| `ToolChoice` | OpenAI `tool_choice` | Anthropic `tool_choice` |
+|---|---|---|
+| `AUTO` | `"auto"` | `{"type":"auto"}` |
+| `NONE` | `"none"` | `{"type":"none"}` |
+| `REQUIRED` | `"required"` | `{"type":"any"}` |
+| `SPECIFIC` | `{"type":"function","function":{"name":X}}` | `{"type":"tool","name":X}` |
+
+`ToolParameters` 的 JSON-Schema 在 OpenAI 落到 `tools[].function.parameters`，
+在 Anthropic 落到 `tools[].input_schema`。
+
+### 7.3 非流式响应解析
+
+```text
+OpenAI assistant message         Anthropic assistant message
+  tool_calls[] {id,type,            content[] {type:"tool_use",
+    function{name,arguments}}         id,name,input{...}}
+        │                                   │
+        ▼                                   ▼
+   ToolExecutionRequest              ToolExecutionRequest
+        └───────────┬───────────────────────┘
+                    ▼
+        AiMessage.toolExecutionRequests()
+        finishReason = TOOL_EXECUTION
+```
+
+要点：
+
+- OpenAI `finish_reason=tool_calls`（或旧版 `function_call`）与 Anthropic `stop_reason=tool_use`
+  都映射为 `FinishReason.TOOL_EXECUTION`；
+- 纯工具调用时 `content` 可能为 `null`，此时 `AiMessage.text()` 返回 `null`；
+- Anthropic `tool_use.input` 是对象，会序列化成 JSON 字符串存入 `arguments`，与 OpenAI 对齐。
+
+### 7.4 流式响应聚合
+
+流式与 LangChain4j 保持一致：文本增量走 `onPartialResponse()`，工具调用增量先在内部按索引累加，
+最终在 `onCompleteResponse()` 的 `ChatResponse` 上暴露完整 `AiMessage.toolExecutionRequests()`。
+
+OpenAI Chat Completions 的 `delta.tool_calls[]` 按 `index` 分桶，累加 `id` / `name` / `arguments`：
+
+```text
+chunk 1: {index:0, id:"call_1", function:{name:"getWeather", arguments:""}}
+chunk 2: {index:0, function:{arguments:"{\"city\":"}}
+chunk 3: {index:0, function:{arguments:"\"hangzhou\"}"}}
+        │
+        ▼  merge by index
+ToolExecutionRequest(id=call_1, name=getWeather, arguments={"city":"hangzhou"})
+```
+
+- 多数 OpenAI 兼容端点带 `index`；当 `index` 缺省时，以“出现新的 `id`”作为新调用起点做兜底分桶；
+- 同一个 `index` 的多个 `arguments` 片段按到达顺序拼接，原始 JSON 文本不重新格式化。
+
+Anthropic Messages 的流式工具调用以 `content_block_start`（`tool_use`）开块，
+随后多个 `content_block_delta` 的 `input_json_delta.partial_json` 追加参数，按 `index` 归属：
+
+```text
+content_block_start (index=1, tool_use, id=toolu_1, name=get_weather)
+content_block_delta (index=1, input_json_delta: '{"city":')
+content_block_delta (index=1, input_json_delta: '"hangzhou"}')
+        │
+        ▼  accumulate by content block index
+ToolExecutionRequest(id=toolu_1, name=get_weather, arguments={"city":"hangzhou"})
+```
+
+`text_delta` 仍然实时走 `onPartialResponse()`；只有当参数块闭合、整个流结束时才产出完整工具调用。
+
+### 7.5 一次完整的多轮工具调用
+
+```java
+ChatModel model = OpenAiChatModel.builder()
+        .apiKey(apiKey).modelName("gpt-4o-mini").build();
+
+List<ChatMessage> history = new ArrayList<ChatMessage>();
+history.add(UserMessage.from("What is the weather in Hangzhou?"));
+
+ChatResponse first = model.chat(ChatRequest.builder()
+        .messages(history)
+        .parameters(DefaultChatRequestParameters.builder().tool(weatherTool).build())
+        .build());
+
+if (first.aiMessage().hasToolExecutionRequests()) {
+    history.add(first.aiMessage());
+    for (ToolExecutionRequest call : first.aiMessage().toolExecutionRequests()) {
+        String result = myToolExecutor.execute(call.name(), call.arguments());
+        history.add(ToolExecutionResultMessage.from(call.id(), call.name(), result));
+    }
+    ChatResponse second = model.chat(ChatRequest.builder().messages(history).build());
+    System.out.println(second.aiMessage().text());   // "It is 22°C and sunny in Hangzhou."
+}
+```
+
+Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需要面向 `ChatMessage` /
+`ToolExecutionRequest` 编程，不需要感知供应商协议差异。
+
+### 7.6 单测覆盖矩阵
+
+| 模块 | 测试类 | 覆盖点 |
+|---|---|---|
+| `agentforge-llm-core` | `AiMessageToolCallTest` | 单/多工具调用、文本+工具调用、thinking/attributes、值相等与不可变、`UserMessage` name + 多 `Content`、`ToolExecutionRequest` 字段往返 |
+| `agentforge-llm-openai` | `OpenAiFunctionCallTest` | 单 `tool_calls`、多 `tool_calls` 与混合文本、`tools`/`tool_choice`（含 SPECIFIC）序列化、assistant tool_calls 与 tool result 回流、纯文本行为不变 |
+| `agentforge-llm-openai` | `OpenAiStreamingFunctionCallTest` | 单工具调用 delta 合并、多工具交错合并、文本与工具调用同流、无 `index` 端点兜底 |
+| `agentforge-llm-anthropic` | `AnthropicToolUseTest` | `tool_use` 解析、多 `tool_use`、assistant `tool_use` 与 `tool_result` 回流、`tools`/`tool_choice` 序列化、多 `Content` 用户消息、纯文本行为不变 |
+| `agentforge-llm-anthropic` | `AnthropicStreamingToolUseTest` | `input_json_delta` 聚合、`text_delta` 与多 `tool_use` 混合流式、metadata / token usage |
+
+### 7.7 兼容性约束
+
+1. Function Calling 不引入任何第三方依赖，`ToolParameters` 以纯 `Map` 承载 JSON-Schema；
+2. 所有新增访问器优先使用接口默认方法（`ChatRequestParameters.tools()` 等），既有实现零改动可编译；
+3. `AiMessage` / `UserMessage` 的旧构造与 `from(String)` / `text()` 入口保留；
+4. 纯工具调用时 `AiMessage.text()` 允许为 `null`，Provider 序列化需按各自协议输出 `content:null`（OpenAI）
+   或省略 text 块（Anthropic）；
+5. 阻塞与流式最终必须收敛到同一个 `ChatResponse` / `AiMessage` 语义，工具调用只在最终响应上暴露，
+   避免上层为了流式额外实现一套工具调用聚合逻辑。

@@ -2,7 +2,7 @@
 
 > 更新日期：2026-09-13  
 > 适用模块：`agentforge-llm-anthropic`  
-> 当前实现：`AnthropicChatModel`  
+> 当前实现：`AnthropicChatModel`（Blocking）、`AnthropicStreamingChatModel`（SSE）、`AnthropicProtocol`（共享 wire mapping）  
 > Wire API：Anthropic Messages API  
 > 维护者：changlu
 
@@ -129,11 +129,14 @@ SystemMessage 不会再进入 `messages` 数组。
 
 | AgentForge | Anthropic role | content |
 |---|---|---|
-| `UserMessage` | `user` | `message.text()` |
-| `AiMessage` | `assistant` | `message.text()` |
+| `UserMessage`（单文本） | `user` | `message.text()`（字符串） |
+| `UserMessage`（多 `Content`） | `user` | `content[]`，逐条 `TextContent` → `{"type":"text","text":...}` |
+| `AiMessage`（纯文本） | `assistant` | `message.text()`（字符串） |
+| `AiMessage`（含工具调用） | `assistant` | `content[]`：可选 text 块 + `tool_use` 块 |
+| `ToolExecutionResultMessage` | `user` | `content[]`：`tool_result` 块 |
 | `SystemMessage` | 不进入 messages | 聚合到顶层 `system` |
 
-示例：
+纯文本对话示例：
 
 ```java
 ChatRequest.builder()
@@ -168,21 +171,54 @@ ChatRequest.builder()
 
 Anthropic 官方说明，Messages API 的对话历史主要使用交替的 `user` / `assistant` turns；连续同 role 消息可能在服务端合并。
 
-### 2.5 当前 ToolExecutionResultMessage / CustomMessage 行为
+### 2.5 ToolExecutionResultMessage 与 assistant tool_use 映射
 
-当前 `AnthropicChatModel.toAnthropicMessages(...)` 的 role 判断逻辑是：
+Anthropic 原生 Tool Calling 使用 content block。AgentForge 已完成强类型映射，
+由 `AnthropicProtocol`（Blocking 与 Streaming 共享）统一实现：
 
-```text
-AI      -> assistant
-其他非 SYSTEM -> user
+`AiMessage.hasToolExecutionRequests()` 为真时，映射为 `assistant` 的 `content[]`：
+
+```json
+{
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "I will check." },
+    {
+      "type": "tool_use",
+      "id": "toolu_1",
+      "name": "get_weather",
+      "input": { "city": "hangzhou" }
+    }
+  ]
+}
 ```
 
-因此现阶段：
+`ToolExecutionResultMessage.from(id, toolName, result)` 映射为 `user` 的 `content[]`：
 
-- `ToolExecutionResultMessage` 会按普通 `user` 文本发送；
-- `CustomMessage` 没有 `text()`，调用时会抛 `UnsupportedOperationException`。
+```json
+{
+  "role": "user",
+  "content": [
+    {
+      "type": "tool_result",
+      "tool_use_id": "toolu_1",
+      "content": "{\"temperature\":22}"
+    }
+  ]
+}
+```
 
-这只是 release_1.x 当前实现行为，**不等于完整的 Anthropic Tool Result 标准协议**。Anthropic 原生 Tool Calling 使用 content block，例如 `tool_use` / `tool_result`，后续 Tool Calling 阶段应改成强类型映射，不能长期把工具结果降级成普通 user 文本。
+映射细节：
+
+| Core 字段 | Anthropic 字段 |
+|---|---|
+| `ToolExecutionRequest.id` | `tool_use.id`（回填时对应 `tool_result.tool_use_id`） |
+| `ToolExecutionRequest.name` | `tool_use.name` |
+| `ToolExecutionRequest.arguments`（JSON 字符串） | `tool_use.input`（对象，解析后下发） |
+| `AiMessage.text` | 可选的前置 `text` 块 |
+| `ToolExecutionResultMessage.isError == true` | `tool_result.is_error = true` |
+
+`CustomMessage` 没有 `text()`，当前仍会抛 `UnsupportedOperationException`。
 
 ### 2.6 参数映射
 
@@ -193,10 +229,13 @@ AI      -> assistant
 | `temperature` | `temperature` | 非空发送；新模型兼容性需注意 |
 | `topP` | `top_p` | 非空发送；新模型兼容性需注意 |
 | `stopSequences` | `stop_sequences` | 非空发送 |
+| `tools` | `tools[]` | `{"name","description","input_schema"}`；无参数时下发空 object schema |
+| `toolChoice` | `tool_choice` | `AUTO→{"type":"auto"}`、`NONE→{"type":"none"}`、`REQUIRED→{"type":"any"}`、`SPECIFIC→{"type":"tool","name":X}` |
 | `SystemMessage` | `system` | 多条以双换行拼接 |
 | `customParameters` | 顶层字段透传 | 标准字段最终覆盖同名 custom 值 |
 
 Anthropic 官方要求 `max_tokens` 指定最大生成 Token 数，模型也可能在达到该最大值之前自然停止。
+`ToolParameters` 的 JSON-Schema 落到 `tools[].input_schema`。
 
 ### 2.7 标准请求示例
 
@@ -297,13 +336,44 @@ Anthropic 的 `content` 是 content block 数组，而不是简单假设为单�
 AiMessage.text() = "Hello world"
 ```
 
-非 text block 当前不会进入 `AiMessage`，这也是后续 Tool Calling / Thinking / Multimodal 需要扩展响应模型的原因。
+除 text block 外，当前实现还会提取：
+
+```json
+{
+  "type": "tool_use",
+  "id": "toolu_1",
+  "name": "get_weather",
+  "input": { "city": "hangzhou" }
+}
+```
+
+映射为 `AiMessage.toolExecutionRequests()` 中的一个 `ToolExecutionRequest`：
+
+| Anthropic `tool_use` | AgentForge `ToolExecutionRequest` |
+|---|---|
+| `id` | `id` |
+| `name` | `name` |
+| `input`（对象） | `arguments`（`Json.stringify(input)`，例如 `{"city":"hangzhou"}`） |
+
+因此：
+
+```text
+content = [text("I will check."), tool_use(...)]
+        ↓
+AiMessage.text()                   = "I will check."
+AiMessage.hasToolExecutionRequests() = true
+AiMessage.toolExecutionRequests()    = [ToolExecutionRequest(toolu_1, get_weather, {"city":"hangzhou"})]
+```
+
+当只有 `tool_use` block、没有任何 text block 时，`AiMessage.text()` 为 `null`。
+其余 `thinking` / `image` / `document` / server tool block 当前仍不会进入 `AiMessage`。
 
 ### 3.3 ChatResponse 映射
 
 | Anthropic 字段 | AgentForge 字段 |
 |---|---|
 | `content[*].text` | `ChatResponse.aiMessage().text()` |
+| `content[*].tool_use` | `ChatResponse.aiMessage().toolExecutionRequests()` |
 | `usage.input_tokens` | `TokenUsage.inputTokens()` |
 | `usage.output_tokens` | `TokenUsage.outputTokens()` |
 | `input + output` | `TokenUsage.totalTokens()` |
@@ -327,9 +397,91 @@ AiMessage.text() = "Hello world"
 
 Anthropic 官方说明：自然结束通常返回 `end_turn`；命中自定义 `stop_sequences` 时返回 `stop_sequence`，并可在响应中返回匹配的 `stop_sequence`。
 
-## 4. 协议特性与 AgentForge 适配原则
+## 4. StreamingChatModel 协议
 
-### 4.1 Anthropic Content Block
+### 4.1 请求
+
+`AnthropicStreamingChatModel` 使用同一个 Endpoint，但强制：
+
+```json
+{
+  "stream": true
+}
+```
+
+请求头额外使用 `Accept: text/event-stream`。请求体的 message / tools / tool_choice 映射与
+Blocking 完全一致，统一由 `AnthropicProtocol` 生成。
+
+### 4.2 SSE 帧解析
+
+Anthropic 的流式响应是带事件名的 SSE：
+
+```text
+event: message_start
+data: {"type":"message_start","message":{...}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hel"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+`JdkHttpTransport` 只按行回调，不解析 SSE 语义。`AnthropicStreamState` 因此自行按
+`event:` / `data:` 字段累积一帧，遇到空行（或没有事件名的单行 `data:` 帧）时 dispatch，
+从而兼容标准 Anthropic 与部分网关的简化输出。
+
+### 4.3 支持的事件
+
+| 事件 | AgentForge 行为 |
+|---|---|
+| `message_start` | 记录 `metadata["id"] / ["model"]`，读取 `message.usage.input_tokens` |
+| `content_block_start` | `content_block.type == "tool_use"` 时按 `index` 建立累加器，记录 `id` / `name` / 初始 `input` |
+| `content_block_delta` | `text_delta` 立即 `onPartialResponse(...)`；`input_json_delta` 追加到同 `index` 的工具参数 |
+| `content_block_stop` | 不处理，等待整块结束 |
+| `message_delta` | 读取 `delta.stop_reason` 与 `usage.output_tokens` |
+| `message_stop` | 不处理，由 EOF / 完成回调触发最终响应 |
+| `error` | 包装为 `LlmException` 并 `onError(...)` |
+
+### 4.4 流式工具调用聚合
+
+`tool_use` 的参数在 Anthropic 侧以 `partial_json` 增量下发，按 content block `index` 归属：
+
+```text
+content_block_start (index=1, type=tool_use, id=toolu_1, name=get_weather, input={})
+content_block_delta (index=1, input_json_delta: "{\"city\":")
+content_block_delta (index=1, input_json_delta: "\"hangzhou\"}")
+        │
+        ▼  accumulate by content block index
+ToolExecutionRequest(id=toolu_1, name=get_weather, arguments={"city":"hangzhou"})
+```
+
+规则：
+
+- 文本块与工具块可以在同一条流里交错出现，互不影响；
+- `arguments` 按到达顺序拼接原始 JSON 文本，不重新格式化；
+- 若某块只有 `content_block_start` 没有 `input_json_delta`（例如 `input` 直接给了对象），
+  则使用 `start` 帧里的 `input`；
+- 如果最终没有任何 `partial_json`，`arguments` 归一化为 `{}`；
+- 与 LangChain4j 一致：流式过程中**不**暴露半成品工具调用，只在最终 `ChatResponse`
+  的 `AiMessage.toolExecutionRequests()` 给出完整结果。
+
+### 4.5 最终响应
+
+```java
+ChatResponse.builder()
+        .aiMessage(AiMessage.from(fullText, toolExecutionRequests))
+        .finishReason(finishReason)   // stop_reason == tool_use -> TOOL_EXECUTION
+        .tokenUsage(tokenUsage)
+        .metadata(metadata)
+        .build();
+```
+
+没有工具调用时退化为 `AiMessage.from(fullText)`；有工具调用且没有文本时 `text` 为 `null`。
+
+## 5. 协议特性与 AgentForge 适配原则
+
+### 5.1 Anthropic Content Block
 
 Anthropic Messages API 的 content 不是单一文本协议，而是 block protocol。当前官方协议可以出现多种块，例如：
 
@@ -345,7 +497,9 @@ server tool blocks
 ...
 ```
 
-release_1.x AgentForge 只完整消费 `text` block。
+release_1.x AgentForge 完整消费 `text` 与 `tool_use` block（后者映射为
+`AiMessage.toolExecutionRequests()`）；`tool_result` 由 `ToolExecutionResultMessage` 反向映射到请求。
+`thinking` / `redacted_thinking` / `image` / `document` / server tool blocks 当前仍不会进入 `AiMessage`。
 
 因此需要区分：
 
@@ -357,7 +511,7 @@ AgentForge release_1.x 当前已实现子集
 
 后续最合理的扩展不是继续把所有 block 压成字符串，而是在 Core 建立统一 Content hierarchy。
 
-### 4.2 System Prompt
+### 5.2 System Prompt
 
 Anthropic 的 system prompt 采用顶层字段是 Provider 协议差异，不应该改变 AgentForge Core 中 `SystemMessage` 的统一语义。
 
@@ -376,7 +530,7 @@ top-level system
 
 这正是 Provider Adapter 层存在的原因。
 
-### 4.3 max_tokens
+### 5.3 max_tokens
 
 Anthropic Messages API 当前要求显式提供 `max_tokens`。为保证最简单调用可以直接执行，`AnthropicChatModel.Builder` 默认：
 
@@ -392,7 +546,7 @@ maxTokens = 1024
 }
 ```
 
-### 4.4 temperature / top_p 的当前兼容风险
+### 5.4 temperature / top_p 的当前兼容风险
 
 AgentForge Core 为多 Provider 通用性保留 `temperature` 与 `topP`；但是截至本文日期，Anthropic 官方文档已经对较新模型收紧这些采样参数：
 
@@ -411,9 +565,9 @@ AgentForge Core 为多 Provider 通用性保留 `temperature` 与 `topP`；但�
 
 Provider 后续也可以加入 model capability 校验，提前在客户端阻止无效参数。
 
-## 5. 错误处理、限制与后续演进
+## 6. 错误处理、限制与后续演进
 
-### 5.1 本地参数校验
+### 6.1 本地参数校验
 
 请求发出前当前检查：
 
@@ -430,7 +584,7 @@ IllegalArgumentException:
 Anthropic request requires at least one user/assistant message
 ```
 
-### 5.2 HTTP 错误
+### 6.2 HTTP 错误
 
 非 2xx 响应转换为：
 
@@ -455,51 +609,53 @@ exception.statusCode();
 exception.responseBody();
 ```
 
-### 5.3 当前未实现能力
+### 6.3 当前未实现能力
 
-当前 `AnthropicChatModel` 尚未完整支持：
+已经落地：
 
-- Streaming / SSE；
-- `tool_use` 强类型响应；
+- Streaming / SSE（`AnthropicStreamingChatModel`）；
+- `tool_use` 强类型响应（含流式 `input_json_delta` 聚合）；
 - `tool_result` 强类型请求；
-- thinking / redacted thinking；
+- `tools` / `tool_choice` 请求映射；
+- `UserMessage` 多 `Content` → `content[]`。
+
+`AnthropicChatModel` / `AnthropicStreamingChatModel` 尚未完整支持：
+
+- thinking / redacted thinking block；
 - image / document content blocks；
 - Prompt Caching 强类型配置与 usage；
 - Structured Output；
 - server tools；
-- extended usage 字段；
+- extended usage 字段（cache token 等）；
 - `stop_sequence` 写入 `ChatResponse.metadata`；
 - provider refusal / stop details 的标准化。
 
-### 5.4 推荐后续类结构
+### 6.4 当前类结构与后续演进
 
-在保持 Core 稳定的情况下，可以继续演进为：
-
-```text
-AnthropicChatModel
-    -> blocking Messages API
-
-AnthropicStreamingChatModel
-    -> Messages API SSE
-```
-
-Tool Calling 完成后，建议把：
+Blocking 与 Streaming 共用同一套 wire mapping，避免协议逻辑重复：
 
 ```text
-ToolExecutionResultMessage
+AnthropicProtocol（package-private）
+    ├── collectSystemMessages / serializeMessages
+    ├── serializeTools / toolChoice
+    ├── extractText / extractToolUses
+        │
+        ├── AnthropicChatModel          -> blocking Messages API
+        └── AnthropicStreamingChatModel -> Messages API SSE
 ```
 
-映射成 Anthropic 原生 `tool_result` block，而不是普通 user text。
-
-更进一步，当多模态和 Thinking 进入 release_1.x 后半段时，再在 Core 引入统一：
+后续若引入 Thinking / Multimodal，建议在 Core 扩展统一 Content 层级（`TextContent` 已存在）：
 
 ```text
 Content
-├── TextContent
+├── TextContent      (已实现)
 ├── ImageContent
-├── ToolUseContent
-├── ToolResultContent
-└── ProviderCustomContent
+├── AudioContent
+├── VideoContent
+└── PdfFileContent
 ```
 
-这样 Anthropic 的 block protocol 与 OpenAI 的多模态 / tool message 都可以汇聚到同一套 AgentForge 上层模型。
+这样 Anthropic 的 block protocol 与 OpenAI 的多模态 / tool message 都可以汇聚到同一套
+AgentForge 上层模型；工具调用相关的 `ToolExecutionRequest` / `ToolExecutionResultMessage`
+已经收敛在 Core 的 message 包中，后续可平移到独立的 `agent.tool` 包以对齐 LangChain4j 的
+完整架构（`ToolSpecification` / `ToolParameters` 已位于 `agent.tool`）。

@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.openai;
+package com.changlu.agentforge.llm.anthropic;
 
 import com.changlu.agentforge.llm.chat.StreamingChatModel;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
@@ -24,34 +24,44 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OpenAI Chat Completions streaming implementation of {@link StreamingChatModel}.
+ * Anthropic Messages API streaming implementation of {@link StreamingChatModel}.
  *
- * <p>The implementation follows the same high-level contract used by LangChain4j:
- * the request is sent with {@code stream=true}, token usage is requested through
- * {@code stream_options.include_usage=true}, every SSE delta is forwarded as a partial
- * response, and all chunks are accumulated into a normalized {@link ChatResponse}.</p>
+ * <p>The request is sent with {@code stream=true} and the Anthropic SSE event protocol is
+ * interpreted as follows:</p>
+ * <ul>
+ *   <li>{@code message_start}: message metadata and input tokens</li>
+ *   <li>{@code content_block_start}: opens a text or {@code tool_use} block</li>
+ *   <li>{@code content_block_delta}: {@code text_delta} is forwarded to
+ *       {@link StreamingChatResponseHandler#onPartialResponse(String)};
+ *       {@code input_json_delta} fragments are appended to the tool call of the same index</li>
+ *   <li>{@code message_delta}: stop reason and output tokens</li>
+ * </ul>
  *
- * <p>The configurable base URL also allows OpenAI-compatible endpoints to reuse the
- * same implementation.</p>
+ * <p>Like LangChain4j, partial tool calls are merged and only exposed as complete
+ * {@link ToolExecutionRequest}s on the final {@link ChatResponse}.</p>
  *
  * @author changlu
- * @date 2026/09/13
+ * @date 2026-09-13
  */
-public class OpenAiStreamingChatModel implements StreamingChatModel {
+public class AnthropicStreamingChatModel implements StreamingChatModel {
 
-    private static final String DEFAULT_BASE_URL = "https://api.openai.com/v1";
+    private static final String DEFAULT_BASE_URL = "https://api.anthropic.com";
+    private static final String DEFAULT_ANTHROPIC_VERSION = "2023-06-01";
+    private static final int DEFAULT_MAX_TOKENS = 1024;
 
     private final String baseUrl;
     private final String apiKey;
+    private final String anthropicVersion;
     private final DefaultChatRequestParameters defaultParameters;
     private final Map<String, String> customHeaders;
     private final HttpTransport httpTransport;
     private final int connectTimeoutMillis;
     private final int readTimeoutMillis;
 
-    private OpenAiStreamingChatModel(Builder builder) {
+    private AnthropicStreamingChatModel(Builder builder) {
         this.baseUrl = trimTrailingSlash(builder.baseUrl);
         this.apiKey = builder.apiKey;
+        this.anthropicVersion = builder.anthropicVersion;
         this.defaultParameters = DefaultChatRequestParameters.builder()
                 .modelName(builder.modelName)
                 .temperature(builder.temperature)
@@ -83,22 +93,21 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         DefaultChatRequestParameters parameters = DefaultChatRequestParameters.merge(
                 defaultParameters, chatRequest.parameters());
         requireModelName(parameters.modelName());
+        requireApiKey(apiKey);
 
         HttpRequest request = HttpRequest.builder()
-                .url(baseUrl + "/chat/completions")
+                .url(baseUrl + "/v1/messages")
                 .header("Content-Type", "application/json")
                 .header("Accept", "text/event-stream")
+                .header("x-api-key", apiKey)
+                .header("anthropic-version", anthropicVersion)
                 .headers(customHeaders)
                 .body(Json.stringify(buildPayload(chatRequest, parameters)))
                 .connectTimeoutMillis(connectTimeoutMillis)
                 .readTimeoutMillis(readTimeoutMillis)
                 .build();
 
-        if (apiKey != null && !apiKey.trim().isEmpty()) {
-            request = copyWithHeader(request, "Authorization", "Bearer " + apiKey);
-        }
-
-        final OpenAiStreamState state = new OpenAiStreamState(handler);
+        final AnthropicStreamState state = new AnthropicStreamState(handler);
         try {
             httpTransport.executeStreaming(request, state);
         } catch (Throwable error) {
@@ -112,46 +121,33 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             payload.putAll(parameters.customParameters());
         }
         payload.put("model", parameters.modelName());
-        payload.put("messages", OpenAiMessages.serialize(request.messages()));
+        payload.put("max_tokens", parameters.maxTokens() == null ? DEFAULT_MAX_TOKENS : parameters.maxTokens());
         putIfNotNull(payload, "temperature", parameters.temperature());
-        putIfNotNull(payload, "max_tokens", parameters.maxTokens());
         putIfNotNull(payload, "top_p", parameters.topP());
-        putIfNotNull(payload, "stop", parameters.stopSequences());
-        if (parameters.tools() != null && !parameters.tools().isEmpty()) {
-            payload.put("tools", OpenAiMessages.serializeTools(parameters.tools()));
-        }
-        putIfNotNull(payload, "tool_choice", OpenAiMessages.toolChoice(parameters));
+        putIfNotNull(payload, "stop_sequences", parameters.stopSequences());
 
-        // Streaming is mandatory for this model, regardless of custom parameter overrides.
+        String system = AnthropicProtocol.collectSystemMessages(request.messages());
+        if (!system.isEmpty()) {
+            payload.put("system", system);
+        }
+        payload.put("messages", AnthropicProtocol.serializeMessages(request.messages()));
+        if (parameters.tools() != null && !parameters.tools().isEmpty()) {
+            payload.put("tools", AnthropicProtocol.serializeTools(parameters.tools()));
+        }
+        putIfNotNull(payload, "tool_choice", AnthropicProtocol.toolChoice(parameters));
+
+        // Streaming is mandatory for this model.
         payload.put("stream", Boolean.TRUE);
-        LinkedHashMap<String, Object> streamOptions = new LinkedHashMap<String, Object>();
-        streamOptions.put("include_usage", Boolean.TRUE);
-        payload.put("stream_options", streamOptions);
         return payload;
     }
 
     private static FinishReason mapFinishReason(Object reasonValue) {
         String reason = Json.string(reasonValue);
         if (reason == null) return null;
-        if ("stop".equals(reason)) return FinishReason.STOP;
-        if ("length".equals(reason)) return FinishReason.LENGTH;
-        if ("tool_calls".equals(reason) || "function_call".equals(reason)) {
-            return FinishReason.TOOL_EXECUTION;
-        }
-        if ("content_filter".equals(reason)) return FinishReason.CONTENT_FILTER;
+        if ("end_turn".equals(reason) || "stop_sequence".equals(reason)) return FinishReason.STOP;
+        if ("max_tokens".equals(reason)) return FinishReason.LENGTH;
+        if ("tool_use".equals(reason)) return FinishReason.TOOL_EXECUTION;
         return FinishReason.OTHER;
-    }
-
-    private static HttpRequest copyWithHeader(HttpRequest source, String name, String value) {
-        return HttpRequest.builder()
-                .url(source.url())
-                .method(source.method())
-                .headers(source.headers())
-                .header(name, value)
-                .body(source.body())
-                .connectTimeoutMillis(source.connectTimeoutMillis())
-                .readTimeoutMillis(source.readTimeoutMillis())
-                .build();
     }
 
     private static void putIfNotNull(Map<String, Object> map, String key, Object value) {
@@ -160,7 +156,13 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
     private static void requireModelName(String modelName) {
         if (modelName == null || modelName.trim().isEmpty()) {
-            throw new IllegalStateException("OpenAI modelName must be configured on the model or request");
+            throw new IllegalStateException("Anthropic modelName must be configured on the model or request");
+        }
+    }
+
+    private static void requireApiKey(String apiKey) {
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new IllegalStateException("Anthropic apiKey must be configured");
         }
     }
 
@@ -171,17 +173,18 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
     }
 
     /**
-     * Builder for {@link OpenAiStreamingChatModel}.
+     * Builder for {@link AnthropicStreamingChatModel}.
      *
      * @author changlu
-     * @date 2026/09/13
+     * @date 2026-09-13
      */
     public static final class Builder {
         private String baseUrl = DEFAULT_BASE_URL;
         private String apiKey;
+        private String anthropicVersion = DEFAULT_ANTHROPIC_VERSION;
         private String modelName;
         private Double temperature;
-        private Integer maxTokens;
+        private Integer maxTokens = DEFAULT_MAX_TOKENS;
         private Double topP;
         private List<String> stopSequences;
         private final Map<String, Object> customParameters = new LinkedHashMap<String, Object>();
@@ -200,6 +203,13 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
+            return this;
+        }
+
+        public Builder anthropicVersion(String anthropicVersion) {
+            if (anthropicVersion != null && !anthropicVersion.trim().isEmpty()) {
+                this.anthropicVersion = anthropicVersion;
+            }
             return this;
         }
 
@@ -254,33 +264,34 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             return this;
         }
 
-        public OpenAiStreamingChatModel build() {
-            return new OpenAiStreamingChatModel(this);
+        public AnthropicStreamingChatModel build() {
+            return new AnthropicStreamingChatModel(this);
         }
     }
 
     /**
-     * Accumulates OpenAI SSE chunks and maps them into AgentForge streaming callbacks.
+     * Accumulates Anthropic SSE events into AgentForge streaming callbacks.
      *
      * @author changlu
-     * @date 2026/09/13
+     * @date 2026-09-13
      */
-    private static final class OpenAiStreamState implements StreamingHttpResponseHandler {
+    private static final class AnthropicStreamState implements StreamingHttpResponseHandler {
 
         private final StreamingChatResponseHandler handler;
         private final StringBuilder text = new StringBuilder();
         private final StringBuilder errorBody = new StringBuilder();
+        private final StringBuilder pendingData = new StringBuilder();
         private final Map<String, Object> metadata = new LinkedHashMap<String, Object>();
-        private final Map<Integer, ToolCallAccumulator> toolCallAccumulators =
-                new LinkedHashMap<Integer, ToolCallAccumulator>();
-        private int fallbackToolCallIndex;
+        private final Map<Integer, ToolUseAccumulator> toolUseAccumulators =
+                new LinkedHashMap<Integer, ToolUseAccumulator>();
 
         private int statusCode = -1;
         private FinishReason finishReason;
         private TokenUsage tokenUsage;
         private boolean terminated;
+        private String pendingEvent;
 
-        private OpenAiStreamState(StreamingChatResponseHandler handler) {
+        private AnthropicStreamState(StreamingChatResponseHandler handler) {
             this.handler = handler;
         }
 
@@ -301,23 +312,28 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
                 }
                 return;
             }
-
             if (line == null) return;
-            String trimmed = line.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith(":")) return;
-            if (!trimmed.startsWith("data:")) return;
 
-            String data = trimmed.substring("data:".length()).trim();
-            if (data.isEmpty()) return;
-            if ("[DONE]".equals(data)) {
-                complete();
+            if (line.trim().isEmpty()) {
+                dispatchFrame();
                 return;
             }
-
-            try {
-                applyChunk(Json.parseObject(data));
-            } catch (Throwable error) {
-                fail(new LlmException("Failed to parse OpenAI streaming response", error));
+            if (line.startsWith(":")) {
+                return;
+            }
+            if (line.startsWith("event:")) {
+                pendingEvent = line.substring("event:".length()).trim();
+                return;
+            }
+            if (line.startsWith("data:")) {
+                String data = line.substring("data:".length()).trim();
+                if (pendingData.length() > 0) pendingData.append('\n');
+                pendingData.append(data);
+                // Anthropic terminates every frame with a blank line. When no event name was
+                // provided, dispatch eagerly so single-line frames still work.
+                if (pendingEvent == null) {
+                    dispatchFrame();
+                }
             }
         }
 
@@ -325,10 +341,11 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         public synchronized void onComplete() {
             if (terminated) return;
             if (!isSuccessfulStatus(statusCode)) {
-                fail(new LlmException("OpenAI streaming request failed with HTTP " + statusCode,
+                fail(new LlmException("Anthropic streaming request failed with HTTP " + statusCode,
                         statusCode, errorBody.toString()));
                 return;
             }
+            dispatchFrame();
             complete();
         }
 
@@ -337,90 +354,127 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             if (error instanceof LlmException) {
                 fail(error);
             } else {
-                fail(new LlmException("OpenAI streaming request failed", error));
+                fail(new LlmException("Anthropic streaming request failed", error));
             }
         }
 
-        private void applyChunk(Map<String, Object> root) {
-            putMetadata("id", root.get("id"));
-            putMetadata("model", root.get("model"));
-            putMetadata("created", root.get("created"));
+        private void dispatchFrame() {
+            String eventName = pendingEvent;
+            String data = pendingData.length() == 0 ? null : pendingData.toString().trim();
+            pendingEvent = null;
+            pendingData.setLength(0);
 
-            Map<String, Object> usage = Json.object(root.get("usage"));
-            if (usage != null) {
-                long input = Json.longValue(usage.get("prompt_tokens"), 0L);
-                long output = Json.longValue(usage.get("completion_tokens"), 0L);
-                long total = Json.longValue(usage.get("total_tokens"), input + output);
-                tokenUsage = new TokenUsage(input, output, total);
+            if (data == null || data.isEmpty() || "[DONE]".equals(data)) {
+                return;
+            }
+            try {
+                applyEvent(eventName, Json.parseObject(data));
+            } catch (Throwable error) {
+                fail(new LlmException("Failed to parse Anthropic streaming response", error));
+            }
+        }
+
+        private void applyEvent(String eventName, Map<String, Object> root) {
+            if (eventName == null) {
+                eventName = Json.string(root.get("type"));
             }
 
-            List<Object> choices = Json.array(root.get("choices"));
-            if (choices == null || choices.isEmpty()) return;
-
-            Map<String, Object> choice = Json.object(choices.get(0));
-            if (choice == null) return;
-
-            FinishReason mappedFinishReason = mapFinishReason(choice.get("finish_reason"));
-            if (mappedFinishReason != null) {
-                finishReason = mappedFinishReason;
+            if ("message_start".equals(eventName)) {
+                applyMessageStart(root);
+            } else if ("content_block_start".equals(eventName)) {
+                applyContentBlockStart(root);
+            } else if ("content_block_delta".equals(eventName)) {
+                applyContentBlockDelta(root);
+            } else if ("message_delta".equals(eventName)) {
+                applyMessageDelta(root);
+            } else if ("error".equals(eventName)) {
+                Map<String, Object> error = Json.object(root.get("error"));
+                fail(new LlmException("Anthropic streaming error", null,
+                        error == null ? Json.stringify(root) : Json.stringify(error)));
             }
+            // content_block_stop / message_stop require no handling.
+        }
 
-            Map<String, Object> delta = Json.object(choice.get("delta"));
-            if (delta == null) return;
+        private void applyMessageStart(Map<String, Object> root) {
+            putMetadata("type", root.get("type"));
+            Map<String, Object> message = Json.object(root.get("message"));
+            if (message == null) {
+                return;
+            }
+            putMetadata("id", message.get("id"));
+            putMetadata("model", message.get("model"));
+            applyUsage(Json.object(message.get("usage")));
+        }
 
-            String partial = OpenAiMessages.extractContent(delta.get("content"));
-            if (partial != null && !partial.isEmpty()) {
+        private void applyContentBlockStart(Map<String, Object> root) {
+            Map<String, Object> block = Json.object(root.get("content_block"));
+            if (block == null || !"tool_use".equals(Json.string(block.get("type")))) {
+                return;
+            }
+            ToolUseAccumulator accumulator = new ToolUseAccumulator();
+            accumulator.id = Json.string(block.get("id"));
+            accumulator.name = Json.string(block.get("name"));
+            Object input = block.get("input");
+            if (input instanceof Map && !((Map<?, ?>) input).isEmpty()) {
+                accumulator.arguments = Json.stringify(input);
+            }
+            toolUseAccumulators.put(index(root), accumulator);
+        }
+
+        private void applyContentBlockDelta(Map<String, Object> root) {
+            Map<String, Object> delta = Json.object(root.get("delta"));
+            if (delta == null) {
+                return;
+            }
+            String deltaType = Json.string(delta.get("type"));
+            if ("text_delta".equals(deltaType)) {
+                String partial = Json.string(delta.get("text"));
+                if (partial == null || partial.isEmpty()) {
+                    return;
+                }
                 text.append(partial);
                 try {
                     handler.onPartialResponse(partial);
                 } catch (Throwable callbackError) {
                     fail(callbackError);
-                    return;
                 }
-            }
-
-            accumulateToolCalls(Json.array(delta.get("tool_calls")));
-        }
-
-        private void accumulateToolCalls(List<Object> toolCallDeltas) {
-            if (toolCallDeltas == null) {
                 return;
             }
-            for (Object deltaValue : toolCallDeltas) {
-                Map<String, Object> toolCallDelta = Json.object(deltaValue);
-                if (toolCallDelta == null) {
-                    continue;
+            if ("input_json_delta".equals(deltaType)) {
+                ToolUseAccumulator accumulator = toolUseAccumulators.get(index(root));
+                String partial = Json.string(delta.get("partial_json"));
+                if (accumulator == null || partial == null) {
+                    return;
                 }
-                boolean hasIndex = toolCallDelta.get("index") instanceof Number;
-                int index = hasIndex
-                        ? ((Number) toolCallDelta.get("index")).intValue()
-                        : fallbackToolCallIndex;
-                ToolCallAccumulator accumulator = toolCallAccumulators.get(index);
-                if (accumulator == null) {
-                    accumulator = new ToolCallAccumulator();
-                    toolCallAccumulators.put(index, accumulator);
-                }
-                String id = Json.string(toolCallDelta.get("id"));
-                if (id != null && !id.isEmpty() && !id.equals(accumulator.id)) {
-                    // A different id without an explicit index marks the start of a new call.
-                    if (!hasIndex && accumulator.id != null) {
-                        index = ++fallbackToolCallIndex;
-                        accumulator = new ToolCallAccumulator();
-                        toolCallAccumulators.put(index, accumulator);
-                    }
-                    accumulator.setId(id);
-                }
-                Map<String, Object> function = Json.object(toolCallDelta.get("function"));
-                if (function == null) {
-                    continue;
-                }
-                if (function.get("name") != null) {
-                    accumulator.name.append(Json.string(function.get("name")));
-                }
-                if (function.get("arguments") != null) {
-                    accumulator.arguments.append(Json.string(function.get("arguments")));
+                accumulator.appendArguments(partial);
+            }
+        }
+
+        private void applyMessageDelta(Map<String, Object> root) {
+            Map<String, Object> delta = Json.object(root.get("delta"));
+            if (delta != null) {
+                FinishReason mapped = mapFinishReason(delta.get("stop_reason"));
+                if (mapped != null) {
+                    finishReason = mapped;
                 }
             }
+            applyUsage(Json.object(root.get("usage")));
+        }
+
+        private void applyUsage(Map<String, Object> usage) {
+            if (usage == null) {
+                return;
+            }
+            long input = Json.longValue(usage.get("input_tokens"),
+                    tokenUsage == null ? 0L : tokenUsage.inputTokens());
+            long output = Json.longValue(usage.get("output_tokens"),
+                    tokenUsage == null ? 0L : tokenUsage.outputTokens());
+            tokenUsage = TokenUsage.of(input, output);
+        }
+
+        private static int index(Map<String, Object> root) {
+            Object value = root.get("index");
+            return value instanceof Number ? ((Number) value).intValue() : 0;
         }
 
         private void putMetadata(String key, Object value) {
@@ -450,11 +504,11 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
         private List<ToolExecutionRequest> buildToolExecutionRequests() {
             ArrayList<ToolExecutionRequest> requests = new ArrayList<ToolExecutionRequest>();
-            for (ToolCallAccumulator accumulator : toolCallAccumulators.values()) {
+            for (ToolUseAccumulator accumulator : toolUseAccumulators.values()) {
                 requests.add(ToolExecutionRequest.builder()
                         .id(accumulator.id)
-                        .name(accumulator.name.toString())
-                        .arguments(accumulator.arguments.toString())
+                        .name(accumulator.name)
+                        .arguments(accumulator.arguments())
                         .build());
             }
             return requests;
@@ -473,20 +527,22 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         private static boolean isSuccessfulStatus(int statusCode) {
             return statusCode >= 200 && statusCode < 300;
         }
+    }
 
-        /**
-         * Accumulates one streamed tool call, merging id/name/arguments fragments.
-         */
-        private static final class ToolCallAccumulator {
-            private String id;
-            private final StringBuilder name = new StringBuilder();
-            private final StringBuilder arguments = new StringBuilder();
+    /**
+     * Holds one streamed {@code tool_use} block until the stream completes.
+     */
+    private static final class ToolUseAccumulator {
+        private String id;
+        private String name;
+        private String arguments;
 
-            private void setId(String id) {
-                if (id != null && !id.isEmpty()) {
-                    this.id = id;
-                }
-            }
+        private void appendArguments(String fragment) {
+            arguments = (arguments == null ? "" : arguments) + fragment;
+        }
+
+        private String arguments() {
+            return arguments == null || arguments.trim().isEmpty() ? "{}" : arguments;
         }
     }
 }

@@ -2,8 +2,7 @@ package com.changlu.agentforge.llm.openai;
 
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
-import com.changlu.agentforge.llm.chat.message.ChatMessage;
-import com.changlu.agentforge.llm.chat.message.ChatMessageType;
+import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequestParameters;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
@@ -105,30 +104,16 @@ public final class OpenAiChatModel implements ChatModel {
             payload.putAll(parameters.customParameters());
         }
         payload.put("model", parameters.modelName());
-        payload.put("messages", toMessages(request.messages()));
+        payload.put("messages", OpenAiMessages.serialize(request.messages()));
         putIfNotNull(payload, "temperature", parameters.temperature());
         putIfNotNull(payload, "max_tokens", parameters.maxTokens());
         putIfNotNull(payload, "top_p", parameters.topP());
         putIfNotNull(payload, "stop", parameters.stopSequences());
-        return payload;
-    }
-
-    private static List<Map<String, Object>> toMessages(List<ChatMessage> messages) {
-        ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>(messages.size());
-        for (ChatMessage message : messages) {
-            LinkedHashMap<String, Object> item = new LinkedHashMap<String, Object>();
-            item.put("role", toOpenAiRole(message.type()));
-            item.put("content", message.text());
-            result.add(item);
+        if (parameters.tools() != null && !parameters.tools().isEmpty()) {
+            payload.put("tools", OpenAiMessages.serializeTools(parameters.tools()));
         }
-        return result;
-    }
-
-    private static String toOpenAiRole(ChatMessageType type) {
-        if (type == ChatMessageType.SYSTEM) return "system";
-        if (type == ChatMessageType.USER) return "user";
-        if (type == ChatMessageType.AI) return "assistant";
-        throw new IllegalArgumentException("Unsupported message type: " + type);
+        putIfNotNull(payload, "tool_choice", OpenAiMessages.toolChoice(parameters));
+        return payload;
     }
 
     private static ChatResponse parseResponse(String body) {
@@ -143,9 +128,16 @@ public final class OpenAiChatModel implements ChatModel {
             throw new LlmException("OpenAI response does not contain a message", null, body);
         }
 
-        String text = extractContent(message.get("content"));
+        String text = OpenAiMessages.extractContent(message.get("content"));
+        // Preserve the historically empty-string semantics for plain textual messages,
+        // but keep null when the assistant only produced tool calls.
+        List<Object> toolCalls = Json.array(message.get("tool_calls"));
+        List<ToolExecutionRequest> toolExecutionRequests = OpenAiMessages.parseToolCalls(toolCalls);
+        AiMessage aiMessage = toolExecutionRequests.isEmpty()
+                ? AiMessage.from(text == null ? "" : text)
+                : AiMessage.from(text == null || text.isEmpty() ? null : text, toolExecutionRequests);
         ChatResponse.Builder response = ChatResponse.builder()
-                .aiMessage(AiMessage.from(text == null ? "" : text))
+                .aiMessage(aiMessage)
                 .finishReason(mapFinishReason(choice.get("finish_reason")))
                 .metadata("id", root.get("id"))
                 .metadata("model", root.get("model"))
@@ -159,21 +151,6 @@ public final class OpenAiChatModel implements ChatModel {
             response.tokenUsage(new TokenUsage(input, output, total));
         }
         return response.build();
-    }
-
-    private static String extractContent(Object content) {
-        if (content == null) return "";
-        if (content instanceof String) return (String) content;
-        List<Object> blocks = Json.array(content);
-        if (blocks == null) return String.valueOf(content);
-        StringBuilder result = new StringBuilder();
-        for (Object blockValue : blocks) {
-            Map<String, Object> block = Json.object(blockValue);
-            if (block == null) continue;
-            Object text = block.get("text");
-            if (text != null) result.append(String.valueOf(text));
-        }
-        return result.toString();
     }
 
     private static FinishReason mapFinishReason(Object reasonValue) {
