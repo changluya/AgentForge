@@ -91,7 +91,7 @@ AgentForge
 - `StreamingChatResponseHandler`：统一流式增量 / 完成 / 异常回调；
 - `ChatRequest`：统一请求对象；
 - `ChatRequestParameters`：统一模型参数抽象；
-- `ChatMessage`：System / User / AI Message；
+- `ChatMessage`：System / User / AI / ToolExecutionResult / Custom Message；
 - `ChatResponse`：统一响应；
 - `TokenUsage` / `FinishReason`：统一结果元信息；
 - `HttpTransport`：可替换 HTTP Transport SPI，同时支持同步与流式扩展；
@@ -336,7 +336,7 @@ agentforge-llm-openai
 agentforge-llm-anthropic
 ```
 
-目标：稳定 `ChatModel`、`StreamingChatModel`、Message、Request、Response、Provider Adapter 等最底层模型抽象。
+目标：稳定 `ChatModel`、`StreamingChatModel`、Message、Request、Response、Provider Adapter 等最底层模型抽象。当前消息层已补齐 `ToolExecutionResultMessage` 与 `CustomMessage`。
 
 当前 OpenAI Provider 已同时具备 `OpenAiChatModel` 与 `OpenAiStreamingChatModel`。
 
