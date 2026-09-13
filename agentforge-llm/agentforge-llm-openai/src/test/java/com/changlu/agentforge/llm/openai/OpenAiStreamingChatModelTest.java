@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,12 +32,73 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests OpenAI Chat Completions streaming behavior without making real network calls.
+ * Tests OpenAI Chat Completions streaming behavior. The real-endpoint test is
+ * opt-in and is skipped when no endpoint configuration is provided.
  *
  * @author changlu
  * @date 2026/09/13
  */
 public class OpenAiStreamingChatModelTest {
+
+    // Modify these constants when you want to run the real-endpoint test.
+    private static final String REAL_ENDPOINT_BASE_URL = "https://api.openai.com/v1";
+    private static final String REAL_ENDPOINT_API_KEY = "";
+    private static final String REAL_ENDPOINT_MODEL_NAME = "gpt-4o-mini";
+
+    /**
+     * Optional real-endpoint verification.
+     *
+     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.</p>
+     * <ul>
+     *     <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.</li>
+     *     <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.</li>
+     *     <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.</li>
+     * </ul>
+     *
+     * <p>When the API key is blank, the test is skipped so normal unit-test runs
+     * do not make a network request. The endpoint may be any OpenAI-compatible service.</p>
+     */
+    @Test
+    public void shouldStreamFromRealEndpointWithUserConfiguration() throws InterruptedException {
+        String baseUrl = REAL_ENDPOINT_BASE_URL;
+        String apiKey = REAL_ENDPOINT_API_KEY;
+        String modelName = REAL_ENDPOINT_MODEL_NAME;
+
+        if (isBlank(baseUrl) || isBlank(apiKey) || isBlank(modelName)) {
+            System.out.println("Skip real OpenAI streaming endpoint test: modify the REAL_ENDPOINT_* constants first.");
+            return;
+        }
+
+        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
+                .baseUrl(baseUrl)
+                .apiKey(apiKey)
+                .modelName(modelName)
+                .temperature(0.0)
+                .maxTokens(64)
+                .build();
+        RecordingHandler handler = new RecordingHandler();
+
+        model.chat(ChatRequest.builder()
+                .message(UserMessage.from("Reply with one short sentence confirming the connection works."))
+                .build(), handler);
+
+        assertTrue("Timed out waiting for the streaming response",
+                handler.await(60, TimeUnit.SECONDS));
+        assertNull(handler.error);
+        assertNotNull(handler.completeResponse);
+        assertNotNull(handler.completeResponse.aiMessage());
+        assertTrue("The streaming response should contain text",
+                !isBlank(handler.completeResponse.aiMessage().text()));
+
+        System.out.println("Real OpenAI streaming endpoint test succeeded.");
+        System.out.println("model=" + handler.completeResponse.metadata().get("model"));
+        System.out.println("finishReason=" + handler.completeResponse.finishReason());
+        System.out.println("answer=" + handler.completeResponse.aiMessage().text());
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
 
     @Test
     public void shouldStreamPartialResponsesAndBuildCompleteResponse() {
@@ -228,8 +291,9 @@ public class OpenAiStreamingChatModelTest {
 
     private static final class RecordingHandler implements StreamingChatResponseHandler {
         private final List<String> partials = new ArrayList<String>();
-        private ChatResponse completeResponse;
-        private Throwable error;
+        private final CountDownLatch completion = new CountDownLatch(1);
+        private volatile ChatResponse completeResponse;
+        private volatile Throwable error;
 
         @Override
         public void onPartialResponse(String partialResponse) {
@@ -239,11 +303,17 @@ public class OpenAiStreamingChatModelTest {
         @Override
         public void onCompleteResponse(ChatResponse completeResponse) {
             this.completeResponse = completeResponse;
+            completion.countDown();
         }
 
         @Override
         public void onError(Throwable error) {
             this.error = error;
+            completion.countDown();
+        }
+
+        private boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+            return completion.await(timeout, unit);
         }
     }
 

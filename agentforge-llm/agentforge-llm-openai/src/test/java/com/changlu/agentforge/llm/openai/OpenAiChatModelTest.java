@@ -28,60 +28,37 @@ import static org.junit.Assert.assertTrue;
 
 public class OpenAiChatModelTest {
 
+    // Modify these constants when you want to run the real-endpoint test.
+    private static final String REAL_ENDPOINT_BASE_URL = "https://api.openai.com/v1";
+    private static final String REAL_ENDPOINT_API_KEY = "";
+    private static final String REAL_ENDPOINT_MODEL_NAME = "gpt-4o-mini";
+
     /**
      * Optional real-endpoint verification.
      *
-     * <p>Configure the following three values before running this test:</p>
+     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.</p>
      * <ul>
-     *     <li>{@code -Dagentforge.openai.base-url=https://api.openai.com/v1}</li>
-     *     <li>{@code -Dagentforge.openai.api-key=...}</li>
-     *     <li>{@code -Dagentforge.openai.model-name=...}</li>
+     *     <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.</li>
+     *     <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.</li>
+     *     <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.</li>
      * </ul>
      *
-     * <p>The equivalent environment variables are
-     * {@code AGENTFORGE_OPENAI_BASE_URL}, {@code AGENTFORGE_OPENAI_API_KEY},
-     * and {@code AGENTFORGE_OPENAI_MODEL_NAME}. The system properties take
-     * precedence. When the values are not configured, the test is skipped so
-     * normal unit-test runs do not make a network request. Once configured,
-     * the real request is executed and any HTTP/transport/response exception
-     * fails the test; no provider-specific response assertion is required.</p>
+     * <p>When the API key is blank, the test is skipped so normal unit-test runs
+     * do not make a network request. Once configured, the real request is
+     * executed and any HTTP/transport/response exception fails the test.</p>
      */
     @Test
     public void shouldCallRealEndpointWithUserConfiguration() {
         /*
-         * 配置方式一：环境变量（推荐）
-         *
-         *   AGENTFORGE_OPENAI_BASE_URL=https://api.openai.com/v1
-         *   AGENTFORGE_OPENAI_API_KEY=sk-xxxxxxxx
-         *   AGENTFORGE_OPENAI_MODEL_NAME=gpt-4o-mini
-         *
-         * macOS/Linux 可以在执行 Maven 前配置：
-         *
-         *   export AGENTFORGE_OPENAI_BASE_URL="https://api.openai.com/v1"
-         *   export AGENTFORGE_OPENAI_API_KEY="sk-xxxxxxxx"
-         *   export AGENTFORGE_OPENAI_MODEL_NAME="gpt-4o-mini"
-         *
-         * Windows PowerShell：
-         *
-         *   $env:AGENTFORGE_OPENAI_BASE_URL="https://api.openai.com/v1"
-         *   $env:AGENTFORGE_OPENAI_API_KEY="sk-xxxxxxxx"
-         *   $env:AGENTFORGE_OPENAI_MODEL_NAME="gpt-4o-mini"
-         *
-         * 配置方式二：JVM 参数
-         *
-         *   mvn -pl agentforge-llm/agentforge-llm-openai -Dagentforge.openai.base-url="https://api.openai.com/v1" -Dagentforge.openai.api-key="sk-xxxxxxxx" -Dagentforge.openai.model-name="gpt-4o-mini" -Dtest=OpenAiChatModelTest#shouldCallRealEndpointWithUserConfiguration test
-         *
-         * IntelliJ IDEA：Run/Edit Configurations -> Environment variables，
-         * 添加上面的三个 AGENTFORGE_OPENAI_* 变量即可。
-         * baseUrl 也可以替换为其他 OpenAI 兼容服务的接口地址。
+         * 直接修改当前测试类顶部的 REAL_ENDPOINT_* 常量即可。
+         * baseUrl 可以替换为其他 OpenAI 兼容服务的接口地址。
          */
-        String baseUrl = configuredValue("agentforge.openai.base-url", "AGENTFORGE_OPENAI_BASE_URL");
-        String apiKey = configuredValue("agentforge.openai.api-key", "AGENTFORGE_OPENAI_API_KEY");
-        String modelName = configuredValue("agentforge.openai.model-name", "AGENTFORGE_OPENAI_MODEL_NAME");
+        String baseUrl = REAL_ENDPOINT_BASE_URL;
+        String apiKey = REAL_ENDPOINT_API_KEY;
+        String modelName = REAL_ENDPOINT_MODEL_NAME;
 
         if (isBlank(baseUrl) || isBlank(apiKey) || isBlank(modelName)) {
-            System.out.println("Skip real OpenAI endpoint test: configure "
-                    + "baseUrl, apiKey and modelName with system properties or environment variables.");
+            System.out.println("Skip real OpenAI endpoint test: modify the REAL_ENDPOINT_* constants first.");
             return;
         }
 
@@ -100,13 +77,6 @@ public class OpenAiChatModelTest {
         System.out.println("model=" + response.metadata().get("model"));
         System.out.println("finishReason=" + response.finishReason());
         System.out.println("answer=" + response.aiMessage().text());
-    }
-
-    private static String configuredValue(String systemProperty, String environmentVariable) {
-        String value = System.getProperty(systemProperty);
-        if (!isBlank(value)) return value.trim();
-        value = System.getenv(environmentVariable);
-        return isBlank(value) ? null : value.trim();
     }
 
     private static boolean isBlank(String value) {
