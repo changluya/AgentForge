@@ -899,3 +899,120 @@ Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需�
    或省略 text 块（Anthropic）；
 5. 阻塞与流式最终必须收敛到同一个 `ChatResponse` / `AiMessage` 语义，工具调用只在最终响应上暴露，
    避免上层为了流式额外实现一套工具调用聚合逻辑。
+
+---
+
+## 8. Tool layer（ToolService / ToolExecutor 复刻）
+
+### 8.1 定位
+
+除 Provider 层的 Function Calling 之外，LLM Core 额外沉淀了一套 **Tool 执行层**，参考 LangChain4j 的
+`dev.langchain4j.service.tool.ToolService` / `ToolExecutor` 复刻：
+
+```text
+agent.tool 包
+├── ToolExecutor                  // 工具执行函数式接口
+├── ToolService                   // 工具注册 + 推理/执行循环
+├── DefaultToolExecutor           // @Tool 方法反射执行器
+├── ToolSpecifications            // @Tool 方法 -> ToolSpecification/ToolParameters
+├── Tool / P                      // 方法/参数注解
+├── ToolExecution                 // 一次工具执行（请求+结果+耗时）
+├── ToolExecutionResult           // 执行结果值对象（文本+原始对象+isError）
+├── ReturnBehavior                // TO_LLM / IMMEDIATE / IMMEDIATE_IF_LAST
+├── ToolArgumentsException / ToolExecutionException
+├── ToolArgumentsErrorHandler / ToolExecutionErrorHandler
+├── ToolErrorContext / ToolErrorHandlerResult
+└── ToolExecutionRequestUtil      // arguments JSON -> Map
+```
+
+它解决的是“上层 Agent 如何把普通 Java 方法快速变成可被 LLM 调用的工具，并自动驱动多轮工具执行”。
+
+### 8.2 快速构建工具
+
+用 `@Tool` 标注一个方法，交给 `ToolService` 注册即可：
+
+```java
+public class WeatherTools {
+
+    @Tool(value = "Returns the weather for the given city")
+    public String getWeather(@P("city name") String city) {
+        return "Weather in " + city + ": 22C sunny";
+    }
+}
+```
+
+```java
+ToolService toolService = new ToolService();
+toolService.tools(Arrays.asList(new WeatherTools()));   // 扫描全部 @Tool 方法
+
+ToolChatResult result = toolService.chat(model, parameters, messages);
+System.out.println(result.finalResponse().aiMessage().text());
+```
+
+`ToolSpecifications` 会把方法名/`@P` 参数名/类型自动转成 `ToolSpecification` + `ToolParameters`
+（JSON-Schema），与 Provider 一侧的 `tools()`/`toolChoice()` 对接。
+
+### 8.3 ToolExecutor
+
+```java
+@FunctionalInterface
+public interface ToolExecutor {
+    String execute(ToolExecutionRequest request, Object memoryId);
+
+    default ToolExecutionResult executeWithResult(ToolExecutionRequest request, Object memoryId) { ... }
+}
+```
+
+- `DefaultToolExecutor` 是默认反射实现：把 `request.arguments()`（JSON）绑定到 `@Tool` 方法参数
+  （执行轻量类型转换），反射调用方法，并把返回值转成文本：
+  - `String` → 原样返回；
+  - `void` → 字面量 `"Success"`；
+  - 其它 → `Json.stringify(...)`。
+- 你也可以提供自定义 `ToolExecutor`（Lambda 即可）直接实现工具逻辑。
+
+### 8.4 推理与工具执行循环
+
+`ToolService.chat(...)` 实现与 LangChain4j 一致的循环：
+
+```text
+1. 携带已注册 tools 调用 ChatModel
+2. 若 aiMessage.hasToolExecutionRequests()：
+     a. 逐个执行工具（找不到 executor -> 幻觉工具策略，默认抛异常）
+     b. 把每个 ToolExecutionResult 转成 ToolExecutionResultMessage（id 关联）
+     c. 追加到消息列表
+     d. 若 ReturnBehavior 要求立即返回 -> 停止
+     e. 否则用新消息继续下一轮
+3. 若无工具调用 -> 返回最终 ChatResponse + 全部 ToolExecution
+```
+
+- 默认 `maxToolCallingRoundTrips = 100`，防止死循环；
+- `ReturnBehavior`：`TO_LLM`（默认，结果回给 LLM 继续）、`IMMEDIATE`（执行后立即返回）、
+  `IMMEDIATE_IF_LAST`（仅当它是最后一个工具调用时立即返回）；
+- 任意工具出错都会强制再跑一轮，让 LLM 看到错误并纠正重试。
+
+### 8.5 错误处理
+
+| 异常 | 触发点 | 默认处理 |
+|---|---|---|
+| `ToolArgumentsException` | 参数 JSON 无法解析 / 参数类型不符 / 缺必填参数 | 抛异常（`RETHROW`） |
+| `ToolExecutionException` | 工具方法执行失败 | 把错误消息以 `ToolErrorHandlerResult.text(...)` 回给 LLM |
+
+可通过 `toolService.argumentsErrorHandler(...)` / `toolService.executionErrorHandler(...)` 定制：
+自定义 handler 要么返回 `ToolErrorHandlerResult.text(msg)`（回给 LLM），要么直接抛异常（终止调用）。
+
+### 8.6 与 Function Calling 协议层的关系
+
+```text
+ToolService.chat()                     <- 上层 Agent 入口（复用本章 Tool layer）
+        │ 调用
+ChatModel / ChatRequest / ChatResponse <- 第 2/3 章协议抽象
+        │
+OpenAI / Anthropic Adapter             <- 第 7 章 Function Calling wire 映射
+        │
+AiMessage.toolExecutionRequests()      <- 模型给出的工具调用
+        │
+ToolService 执行 -> ToolExecutionResultMessage 回填
+```
+
+本章 Tool layer 与第 7 章 Provider wire 层解耦：无论底层是 OpenAI 还是 Anthropic，
+上层 Agent 都只面向 `ChatMessage` / `ToolExecutionRequest` / `ToolExecutor` 编程。
