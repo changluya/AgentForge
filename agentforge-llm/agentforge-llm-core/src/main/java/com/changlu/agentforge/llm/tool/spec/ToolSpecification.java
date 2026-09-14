@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.spec;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * Describes a tool (function) that the model is allowed to call.
  *
- * <p>Mirrors LangChain4j's {@code ToolSpecification}: a name, an optional description,
+ * 
  * an optional {@link ToolParameters} JSON schema and an optional {@code strict} flag.</p>
  *
  * <p>Provider adapters map this to their own wire format:</p>

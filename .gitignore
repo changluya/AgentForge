@@ -29,3 +29,6 @@ logs/
 # Local env
 .env
 .env.*
+
+# Live-endpoint credentials (do not commit)
+**/live-endpoint.properties

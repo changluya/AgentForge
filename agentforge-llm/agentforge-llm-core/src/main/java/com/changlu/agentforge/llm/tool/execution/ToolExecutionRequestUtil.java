@@ -1,9 +1,10 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.internal.json.Json;
 
 import java.util.Map;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
 
 /**
  * Utilities for extracting data from a {@link ToolExecutionRequest}'s JSON arguments.

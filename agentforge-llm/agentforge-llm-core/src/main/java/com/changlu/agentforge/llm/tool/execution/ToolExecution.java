@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import java.time.Duration;
@@ -9,7 +9,7 @@ import java.util.Objects;
  * Represents a single tool execution: the {@link ToolExecutionRequest} and the resulting
  * {@link ToolExecutionResult}, plus optional timing and the memory-id the execution ran under.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolExecution}.</p>
+ * 
  *
  * @author changlu
  * @since 2026-09-13

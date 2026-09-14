@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.internal.json.Json;
@@ -7,11 +7,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
+import com.changlu.agentforge.llm.tool.ToolExecutor;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
+import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
+import com.changlu.agentforge.llm.tool.P;
 
 /**
  * A {@link ToolExecutor} that executes a {@link Tool}-annotated method reflectively.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.DefaultToolExecutor}: it binds the JSON
+ * 
  * arguments of a {@link ToolExecutionRequest} to method parameters (performing light type coercion)
  * and invokes the target method. The return value is turned into the text sent to the LLM:</p>
  * <ul>

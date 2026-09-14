@@ -1,14 +1,16 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import com.changlu.agentforge.llm.tool.ReturnBehavior;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 
 /**
  * Marks a method as a tool (function) that an LLM may call.
  *
- * <p>AgentForge mirrors LangChain4j's {@code dev.langchain4j.agent.tool.Tool}.</p>
+ * <p>AgentForge's {@code @Tool} method marker.</p>
  *
  * <p>When a method is annotated with {@code @Tool}, a {@link ToolSpecification} is derived from the
  * method signature (method name, parameter names/types and {@link P} annotations) and registered with

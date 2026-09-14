@@ -24,7 +24,8 @@ agentforge-llm
 │   ├── ChatModel / StreamingChatModel
 │   ├── ChatMessage（AiMessage / UserMessage + Content / ToolExecutionRequest / ToolExecutionResultMessage ...）
 │   ├── ChatRequest / ChatRequestParameters（tools / toolChoice / toolChoiceName）
-│   ├── ToolSpecification / ToolParameters / ToolChoice
+│   ├── tool（Tool / ToolExecutor，spec / execution / error 子包）
+│   ├── ToolChoice
 │   ├── ChatResponse / TokenUsage / FinishReason
 │   ├── HttpTransport / JdkHttpTransport
 │   └── LlmException / Json
@@ -83,10 +84,20 @@ ChatResponse + TokenUsage + FinishReason
 
 ```text
 com.changlu.agentforge.llm
-├── agent
-│   └── tool
-│       ├── ToolSpecification.java     // 工具（函数）声明：name/description/parameters/strict
-│       └── ToolParameters.java        // JSON-Schema 风格参数定义（纯 Map，无第三方依赖）
+├── tool
+│   ├── Tool.java / P.java / ReturnBehavior.java / ToolExecutor.java   // 核心契约
+│   ├── spec
+│   │   ├── ToolSpecification.java     // 工具（函数）声明：name/description/parameters/strict
+│   │   ├── ToolParameters.java        // JSON-Schema 风格参数定义（纯 Map，无第三方依赖）
+│   │   └── ToolSpecifications.java    // @Tool 方法 -> ToolSpecification/ToolParameters
+│   ├── execution
+│   │   ├── ToolService.java           // 工具注册 + 推理/执行循环
+│   │   ├── DefaultToolExecutor.java   // @Tool 方法反射执行器
+│   │   ├── ToolExecution.java / ToolExecutionResult.java / ToolExecutionRequestUtil.java
+│   └── error
+│       ├── ToolArgumentsException.java / ToolExecutionException.java
+│       └── ToolArgumentsErrorHandler.java / ToolExecutionErrorHandler.java /
+│           ToolErrorContext.java / ToolErrorHandlerResult.java
 ├── chat
 │   ├── ChatModel.java
 │   ├── StreamingChatModel.java
@@ -906,26 +917,49 @@ Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需�
 
 ### 8.1 定位
 
-除 Provider 层的 Function Calling 之外，LLM Core 额外沉淀了一套 **Tool 执行层**，参考 LangChain4j 的
-`dev.langchain4j.service.tool.ToolService` / `ToolExecutor` 复刻：
+除 Provider 层的 Function Calling 之外，LLM Core 额外沉淀了一套 **Tool 执行层**（对应包
+`com.changlu.agentforge.llm.tool`，拆分为顶层 + 三个子包）：
 
 ```text
-agent.tool 包
-├── ToolExecutor                  // 工具执行函数式接口
-├── ToolService                   // 工具注册 + 推理/执行循环
-├── DefaultToolExecutor           // @Tool 方法反射执行器
-├── ToolSpecifications            // @Tool 方法 -> ToolSpecification/ToolParameters
-├── Tool / P                      // 方法/参数注解
-├── ToolExecution                 // 一次工具执行（请求+结果+耗时）
-├── ToolExecutionResult           // 执行结果值对象（文本+原始对象+isError）
-├── ReturnBehavior                // TO_LLM / IMMEDIATE / IMMEDIATE_IF_LAST
-├── ToolArgumentsException / ToolExecutionException
-├── ToolArgumentsErrorHandler / ToolExecutionErrorHandler
-├── ToolErrorContext / ToolErrorHandlerResult
-└── ToolExecutionRequestUtil      // arguments JSON -> Map
+com.changlu.agentforge.llm.tool            // 核心契约：注解 + 工具执行接口
+├── Tool                        // @Tool 方法注解
+├── P                           // @P 参数注解
+├── ReturnBehavior              // TO_LLM / IMMEDIATE / IMMEDIATE_IF_LAST
+├── ToolExecutor                // 工具执行函数式接口
+│
+├── spec                        // 工具规范
+│   ├── ToolSpecification
+│   ├── ToolParameters
+│   └── ToolSpecifications      // @Tool 方法 -> ToolSpecification/ToolParameters
+│
+├── execution                   // 执行
+│   ├── ToolService             // 工具注册 + 推理/执行循环
+│   ├── DefaultToolExecutor     // @Tool 方法反射执行器
+│   ├── ToolExecution           // 一次工具执行（请求+结果+耗时）
+│   ├── ToolExecutionResult     // 执行结果值对象（文本+原始对象+isError）
+│   └── ToolExecutionRequestUtil// arguments JSON -> Map
+│
+└── error                       // 异常与错误处理
+    ├── ToolArgumentsException / ToolExecutionException
+    ├── ToolArgumentsErrorHandler / ToolExecutionErrorHandler
+    ├── ToolErrorContext / ToolErrorHandlerResult
 ```
 
 它解决的是“上层 Agent 如何把普通 Java 方法快速变成可被 LLM 调用的工具，并自动驱动多轮工具执行”。
+核心可复用的字段/方法形态（与 LangChain4j 一致的简单风格）：
+
+```java
+// ToolService
+private static final ToolExecutionErrorHandler DEFAULT_TOOL_EXECUTION_ERROR_HANDLER =
+        (error, context) -> ToolErrorHandlerResult.text(error.getMessage());
+
+private final List<ToolSpecification> toolSpecifications = new ArrayList<>();
+private final Map<String, ToolExecutor> toolExecutors = new HashMap<>();
+
+public List<ToolSpecification> toolSpecifications() {
+    return this.toolSpecifications;
+}
+```
 
 ### 8.2 快速构建工具
 

@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.spec;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.execution;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents the value returned by a tool execution, wrapping both the raw object result and the
  * text payload that will be sent back to the LLM, plus an {@code isError} flag.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolExecutionResult} (simplified to a
+ * 
  * text/raw result, since AgentForge core currently exposes text-oriented tool results).</p>
  *
  * @author changlu

@@ -1,12 +1,13 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import java.util.Objects;
+import com.changlu.agentforge.llm.tool.execution.ToolExecutionResult;
 
 /**
  * Low-level executor/handler of a {@link ToolExecutionRequest}.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolExecutor}.</p>
+ * 
  *
  * @author changlu
  * @since 2026-09-13

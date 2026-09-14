@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation for a parameter of a {@link Tool}-annotated method.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.agent.tool.P}. It lets you override the
+ * 
  * parameter name the LLM will see (useful when javac is not run with {@code -parameters},
  * otherwise reflection returns {@code arg0}, {@code arg1}, ...) and provide a description.</p>
  *

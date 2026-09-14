@@ -1,9 +1,9 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.error;
 
 /**
  * Handler for {@link ToolExecutionException}s thrown while executing a tool.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolExecutionErrorHandler}.</p>
+ * 
  *
  * <p>There are two ways to handle an error:</p>
  * <ol>

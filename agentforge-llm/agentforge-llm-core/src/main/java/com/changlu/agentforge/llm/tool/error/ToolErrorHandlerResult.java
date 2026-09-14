@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.error;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import java.util.Objects;
  * {@link ToolExecutionErrorHandler} instead of throwing, letting the error message be sent back
  * to the LLM so it can correct itself and retry.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolErrorHandlerResult}.</p>
+ * 
  *
  * @author changlu
  * @since 2026-09-13

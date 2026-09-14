@@ -1,9 +1,9 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.error;
 
 /**
  * Indicates that something went wrong while executing the tool itself.
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.exception.ToolExecutionException}.</p>
+ * 
  *
  * @author changlu
  * @since 2026-09-13

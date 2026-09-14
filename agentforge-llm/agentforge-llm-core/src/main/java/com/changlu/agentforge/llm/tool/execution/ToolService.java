@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.ChatModel;
@@ -18,6 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import com.changlu.agentforge.llm.tool.ReturnBehavior;
+import com.changlu.agentforge.llm.tool.Tool;
+import com.changlu.agentforge.llm.tool.ToolExecutor;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsErrorHandler;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
+import com.changlu.agentforge.llm.tool.error.ToolErrorContext;
+import com.changlu.agentforge.llm.tool.error.ToolErrorHandlerResult;
+import com.changlu.agentforge.llm.tool.error.ToolExecutionErrorHandler;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
 
 /**
  * Executes the inference-and-tool loop for a {@link ChatModel}: it repeatedly calls the model
@@ -25,7 +35,7 @@ import java.util.function.Function;
  * the results back as {@link ToolExecutionResultMessage}s, and re-calls the model until no tool is
  * requested (or the round-trip limit is reached).
  *
- * <p>This is a faithful AgentForge port of LangChain4j's {@code dev.langchain4j.service.tool.ToolService},
+ * <p>An AgentForge tool-execution layer.
  * scoped to the self-contained AgentForge LLM core (no AI-Service reflection/chains, no compensation
  * or async machinery).</p>
  *
@@ -48,12 +58,8 @@ public final class ToolService {
         throw new RuntimeException(error);
     };
 
-    private static final ToolExecutionErrorHandler EXECUTION_ERROR_TO_LLM = (error, context) -> {
-        String message = error.getMessage() == null || error.getMessage().trim().isEmpty()
-                ? error.getClass().getName()
-                : error.getMessage();
-        return ToolErrorHandlerResult.text(message);
-    };
+    private static final ToolExecutionErrorHandler DEFAULT_TOOL_EXECUTION_ERROR_HANDLER =
+            (error, context) -> ToolErrorHandlerResult.text(error.getMessage());
 
     private static final Function<ToolExecutionRequest, ToolExecutionResultMessage> THROW_ON_HALLUCINATED =
             request -> {
@@ -61,12 +67,12 @@ public final class ToolService {
                         "Model requested a tool '" + request.name() + "' that is not available");
             };
 
-    private final Map<String, ToolSpecification> toolSpecifications = new LinkedHashMap<String, ToolSpecification>();
+    private final List<ToolSpecification> toolSpecifications = new ArrayList<ToolSpecification>();
     private final Map<String, ToolExecutor> toolExecutors = new LinkedHashMap<String, ToolExecutor>();
     private final Map<String, ReturnBehavior> returnBehaviors = new LinkedHashMap<String, ReturnBehavior>();
 
     private ToolArgumentsErrorHandler argumentsErrorHandler = RETHROW_ARGUMENTS_ERROR;
-    private ToolExecutionErrorHandler executionErrorHandler = EXECUTION_ERROR_TO_LLM;
+    private ToolExecutionErrorHandler executionErrorHandler = DEFAULT_TOOL_EXECUTION_ERROR_HANDLER;
     private Function<ToolExecutionRequest, ToolExecutionResultMessage> hallucinatedToolNameStrategy =
             THROW_ON_HALLUCINATED;
     private int maxToolCallingRoundTrips = 100;
@@ -161,7 +167,7 @@ public final class ToolService {
     }
 
     public void executionErrorHandler(ToolExecutionErrorHandler handler) {
-        this.executionErrorHandler = handler == null ? EXECUTION_ERROR_TO_LLM : handler;
+        this.executionErrorHandler = handler == null ? DEFAULT_TOOL_EXECUTION_ERROR_HANDLER : handler;
     }
 
     public void hallucinatedToolNameStrategy(
@@ -181,11 +187,11 @@ public final class ToolService {
      * @return the registered tool specifications (what is sent to the LLM)
      */
     public List<ToolSpecification> toolSpecifications() {
-        return Collections.unmodifiableList(new ArrayList<ToolSpecification>(toolSpecifications.values()));
+        return toolSpecifications;
     }
 
     public Map<String, ToolExecutor> toolExecutors() {
-        return Collections.unmodifiableMap(toolExecutors);
+        return toolExecutors;
     }
 
     /**
@@ -321,7 +327,7 @@ public final class ToolService {
             return userParameters;
         }
         DefaultChatRequestParameters toolParameters = DefaultChatRequestParameters.builder()
-                .tools(new ArrayList<ToolSpecification>(toolSpecifications.values()))
+                .tools(new ArrayList<ToolSpecification>(toolSpecifications))
                 .build();
         // User parameters override non-tool fields; registered tools are always included.
         return DefaultChatRequestParameters.merge(toolParameters, userParameters);
@@ -335,11 +341,11 @@ public final class ToolService {
         if (specification == null || executor == null) {
             return;
         }
-        if (toolSpecifications.containsKey(specification.name())) {
+        if (toolExecutors.containsKey(specification.name())) {
             throw new IllegalArgumentException(
                     "Tool name '" + specification.name() + "' is already registered");
         }
-        toolSpecifications.put(specification.name(), specification);
+        toolSpecifications.add(specification);
         toolExecutors.put(specification.name(), executor);
         if (returnBehavior != null) {
             returnBehaviors.put(specification.name(), returnBehavior);

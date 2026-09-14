@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import org.junit.Test;
@@ -12,6 +12,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import com.changlu.agentforge.llm.tool.execution.DefaultToolExecutor;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.execution.ToolExecutionResult;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
 
 /**
  * Tests for {@link DefaultToolExecutor}, {@link ToolSpecifications} and {@link ToolExecutionResult}.

@@ -1,10 +1,10 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.error;
 
 /**
  * Handler for {@link ToolArgumentsException}s thrown while preparing tool arguments from the LLM's
  * JSON (for example the JSON cannot be parsed or a value is of the wrong type).
  *
- * <p>Mirrors LangChain4j's {@code dev.langchain4j.service.tool.ToolArgumentsErrorHandler}.</p>
+ * 
  *
  * <p>There are two ways to handle an error:</p>
  * <ol>

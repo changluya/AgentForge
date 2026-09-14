@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.ChatModel;
@@ -22,6 +22,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import com.changlu.agentforge.llm.tool.execution.ToolService;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
 
 /**
  * Tests {@link ToolService} registration and the inference-and-tools loop with a fake {@link ChatModel}.

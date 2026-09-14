@@ -1,7 +1,8 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.error;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import java.util.Objects;
+import com.changlu.agentforge.llm.tool.execution.ToolExecution;
 
 /**
  * Context passed to a {@link ToolArgumentsErrorHandler} or {@link ToolExecutionErrorHandler}.

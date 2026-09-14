@@ -1,7 +1,7 @@
 package com.changlu.agentforge.llm.anthropic;
 
-import com.changlu.agentforge.llm.agent.tool.ToolParameters;
-import com.changlu.agentforge.llm.agent.tool.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.SystemMessage;
 import com.changlu.agentforge.llm.chat.message.TextContent;

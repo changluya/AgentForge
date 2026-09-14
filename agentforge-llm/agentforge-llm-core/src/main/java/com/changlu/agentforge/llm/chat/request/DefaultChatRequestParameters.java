@@ -1,6 +1,6 @@
 package com.changlu.agentforge.llm.chat.request;
 
-import com.changlu.agentforge.llm.agent.tool.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool.spec;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -8,10 +8,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.changlu.agentforge.llm.tool.Tool;
+import com.changlu.agentforge.llm.tool.P;
 
 /**
- * Builds {@link ToolSpecification}s from {@link Tool}-annotated methods, mirroring LangChain4j's
- * {@code dev.langchain4j.agent.tool.ToolSpecifications}.
+ * Builds {@link ToolSpecification}s from {@link Tool}-annotated methods.
  *
  * @author changlu
  * @since 2026-09-13

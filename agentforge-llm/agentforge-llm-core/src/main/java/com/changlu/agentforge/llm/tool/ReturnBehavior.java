@@ -1,9 +1,9 @@
-package com.changlu.agentforge.llm.agent.tool;
+package com.changlu.agentforge.llm.tool;
 
 /**
  * Per-tool setting controlling what happens with a tool's result after execution.
  *
- * <p>Mirrors LangChain4j's {@code ReturnBehavior}.</p>
+ * 
  *
  * <ul>
  *   <li>{@link #TO_LLM} (default): the tool result is appended to the conversation and sent back
