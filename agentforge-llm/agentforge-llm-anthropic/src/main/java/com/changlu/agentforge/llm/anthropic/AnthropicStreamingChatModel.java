@@ -279,6 +279,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
 
         private final StreamingChatResponseHandler handler;
         private final StringBuilder text = new StringBuilder();
+        private final StringBuilder thinking = new StringBuilder();
         private final StringBuilder errorBody = new StringBuilder();
         private final StringBuilder pendingData = new StringBuilder();
         private final Map<String, Object> metadata = new LinkedHashMap<String, Object>();
@@ -440,6 +441,19 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
                 }
                 return;
             }
+            if ("thinking_delta".equals(deltaType)) {
+                String partial = Json.string(delta.get("thinking"));
+                if (partial == null || partial.isEmpty()) {
+                    return;
+                }
+                thinking.append(partial);
+                try {
+                    handler.onPartialThinking(partial);
+                } catch (Throwable callbackError) {
+                    fail(callbackError);
+                }
+                return;
+            }
             if ("input_json_delta".equals(deltaType)) {
                 ToolUseAccumulator accumulator = toolUseAccumulators.get(index(root));
                 String partial = Json.string(delta.get("partial_json"));
@@ -485,9 +499,22 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             if (terminated) return;
             terminated = true;
             List<ToolExecutionRequest> toolExecutionRequests = buildToolExecutionRequests();
-            AiMessage aiMessage = toolExecutionRequests.isEmpty()
-                    ? AiMessage.from(text.toString())
-                    : AiMessage.from(text.length() == 0 ? null : text.toString(), toolExecutionRequests);
+            String thinkingText = thinking.length() == 0 ? null : thinking.toString();
+            AiMessage aiMessage;
+            if (toolExecutionRequests.isEmpty()) {
+                aiMessage = thinkingText == null
+                        ? AiMessage.from(text.toString())
+                        : AiMessage.builder()
+                                .text(text.toString())
+                                .thinking(thinkingText)
+                                .build();
+            } else {
+                aiMessage = AiMessage.builder()
+                        .text(text.length() == 0 ? null : text.toString())
+                        .thinking(thinkingText)
+                        .toolExecutionRequests(toolExecutionRequests)
+                        .build();
+            }
             ChatResponse.Builder response = ChatResponse.builder()
                     .aiMessage(aiMessage)
                     .finishReason(finishReason)

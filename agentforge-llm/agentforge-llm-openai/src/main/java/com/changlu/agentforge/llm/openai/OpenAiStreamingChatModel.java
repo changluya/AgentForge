@@ -269,6 +269,7 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
         private final StreamingChatResponseHandler handler;
         private final StringBuilder text = new StringBuilder();
+        private final StringBuilder thinking = new StringBuilder();
         private final StringBuilder errorBody = new StringBuilder();
         private final Map<String, Object> metadata = new LinkedHashMap<String, Object>();
         private final Map<Integer, ToolCallAccumulator> toolCallAccumulators =
@@ -379,7 +380,30 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
                 }
             }
 
+            String partialThinking = extractThinking(delta);
+            if (partialThinking != null && !partialThinking.isEmpty()) {
+                thinking.append(partialThinking);
+                try {
+                    handler.onPartialThinking(partialThinking);
+                } catch (Throwable callbackError) {
+                    fail(callbackError);
+                    return;
+                }
+            }
+
             accumulateToolCalls(Json.array(delta.get("tool_calls")));
+        }
+
+        /**
+         * DeepSeek 及多数 OpenAI-compatible 推理模型把思考内容放在
+         * {@code reasoning_content}，部分实现用 {@code thinking}，这里两者都兼容。
+         */
+        private static String extractThinking(Map<String, Object> delta) {
+            String thinking = Json.string(delta.get("reasoning_content"));
+            if (thinking == null || thinking.isEmpty()) {
+                thinking = Json.string(delta.get("thinking"));
+            }
+            return thinking;
         }
 
         private void accumulateToolCalls(List<Object> toolCallDeltas) {
@@ -431,9 +455,22 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             if (terminated) return;
             terminated = true;
             List<ToolExecutionRequest> toolExecutionRequests = buildToolExecutionRequests();
-            AiMessage aiMessage = toolExecutionRequests.isEmpty()
-                    ? AiMessage.from(text.toString())
-                    : AiMessage.from(text.length() == 0 ? null : text.toString(), toolExecutionRequests);
+            String thinkingText = thinking.length() == 0 ? null : thinking.toString();
+            AiMessage aiMessage;
+            if (toolExecutionRequests.isEmpty()) {
+                aiMessage = thinkingText == null
+                        ? AiMessage.from(text.toString())
+                        : AiMessage.builder()
+                                .text(text.toString())
+                                .thinking(thinkingText)
+                                .build();
+            } else {
+                aiMessage = AiMessage.builder()
+                        .text(text.length() == 0 ? null : text.toString())
+                        .thinking(thinkingText)
+                        .toolExecutionRequests(toolExecutionRequests)
+                        .build();
+            }
             ChatResponse.Builder response = ChatResponse.builder()
                     .aiMessage(aiMessage)
                     .finishReason(finishReason)

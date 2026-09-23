@@ -13,12 +13,22 @@
 
     <artifactId>agentforge-ai-core</artifactId>
     <name>AgentForge :: AI :: Core</name>
-    <description>Reserved core module for future AgentForge framework capabilities.</description>
+    <description>AgentForge framework core: LLM factory and provider-neutral building blocks.</description>
 
     <dependencies>
         <dependency>
             <groupId>com.changlu.agentforge</groupId>
             <artifactId>agentforge-llm-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.changlu.agentforge</groupId>
+            <artifactId>agentforge-llm-openai</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.changlu.agentforge</groupId>
+            <artifactId>agentforge-llm-anthropic</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

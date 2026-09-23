@@ -107,6 +107,36 @@ public class AnthropicStreamingToolUseTest {
         assertEquals("{\"city\":\"bj\"}", requests.get(1).arguments());
     }
 
+    @Test
+    public void shouldForwardThinkingDeltas() throws InterruptedException {
+        StreamingTransport transport = StreamingTransport.success(
+                sse("message_start", "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_3\"}}"),
+                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":" +
+                        "{\"type\":\"thinking\"}}"),
+                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
+                        "{\"type\":\"thinking_delta\",\"thinking\":\"先\"}}"),
+                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
+                        "{\"type\":\"thinking_delta\",\"thinking\":\"查天气\"}}"),
+                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
+                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":1,\"content_block\":" +
+                        "{\"type\":\"text\",\"text\":\"\"}}"),
+                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":1,\"delta\":" +
+                        "{\"type\":\"text_delta\",\"text\":\"Hangzhou 22C\"}}"),
+                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":1}"),
+                sse("message_delta", "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"}}"),
+                sse("message_stop", "{\"type\":\"message_stop\"}"));
+
+        RecordingHandler handler = new RecordingHandler();
+        model(transport).chat("weather?", handler);
+
+        assertTrue(handler.await());
+        assertNull(handler.error);
+        assertEquals(Arrays.asList("先", "查天气"), handler.thinkings);
+        assertEquals(Arrays.asList("Hangzhou 22C"), handler.partials);
+        assertEquals("先查天气", handler.completeResponse.aiMessage().thinking());
+        assertEquals("Hangzhou 22C", handler.completeResponse.aiMessage().text());
+    }
+
     private static String sse(String event, String data) {
         // Transport replays lines one by one; blank lines terminate a frame.
         return "event: " + event + "\ndata: " + data + "\n";
@@ -122,6 +152,7 @@ public class AnthropicStreamingToolUseTest {
 
     private static final class RecordingHandler implements StreamingChatResponseHandler {
         private final List<String> partials = new ArrayList<String>();
+        private final List<String> thinkings = new ArrayList<String>();
         private final CountDownLatch completion = new CountDownLatch(1);
         private volatile ChatResponse completeResponse;
         private volatile Throwable error;
@@ -129,6 +160,11 @@ public class AnthropicStreamingToolUseTest {
         @Override
         public void onPartialResponse(String partialResponse) {
             partials.add(partialResponse);
+        }
+
+        @Override
+        public void onPartialThinking(String partialThinking) {
+            thinkings.add(partialThinking);
         }
 
         @Override

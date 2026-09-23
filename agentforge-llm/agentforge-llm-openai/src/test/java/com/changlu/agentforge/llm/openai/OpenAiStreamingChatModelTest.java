@@ -192,6 +192,36 @@ public class OpenAiStreamingChatModelTest {
     }
 
     @Test
+    public void shouldForwardReasoningContentDeltas() {
+        StreamingTransport transport = StreamingTransport.success(
+                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
+                        "{\"reasoning_content\":\"先查一下\"},\"finish_reason\":null}]}",
+                "",
+                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
+                        "{\"reasoning_content\":\"天气\"},\"finish_reason\":null}]}",
+                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
+                        "{\"content\":\"Hangzhou 22C\"},\"finish_reason\":null}]}",
+                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":{}," +
+                        "\"finish_reason\":\"stop\"}]}",
+                "data: [DONE]");
+
+        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
+                .apiKey("test-key")
+                .modelName("deepseek-test")
+                .httpTransport(transport)
+                .build();
+        RecordingHandler handler = new RecordingHandler();
+
+        model.chat("weather?", handler);
+
+        assertEquals(Arrays.asList("先查一下", "天气"), handler.thinkings);
+        assertEquals(Arrays.asList("Hangzhou 22C"), handler.partials);
+        assertNull(handler.error);
+        assertEquals("先查一下天气", handler.completeResponse.aiMessage().thinking());
+        assertEquals("Hangzhou 22C", handler.completeResponse.aiMessage().text());
+    }
+
+    @Test
     public void shouldWorkWithOpenAiCompatibleEndpointWithoutApiKey() {
         StreamingTransport transport = StreamingTransport.success(
                 "data: {\"choices\":[{\"delta\":{\"content\":\"local\"},\"finish_reason\":\"stop\"}]}"
@@ -291,6 +321,7 @@ public class OpenAiStreamingChatModelTest {
 
     private static final class RecordingHandler implements StreamingChatResponseHandler {
         private final List<String> partials = new ArrayList<String>();
+        private final List<String> thinkings = new ArrayList<String>();
         private final CountDownLatch completion = new CountDownLatch(1);
         private volatile ChatResponse completeResponse;
         private volatile Throwable error;
@@ -298,6 +329,11 @@ public class OpenAiStreamingChatModelTest {
         @Override
         public void onPartialResponse(String partialResponse) {
             partials.add(partialResponse);
+        }
+
+        @Override
+        public void onPartialThinking(String partialThinking) {
+            thinkings.add(partialThinking);
         }
 
         @Override

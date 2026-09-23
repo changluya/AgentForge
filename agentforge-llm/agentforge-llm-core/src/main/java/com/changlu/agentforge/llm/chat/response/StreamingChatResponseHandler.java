@@ -17,6 +17,19 @@ public interface StreamingChatResponseHandler {
     void onPartialResponse(String partialResponse);
 
     /**
+     * Called for each incremental thinking/reasoning fragment returned by the model.
+     *
+     * <p>Models with a built-in reasoning phase (for example DeepSeek-style
+     * {@code reasoning_content} or Anthropic {@code thinking} blocks) stream
+     * their internal chain-of-thought here before any visible text arrives.
+     * Middlewares that do not need reasoning deltas may simply ignore it.</p>
+     *
+     * @param partialThinking incremental thinking fragment, non-empty
+     */
+    default void onPartialThinking(String partialThinking) {
+    }
+
+    /**
      * Called exactly once after a successful stream completes.
      */
     void onCompleteResponse(ChatResponse completeResponse);

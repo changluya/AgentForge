@@ -63,7 +63,8 @@ Agent 的上层能力最终都会落到模型调用上。如果最底层模型�
 
 ## 2. 当前项目结构
 
-当前第一阶段只实现 `agentforge-llm`，`agentforge-framework` 先创建模块骨架，为下一阶段保留边界。
+`agentforge-llm` 已完成第一阶段模型抽象与 Provider Adapter；`agentforge-framework` 开始落地 Agent 基础层：
+`agentforge-ai-core` 提供 ChatModel 工厂，`agentforge-ai-agent` 提供 ReAct Agent 运行时。
 
 ```text
 AgentForge
@@ -176,6 +177,84 @@ ChatModel model = AnthropicChatModel.builder()
 
 String answer = model.chat("Hello AgentForge");
 ```
+
+### `agentforge-ai-core`
+
+框架层模型工厂，屏蔽 Provider Adapter 构建细节，只暴露一个配置对象：
+
+```java
+LlmBasicConfig config = LlmBasicConfig.builder()
+        .provider(LlmEnum.OPENAI.getCode())
+        .url("https://your-openai-compatible-endpoint/v1")
+        .apiKey(System.getenv("MODEL_API_KEY"))
+        .modelName("your-model")
+        .prop(LlmConstant.TEMPERATURE, "0.0")
+        .prop(LlmConstant.MAX_TOKENS, "1024")
+        .prop(LlmConstant.TIMEOUT, "120")
+        .build();
+
+ChatModel chatModel = LlmFactory.buildChatModel(config);
+StreamingChatModel streamingChatModel = LlmFactory.buildStreamChatModel(config);
+```
+
+- `LlmFactory`：按 `provider` 编码路由到对应 `IModel` 实现；
+- `LlmBasicConfig`：provider / url / modelName / apiKey + `Properties` 扩展参数；
+- `LlmConstant`：`timeout`（秒）/ `temperature` / `topP` / `maxTokens`；
+- `OpenAiModel` / `AnthropicModel`：把公共参数映射到各 Provider Builder。
+
+### `agentforge-ai-agent`
+
+第一版 ReAct Agent 运行时，`agentforge-llm` 之上补齐 Context / Memory / Tool / Stream 与 Think-Act 主循环：
+
+```java
+ToolService toolService = new ToolService();
+toolService.tools(new WeatherTools());
+
+ReActAgent agent = ReActAgent.builder()
+        .agentName("weather-react-agent")
+        .systemPrompt("你是一个天气助手。")
+        .chatModel(chatModel)
+        .streamingChatModel(streamingChatModel)
+        .chatMemoryProvider(ChatMemoryProvider.windowChatMemoryProvider(50))
+        .toolService(toolService)
+        .agentSettings(AgentSettings.builder().maxSteps(5).build())
+        .build();
+
+// 非流式：think -> act(工具) -> think
+ChatResult result = agent.run(AgentRequest.builder()
+        .memoryId("demo")
+        .question("北京今天的天气怎么样？")
+        .build());
+
+// 流式：同样的请求，返回可持续订阅的 TokenStream
+TokenStream tokenStream = agent.runStream(AgentRequest.builder()
+        .memoryId("demo")
+        .question("北京今天的天气怎么样？")
+        .build());
+
+// 中间件：像 AOP 一样横切 think-act 主循环
+ReActAgent observedAgent = ReActAgent.builder()
+        .agentName("observed-agent")
+        .systemPrompt("你是一个天气助手。")
+        .chatModel(chatModel)
+        .chatMemoryProvider(ChatMemoryProvider.windowChatMemoryProvider(50))
+        .toolService(toolService)
+        .agentSettings(AgentSettings.builder().maxSteps(5).build())
+        .middleware(new LoggingIAgentMiddleware())   // 单个
+        .build();
+```
+
+- `IAgent` / `BaseAgent` / `Agent` / `BaseReActAgent` / `ReActAgent`：分层主循环，模型回答不再要求工具时
+  （finishReason = STOP）退出，并以 `SUCCESS` / `MODEL_CALL_ERROR` / `CANCEL` / `MAX_STEPS` 收敛运行态；
+- `AgentChatContext`：单次运行上下文，由 `BaseAgent` 每次运行时构建，持有 `AgentRequest`、
+  `ChatMemory`、`ChatModel`，并自行维护 `extensions` 扩展业务字段；
+- `ChatMemory` / `WindowChatMemory` / `ChatMemoryProvider`：会话窗口记忆；
+- `AgentToolExecutor`：把 `agentforge-llm` 的 `ToolService` 接入工具调用回合；
+- `TokenStream` / `ReActTokenStream`：模型文本 / 思考增量、中间响应（工具调用轮）、`[tool]` 事件与完成 / 异常回调。
+- `AgentMiddlewareManager` / `IAgentMiddleware` / `IStreamingIAgentMiddleware`：横切 Agent 主循环的中间件，
+  覆盖初始化、每轮 begin-end、模型调用前后、流式文本 / 思考增量（DeepSeek `reasoning_content`、
+  Anthropic `thinking_delta`）、中间响应、工具执行前后、重试、停止与异常等触发点；
+- `extend.middlewares.LoggingIAgentMiddleware`：内置的日志中间件示例，覆盖全部触发点。
 
 ---
 
@@ -306,17 +385,24 @@ com.changlu.agentforge
 
 ### 单元测试
 
-当前 LLM 第一阶段三个实现模块均已补充单元测试：
+当前五个实现模块均已补充单元测试：
 
 ```text
 agentforge-llm-core       -> Core API / Request / Parameters / JSON / HTTP
 agentforge-llm-openai     -> 请求映射 / 响应归一化 / 异常 / OpenAI-compatible
 agentforge-llm-anthropic  -> System Message / Messages API / 响应归一化 / 异常
+agentforge-ai-core        -> LlmFactory / LlmEnum / 参数映射 / 配置对象
+agentforge-ai-agent       -> ReAct 主循环 / 流式 / Memory / 取消 / maxSteps
 ```
 
-单测默认不访问真实模型服务，而是通过可替换的 `HttpTransport` 使用 Fake/Capturing Transport 验证请求与响应，因此 CI 中无需配置 OpenAI 或 Anthropic API Key。
+单测默认不访问真实模型服务，而是通过可替换的 `HttpTransport` 使用 Fake/Capturing Transport、以及脚本化
+`ChatModel` / `StreamingChatModel` 验证请求与响应，因此 CI 中无需配置任何 API Key。
 
-当前共包含 **39 个单元测试用例**，并持续通过 JDK 8 / JDK 17 CI 执行：
+`*LiveTest` 用于真实 endpoint 端到端验证：从 `src/test/resources/live-endpoint.properties`（已被 `.gitignore`
+忽略）读取 `provider` / `baseUrl` / `modelName` / `apiKey`，未配置时自动跳过，可参考同目录下的
+`live-endpoint.example.properties`。真实 Key 请勿写进 Java 源码，该文件会随仓库公开。
+
+当前共包含 **140 个单元测试用例**，并持续通过 JDK 8 / JDK 17 CI 执行：
 
 ```bash
 mvn clean test
@@ -328,7 +414,7 @@ mvn clean test
 
 AgentForge 将按照“从底层模型能力逐层锻造 Agent”的顺序演进。
 
-### Phase 1 — LLM Foundation（当前）
+### Phase 1 — LLM Foundation（已完成）
 
 ```text
 agentforge-llm-core
@@ -340,7 +426,7 @@ agentforge-llm-anthropic
 
 当前 OpenAI Provider 已同时具备 `OpenAiChatModel` 与 `OpenAiStreamingChatModel`。
 
-### Phase 2 — LLM Capability
+### Phase 2 — LLM Capability（进行中）
 
 计划逐步增加：
 
@@ -355,7 +441,9 @@ Retry / Listener / Observability
 More Providers
 ```
 
-### Phase 3 — Agent Foundation
+其中 `Anthropic StreamingChatModel` 与 `Tool Calling`（阻塞 + 流式，OpenAI / Anthropic 双协议）已落地。
+
+### Phase 3 — Agent Foundation（当前）
 
 开始实现：
 
@@ -363,6 +451,10 @@ More Providers
 agentforge-ai-core
 agentforge-ai-agent
 ```
+
+已完成 `LlmFactory` ChatModel 工厂、ReAct 主循环（流式 / 非流式）、窗口记忆、工具调用回合与
+Middleware 链路；Human-in-the-loop 审批与 Resume、External Tool / Stop-Tool 模式、子 Agent 与 Trace
+仍待从设计参考中逐步补齐。
 
 逐步加入：
 
