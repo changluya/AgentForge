@@ -1,0 +1,61 @@
+agentforge-examples/agentforge-studio/agentforge-studio-web/pom.xml
+  s_f4e9d504c94701::t_379dcff3092e93 1-9,11-21,23-25
+  s_f4e9d504c94701::t_579bea2dc19eae 10,22
+agentforge-llm/pom.xml
+  s_f4e9d504c94701::t_7b6a1603efac0c 9-11
+agentforge-ai-parent/pom.xml
+  s_f4e9d504c94701::t_7b6a1603efac0c 1-24,26-113
+  s_f4e9d504c94701::t_c1671d43e39e1d 25
+agentforge-examples/agentforge-studio/pom.xml
+  s_f4e9d504c94701::t_379dcff3092e93 1-9,11-23
+  s_f4e9d504c94701::t_579bea2dc19eae 10
+agentforge-examples/pom.xml
+  s_f4e9d504c94701::t_379dcff3092e93 1-8,12-22
+  s_f4e9d504c94701::t_7b6a1603efac0c 9-11
+agentforge-llm/agentforge-llm-core/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10
+agentforge-llm/agentforge-llm-anthropic/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10,22
+agentforge-framework/agentforge-ai-core/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10,22,27,32
+agentforge-framework/pom.xml
+  s_f4e9d504c94701::t_7b6a1603efac0c 9-11
+agentforge-framework/agentforge-ai-agent/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10,22
+pom.xml
+  s_f4e9d504c94701::t_379dcff3092e93 29
+  s_f4e9d504c94701::t_7b6a1603efac0c 8-9,25-26
+  s_f4e9d504c94701::t_c1671d43e39e1d 33
+agentforge-ai-bom/pom.xml
+  s_f4e9d504c94701::t_7b6a1603efac0c 1-60
+agentforge-llm/agentforge-llm-openai/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10,22
+.gitignore
+  s_f4e9d504c94701::t_56f833c3597c59 4
+README.md
+  s_f4e9d504c94701::t_379dcff3092e93 82-86
+  s_f4e9d504c94701::t_579bea2dc19eae 71-72
+agentforge-examples/agentforge-studio/agentforge-studio-ui/pom.xml
+  s_f4e9d504c94701::t_579bea2dc19eae 10
+  s_f4e9d504c94701::t_379dcff3092e93 1-9,11-18
+docs/dev/backend/标准维护规范文档/AgentForge-BOM与Parent维护规范.md
+  s_f4e9d504c94701::t_56f833c3597c59 94,99,180
+  s_f4e9d504c94701::t_04b5b6166b4f39 1-86,88-93,95-98,100-108,110-179,181-190,192-218
+  s_f4e9d504c94701::t_c1671d43e39e1d 87,109,191
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4621d2d152ab4cd0ebcd074de8fcacbfa854aad2",
+  "prompts": {},
+  "sessions": {
+    "s_f4e9d504c94701": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e71a-40c7-7843-a27c-de63e7ddabeb",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
