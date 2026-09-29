@@ -68,6 +68,8 @@ Agent 的上层能力最终都会落到模型调用上。如果最底层模型�
 
 ```text
 AgentForge
+├── agentforge-ai-parent
+├── agentforge-ai-bom
 ├── agentforge-llm
 │   ├── agentforge-llm-core
 │   ├── agentforge-llm-openai
@@ -76,6 +78,11 @@ AgentForge
 ├── agentforge-framework
 │   ├── agentforge-ai-core
 │   └── agentforge-ai-agent
+│
+├── agentforge-examples
+│   └── agentforge-studio
+│       ├── agentforge-studio-ui
+│       └── agentforge-studio-web
 │
 ├── pom.xml
 └── README.md

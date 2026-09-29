@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.changlu.agentforge</groupId>
+        <artifactId>agentforge-ai-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../agentforge-ai-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>agentforge-ai-bom</artifactId>
+    <packaging>pom</packaging>
+    <name>AgentForge :: AI :: BOM</name>
+    <description>Bill of Materials for compatible AgentForge module versions.</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.changlu.agentforge</groupId>
+                <artifactId>agentforge-llm-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.changlu.agentforge</groupId>
+                <artifactId>agentforge-llm-openai</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.changlu.agentforge</groupId>
+                <artifactId>agentforge-llm-anthropic</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.changlu.agentforge</groupId>
+                <artifactId>agentforge-ai-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.changlu.agentforge</groupId>
+                <artifactId>agentforge-ai-agent</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <flattenMode>bom</flattenMode>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

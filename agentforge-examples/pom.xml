@@ -6,12 +6,17 @@
 
     <parent>
         <groupId>com.changlu.agentforge</groupId>
-        <artifactId>agentforge-llm</artifactId>
+        <artifactId>agentforge-ai-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../agentforge-ai-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>agentforge-llm-core</artifactId>
-    <name>AgentForge :: LLM :: Core</name>
-    <description>Provider-neutral LLM abstractions and transport primitives for AgentForge.</description>
+    <artifactId>agentforge-examples</artifactId>
+    <packaging>pom</packaging>
+    <name>AgentForge :: Examples</name>
+    <description>Example applications built with AgentForge.</description>
+
+    <modules>
+        <module>agentforge-studio</module>
+    </modules>
 </project>

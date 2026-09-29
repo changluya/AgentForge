@@ -6,19 +6,19 @@
 
     <parent>
         <groupId>com.changlu.agentforge</groupId>
-        <artifactId>agentforge-llm</artifactId>
+        <artifactId>agentforge-studio</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>agentforge-llm-anthropic</artifactId>
-    <name>AgentForge :: LLM :: Anthropic</name>
-    <description>Anthropic Messages API implementation for AgentForge ChatModel.</description>
+    <artifactId>agentforge-studio-web</artifactId>
+    <name>AgentForge :: Examples :: Studio :: Web</name>
+    <description>Backend web module for AgentForge Studio.</description>
 
     <dependencies>
         <dependency>
             <groupId>com.changlu.agentforge</groupId>
-            <artifactId>agentforge-llm-core</artifactId>
+            <artifactId>agentforge-ai-agent</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>
