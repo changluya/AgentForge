@@ -11,23 +11,15 @@ import java.util.List;
  */
 public interface ChatMemory {
 
-    /**
-     * 会话ID
-     */
+    /** 会话ID */
     Object id();
 
-    /**
-     * 追加一条消息
-     */
+    /** 追加一条消息 */
     void add(ChatMessage message);
 
-    /**
-     * 当前记忆中的全部消息，用于发起下一次模型调用
-     */
+    /** 当前记忆中的全部消息，用于发起下一次模型调用 */
     List<ChatMessage> messages();
 
-    /**
-     * 清空会话上下文
-     */
+    /** 清空会话上下文 */
     void clear();
 }

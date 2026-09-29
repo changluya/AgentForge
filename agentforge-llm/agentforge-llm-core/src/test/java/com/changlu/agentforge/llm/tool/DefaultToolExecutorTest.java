@@ -1,26 +1,25 @@
 package com.changlu.agentforge.llm.tool;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
+import com.changlu.agentforge.llm.tool.execution.DefaultToolExecutor;
+import com.changlu.agentforge.llm.tool.execution.ToolExecutionResult;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
+
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import com.changlu.agentforge.llm.tool.execution.DefaultToolExecutor;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
-import com.changlu.agentforge.llm.tool.spec.ToolParameters;
-import com.changlu.agentforge.llm.tool.execution.ToolExecutionResult;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
-import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
 
 /**
- * Tests for {@link DefaultToolExecutor}, {@link ToolSpecifications} and {@link ToolExecutionResult}.
+ * Tests for {@link DefaultToolExecutor}, {@link ToolSpecifications} and {@link
+ * ToolExecutionResult}.
  *
  * @author changlu
  * @since 2026-09-13
@@ -52,9 +51,10 @@ public class DefaultToolExecutorTest {
 
     @Test
     public void shouldBindStringArgumentAndInvoke() {
-        ToolExecutionRequest request = ToolExecutionRequest.from(
-                "call_1", "getWeather", "{\"city\":\"Hangzhou\"}");
-        DefaultToolExecutor executor = new DefaultToolExecutor(new WeatherTools(), method("getWeather"));
+        ToolExecutionRequest request =
+                ToolExecutionRequest.from("call_1", "getWeather", "{\"city\":\"Hangzhou\"}");
+        DefaultToolExecutor executor =
+                new DefaultToolExecutor(new WeatherTools(), method("getWeather"));
 
         ToolExecutionResult result = executor.executeWithResult(request, null);
 
@@ -65,7 +65,8 @@ public class DefaultToolExecutorTest {
 
     @Test
     public void shouldCoerceNumericArguments() {
-        ToolExecutionRequest request = ToolExecutionRequest.from("call_2", "add", "{\"a\":2,\"b\":3}");
+        ToolExecutionRequest request =
+                ToolExecutionRequest.from("call_2", "add", "{\"a\":2,\"b\":3}");
         DefaultToolExecutor executor = new DefaultToolExecutor(new WeatherTools(), method("add"));
 
         ToolExecutionResult result = executor.executeWithResult(request, null);
@@ -76,7 +77,8 @@ public class DefaultToolExecutorTest {
 
     @Test
     public void shouldReturnSuccessForVoidMethod() {
-        ToolExecutionRequest request = ToolExecutionRequest.from("call_3", "log", "{\"message\":\"hi\"}");
+        ToolExecutionRequest request =
+                ToolExecutionRequest.from("call_3", "log", "{\"message\":\"hi\"}");
         DefaultToolExecutor executor = new DefaultToolExecutor(new WeatherTools(), method("log"));
 
         ToolExecutionResult result = executor.executeWithResult(request, null);
@@ -86,7 +88,8 @@ public class DefaultToolExecutorTest {
 
     @Test
     public void shouldUsePAnnotationForParameterName() {
-        ToolExecutionRequest request = ToolExecutionRequest.from("call_4", "greet", "{\"name\":\"Alice\"}");
+        ToolExecutionRequest request =
+                ToolExecutionRequest.from("call_4", "greet", "{\"name\":\"Alice\"}");
         DefaultToolExecutor executor = new DefaultToolExecutor(new WeatherTools(), method("greet"));
 
         assertEquals("Hello, Alice", executor.executeWithResult(request, null).text());
@@ -95,10 +98,10 @@ public class DefaultToolExecutorTest {
     @Test
     public void shouldThrowToolArgumentsExceptionForMissingArgument() {
         ToolExecutionRequest request = ToolExecutionRequest.from("call_5", "getWeather", "{}");
-        DefaultToolExecutor executor = new DefaultToolExecutor(new WeatherTools(), method("getWeather"));
+        DefaultToolExecutor executor =
+                new DefaultToolExecutor(new WeatherTools(), method("getWeather"));
 
-        assertThrows(ToolArgumentsException.class,
-                () -> executor.executeWithResult(request, null));
+        assertThrows(ToolArgumentsException.class, () -> executor.executeWithResult(request, null));
     }
 
     @Test
@@ -116,8 +119,10 @@ public class DefaultToolExecutorTest {
 
     @Test
     public void shouldBuildToolSpecificationFromObjectAndValidateUniqueNames() {
-        ToolSpecifications.validateSpecifications(ToolSpecifications.toolSpecificationsFrom(new WeatherTools()));
-        List<ToolSpecification> specs = ToolSpecifications.toolSpecificationsFrom(WeatherTools.class);
+        ToolSpecifications.validateSpecifications(
+                ToolSpecifications.toolSpecificationsFrom(new WeatherTools()));
+        List<ToolSpecification> specs =
+                ToolSpecifications.toolSpecificationsFrom(WeatherTools.class);
         assertEquals(4, specs.size());
     }
 
@@ -125,7 +130,8 @@ public class DefaultToolExecutorTest {
     public void shouldFailOnDuplicateToolNames() {
         ToolSpecification a = ToolSpecification.builder().name("dup").build();
         ToolSpecification b = ToolSpecification.builder().name("dup").build();
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> ToolSpecifications.validateSpecifications(Arrays.asList(a, b)));
     }
 

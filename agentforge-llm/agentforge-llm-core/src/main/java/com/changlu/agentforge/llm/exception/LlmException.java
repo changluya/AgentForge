@@ -1,8 +1,6 @@
 package com.changlu.agentforge.llm.exception;
 
-/**
- * Base runtime exception for LLM provider/transport failures.
- */
+/** Base runtime exception for LLM provider/transport failures. */
 public class LlmException extends RuntimeException {
 
     private final Integer statusCode;

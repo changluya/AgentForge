@@ -21,16 +21,14 @@ public class AgentChatContext {
     // 扩展业务字段，运行期由Agent/Tool读写
     private Map<String, Object> extensions;
 
-    public AgentChatContext() {
-    }
+    public AgentChatContext() {}
 
     private AgentChatContext(Builder builder) {
         this.request = builder.request;
         this.chatMemory = builder.chatMemory;
         this.chatModel = builder.chatModel;
-        this.extensions = builder.extensions == null
-                ? new HashMap<String, Object>()
-                : builder.extensions;
+        this.extensions =
+                builder.extensions == null ? new HashMap<String, Object>() : builder.extensions;
     }
 
     public static Builder builder() {
@@ -45,16 +43,12 @@ public class AgentChatContext {
         this.request = request;
     }
 
-    /**
-     * 会话ID，直接取自本次请求
-     */
+    /** 会话ID，直接取自本次请求 */
     public Object getMemoryId() {
         return request == null ? null : request.getMemoryId();
     }
 
-    /**
-     * 用户问题，直接取自本次请求
-     */
+    /** 用户问题，直接取自本次请求 */
     public String getQuestion() {
         return request == null ? null : request.getQuestion();
     }
@@ -86,9 +80,7 @@ public class AgentChatContext {
         this.extensions = extensions;
     }
 
-    /**
-     * 写入一个运行期业务字段
-     */
+    /** 写入一个运行期业务字段 */
     public AgentChatContext putExtension(String key, Object value) {
         if (key != null) {
             getExtensions().put(key, value);
@@ -96,9 +88,7 @@ public class AgentChatContext {
         return this;
     }
 
-    /**
-     * 读取一个运行期业务字段
-     */
+    /** 读取一个运行期业务字段 */
     public Object getExtension(String key) {
         return key == null ? null : getExtensions().get(key);
     }
@@ -109,8 +99,7 @@ public class AgentChatContext {
         private ChatModel chatModel;
         private Map<String, Object> extensions;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder request(AgentRequest request) {
             this.request = request;

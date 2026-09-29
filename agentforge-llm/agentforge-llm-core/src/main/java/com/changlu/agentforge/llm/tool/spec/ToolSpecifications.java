@@ -1,5 +1,8 @@
 package com.changlu.agentforge.llm.tool.spec;
 
+import com.changlu.agentforge.llm.tool.P;
+import com.changlu.agentforge.llm.tool.Tool;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -8,8 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.changlu.agentforge.llm.tool.Tool;
-import com.changlu.agentforge.llm.tool.P;
 
 /**
  * Builds {@link ToolSpecification}s from {@link Tool}-annotated methods.
@@ -19,8 +20,7 @@ import com.changlu.agentforge.llm.tool.P;
  */
 public final class ToolSpecifications {
 
-    private ToolSpecifications() {
-    }
+    private ToolSpecifications() {}
 
     /**
      * Returns a {@link ToolSpecification} for a {@link Tool}-annotated method.
@@ -31,7 +31,8 @@ public final class ToolSpecifications {
     public static ToolSpecification toolSpecificationFrom(Method method) {
         Tool tool = method.getAnnotation(Tool.class);
         if (tool == null) {
-            throw new IllegalArgumentException("Method '" + method + "' is not annotated with @Tool");
+            throw new IllegalArgumentException(
+                    "Method '" + method + "' is not annotated with @Tool");
         }
         return ToolSpecification.builder()
                 .name(toolNameFrom(method))
@@ -54,8 +55,8 @@ public final class ToolSpecifications {
     }
 
     /**
-     * Scans the object (and its class hierarchy) for {@link Tool}-annotated methods and returns their
-     * {@link ToolSpecification}s.
+     * Scans the object (and its class hierarchy) for {@link Tool}-annotated methods and returns
+     * their {@link ToolSpecification}s.
      *
      * @param objectWithTools the object
      * @return tool specifications
@@ -84,7 +85,9 @@ public final class ToolSpecifications {
         for (ToolSpecification toolSpecification : toolSpecifications) {
             if (!names.add(toolSpecification.name())) {
                 throw new IllegalArgumentException(
-                        "Tool names must be unique. The tool '" + toolSpecification.name() + "' appears several times");
+                        "Tool names must be unique. The tool '"
+                                + toolSpecification.name()
+                                + "' appears several times");
             }
         }
     }
@@ -97,14 +100,18 @@ public final class ToolSpecifications {
         ToolParameters.Builder builder = ToolParameters.builder();
         for (Parameter parameter : parameters) {
             P pAnnotation = parameter.getAnnotation(P.class);
-            String parameterName = pAnnotation != null && !isNullOrBlank(pAnnotation.name())
-                    ? pAnnotation.name()
-                    : parameter.getName();
+            String parameterName =
+                    pAnnotation != null && !isNullOrBlank(pAnnotation.name())
+                            ? pAnnotation.name()
+                            : parameter.getName();
             String description = null;
             if (pAnnotation != null) {
-                description = !isNullOrBlank(pAnnotation.description())
-                        ? pAnnotation.description()
-                        : (!isNullOrBlank(pAnnotation.value()) ? pAnnotation.value() : null);
+                description =
+                        !isNullOrBlank(pAnnotation.description())
+                                ? pAnnotation.description()
+                                : (!isNullOrBlank(pAnnotation.value())
+                                        ? pAnnotation.value()
+                                        : null);
             }
             String jsonType = jsonType(parameter.getType());
             builder.addProperty(parameterName, jsonType, description, true);
@@ -114,15 +121,22 @@ public final class ToolSpecifications {
 
     private static String jsonType(Class<?> type) {
         if (type == String.class) return "string";
-        if (type == int.class || type == Integer.class
-                || type == long.class || type == Long.class
-                || type == short.class || type == Short.class
-                || type == byte.class || type == Byte.class) return "integer";
-        if (type == double.class || type == Double.class
-                || type == float.class || type == Float.class) return "number";
+        if (type == int.class
+                || type == Integer.class
+                || type == long.class
+                || type == Long.class
+                || type == short.class
+                || type == Short.class
+                || type == byte.class
+                || type == Byte.class) return "integer";
+        if (type == double.class
+                || type == Double.class
+                || type == float.class
+                || type == Float.class) return "number";
         if (type == boolean.class || type == Boolean.class) return "boolean";
         if (type.isEnum()) return "string";
-        if (type.isArray() || List.class.isAssignableFrom(type) || Set.class.isAssignableFrom(type)) return "array";
+        if (type.isArray() || List.class.isAssignableFrom(type) || Set.class.isAssignableFrom(type))
+            return "array";
         if (Map.class.isAssignableFrom(type)) return "object";
         return "object";
     }

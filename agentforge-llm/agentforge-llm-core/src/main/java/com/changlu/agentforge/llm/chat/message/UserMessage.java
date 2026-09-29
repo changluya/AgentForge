@@ -8,16 +8,17 @@ import java.util.Objects;
 /**
  * Represents a message from a user, typically an end user of the application.
  *
- * <p>Following LangChain4j's {@code UserMessage}, a user message can either contain a single
- * text (a {@code String}) or multiple {@link Content}s. It optionally carries a
- * {@link #name()} of the user. Models that do not support names may simply ignore it.</p>
+ * <p>Following LangChain4j's {@code UserMessage}, a user message can either contain a single text
+ * (a {@code String}) or multiple {@link Content}s. It optionally carries a {@link #name()} of the
+ * user. Models that do not support names may simply ignore it.
  *
- * <p>The legacy text-first API is preserved through several back-compatible accessors:</p>
+ * <p>The legacy text-first API is preserved through several back-compatible accessors:
+ *
  * <ul>
- *   <li>{@link #text()} - returns the text when the message has a single {@link TextContent}.</li>
- *   <li>{@link #contents()} - returns the full list of contents.</li>
- *   <li>{@link #singleText()} - stricter accessor for exactly one {@link TextContent}.</li>
- *   <li>{@link #hasSingleText()} - convenience predicate.</li>
+ *   <li>{@link #text()} - returns the text when the message has a single {@link TextContent}.
+ *   <li>{@link #contents()} - returns the full list of contents.
+ *   <li>{@link #singleText()} - stricter accessor for exactly one {@link TextContent}.
+ *   <li>{@link #hasSingleText()} - convenience predicate.
  * </ul>
  *
  * @author changlu
@@ -73,8 +74,8 @@ public final class UserMessage implements ChatMessage {
     }
 
     /**
-     * Returns the text payload of this message when it is build from a single
-     * {@link TextContent}. Compatible with the historical text-first API.
+     * Returns the text payload of this message when it is build from a single {@link TextContent}.
+     * Compatible with the historical text-first API.
      *
      * @return message text
      * @throws UnsupportedOperationException when the message has no single textual payload
@@ -98,8 +99,8 @@ public final class UserMessage implements ChatMessage {
     }
 
     /**
-     * Returns the text from a single {@link TextContent}. Use only when certain that the
-     * message contains exactly one text content; otherwise throws an exception.
+     * Returns the text from a single {@link TextContent}. Use only when certain that the message
+     * contains exactly one text content; otherwise throws an exception.
      *
      * @return the single text
      */
@@ -134,50 +135,35 @@ public final class UserMessage implements ChatMessage {
 
     @Override
     public String toString() {
-        return "UserMessage{"
-                + "name='" + name + '\''
-                + ", contents=" + contents
-                + '}';
+        return "UserMessage{" + "name='" + name + '\'' + ", contents=" + contents + '}';
     }
 
-    /**
-     * Creates a new user message from a single text.
-     */
+    /** Creates a new user message from a single text. */
     public static UserMessage from(String text) {
         return new UserMessage(text);
     }
 
-    /**
-     * Creates a new user message from a user name and a single text.
-     */
+    /** Creates a new user message from a user name and a single text. */
     public static UserMessage from(String name, String text) {
         return new UserMessage(name, text);
     }
 
-    /**
-     * Creates a new user message from one or more contents.
-     */
+    /** Creates a new user message from one or more contents. */
     public static UserMessage from(Content... contents) {
         return new UserMessage(contents);
     }
 
-    /**
-     * Creates a new user message from a user name and one or more contents.
-     */
+    /** Creates a new user message from a user name and one or more contents. */
     public static UserMessage from(String name, Content... contents) {
         return new UserMessage(name, contents);
     }
 
-    /**
-     * Creates a new user message from a list of contents.
-     */
+    /** Creates a new user message from a list of contents. */
     public static UserMessage from(List<Content> contents) {
         return new UserMessage(contents);
     }
 
-    /**
-     * Creates a new user message from a user name and a list of contents.
-     */
+    /** Creates a new user message from a user name and a list of contents. */
     public static UserMessage from(String name, List<Content> contents) {
         return new UserMessage(name, contents);
     }

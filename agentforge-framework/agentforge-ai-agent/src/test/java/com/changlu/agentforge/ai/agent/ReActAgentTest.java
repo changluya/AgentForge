@@ -3,7 +3,6 @@ package com.changlu.agentforge.ai.agent;
 import com.changlu.agentforge.ai.agent.domain.AgentRequest;
 import com.changlu.agentforge.ai.agent.domain.AgentRunState;
 import com.changlu.agentforge.ai.agent.domain.AgentSettings;
-import com.changlu.agentforge.ai.agent.memory.ChatMemory;
 import com.changlu.agentforge.ai.agent.memory.ChatMemoryProvider;
 import com.changlu.agentforge.ai.agent.step.ChatResult;
 import com.changlu.agentforge.ai.agent.step.ChatResultState;
@@ -13,6 +12,7 @@ import com.changlu.agentforge.ai.agent.support.WeatherTools;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessageType;
 import com.changlu.agentforge.llm.tool.execution.ToolService;
+
 import org.junit.Test;
 
 import java.util.List;
@@ -33,11 +33,17 @@ public class ReActAgentTest {
 
     @Test
     public void shouldRunToolRoundAndReturnFinalAnswer() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueText("Hangzhou今天22度，晴。");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueText("Hangzhou今天22度，晴。");
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
-        ReActAgent agent = agent(chatModel, toolService(new WeatherTools()), memoryProvider, defaultSettings());
+        ReActAgent agent =
+                agent(
+                        chatModel,
+                        toolService(new WeatherTools()),
+                        memoryProvider,
+                        defaultSettings());
 
         ChatResult result = agent.run(request("杭州天气怎么样？"));
 
@@ -63,9 +69,15 @@ public class ReActAgentTest {
 
     @Test
     public void shouldAnswerDirectlyWithoutAnyToolCall() {
-        ScriptedChatModel chatModel = new ScriptedChatModel().enqueueText("AgentForge是一个Java Agent框架。");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel().enqueueText("AgentForge是一个Java Agent框架。");
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
-        ReActAgent agent = agent(chatModel, toolService(new WeatherTools()), memoryProvider, defaultSettings());
+        ReActAgent agent =
+                agent(
+                        chatModel,
+                        toolService(new WeatherTools()),
+                        memoryProvider,
+                        defaultSettings());
 
         ChatResult result = agent.run(request("AgentForge是什么？"));
 
@@ -77,15 +89,20 @@ public class ReActAgentTest {
 
     @Test
     public void shouldStopWhenReachingMaxSteps() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueToolCall("call_2", "getWeather", "{\"city\":\"Beijing\"}")
-                .enqueueToolCall("call_3", "getWeather", "{\"city\":\"Shanghai\"}");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueToolCall("call_2", "getWeather", "{\"city\":\"Beijing\"}")
+                        .enqueueToolCall("call_3", "getWeather", "{\"city\":\"Shanghai\"}");
         AgentSettings settings = AgentSettings.builder().maxSteps(2).aiCallRetry(0).build();
 
-        ChatResult result = agent(chatModel, toolService(new WeatherTools()),
-                ChatMemoryProvider.windowChatMemoryProvider(100), settings)
-                .run(request("一直查天气"));
+        ChatResult result =
+                agent(
+                                chatModel,
+                                toolService(new WeatherTools()),
+                                ChatMemoryProvider.windowChatMemoryProvider(100),
+                                settings)
+                        .run(request("一直查天气"));
 
         assertEquals(AgentRunState.MAX_STEPS, result.getRunState());
         assertEquals("执行步长达到限制，请重新询问你的问题！", result.getRes());
@@ -98,9 +115,13 @@ public class ReActAgentTest {
         ScriptedChatModel chatModel = new ScriptedChatModel().alwaysFail("connection reset");
         AgentSettings settings = AgentSettings.builder().aiCallRetry(0).aiCallRetryDelay(0).build();
 
-        ChatResult result = agent(chatModel, toolService(new WeatherTools()),
-                ChatMemoryProvider.windowChatMemoryProvider(100), settings)
-                .run(request("杭州天气怎么样？"));
+        ChatResult result =
+                agent(
+                                chatModel,
+                                toolService(new WeatherTools()),
+                                ChatMemoryProvider.windowChatMemoryProvider(100),
+                                settings)
+                        .run(request("杭州天气怎么样？"));
 
         assertEquals(AgentRunState.MODEL_CALL_ERROR, result.getRunState());
         assertTrue(result.getRes().contains("模型调用失败"));
@@ -110,14 +131,16 @@ public class ReActAgentTest {
 
     @Test
     public void shouldRetryModelCallBeforeSucceeding() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .failFirst(2)
-                .enqueueText("recovered");
+        ScriptedChatModel chatModel = new ScriptedChatModel().failFirst(2).enqueueText("recovered");
         AgentSettings settings = AgentSettings.builder().aiCallRetry(2).aiCallRetryDelay(0).build();
 
-        ChatResult result = agent(chatModel, toolService(new WeatherTools()),
-                ChatMemoryProvider.windowChatMemoryProvider(100), settings)
-                .run(request("重试一次"));
+        ChatResult result =
+                agent(
+                                chatModel,
+                                toolService(new WeatherTools()),
+                                ChatMemoryProvider.windowChatMemoryProvider(100),
+                                settings)
+                        .run(request("重试一次"));
 
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
         assertEquals("recovered", result.getRes());
@@ -128,16 +151,18 @@ public class ReActAgentTest {
     public void shouldCancelRunningLoop() {
         SideEffectTools sideEffectTool = new SideEffectTools();
         ToolService toolService = toolService(sideEffectTool);
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "sideEffect", "{\"reason\":\"user stopped\"}");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "sideEffect", "{\"reason\":\"user stopped\"}");
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
         final ReActAgent agent = agent(chatModel, toolService, memoryProvider, defaultSettings());
-        sideEffectTool.onExecute(new Runnable() {
-            @Override
-            public void run() {
-                agent.cancel(MEMORY_ID);
-            }
-        });
+        sideEffectTool.onExecute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        agent.cancel(MEMORY_ID);
+                    }
+                });
 
         ChatResult result = agent.run(request("查一下然后取消"));
 
@@ -151,13 +176,18 @@ public class ReActAgentTest {
 
     @Test
     public void shouldWriteBackUnknownToolAsFailedResultAndContinue() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "notRegistered", "{}")
-                .enqueueText("已经没有可用工具了");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "notRegistered", "{}")
+                        .enqueueText("已经没有可用工具了");
 
-        ChatResult result = agent(chatModel, toolService(new WeatherTools()),
-                ChatMemoryProvider.windowChatMemoryProvider(100), defaultSettings())
-                .run(request("调用一个不存在的工具"));
+        ChatResult result =
+                agent(
+                                chatModel,
+                                toolService(new WeatherTools()),
+                                ChatMemoryProvider.windowChatMemoryProvider(100),
+                                defaultSettings())
+                        .run(request("调用一个不存在的工具"));
 
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
         assertEquals("已经没有可用工具了", result.getRes());
@@ -167,8 +197,12 @@ public class ReActAgentTest {
     @Test
     public void shouldRefreshSystemPromptOnEveryRun() {
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
-        ReActAgent agent = agent(new ScriptedChatModel().enqueueText("first").enqueueText("second"),
-                toolService(new WeatherTools()), memoryProvider, defaultSettings());
+        ReActAgent agent =
+                agent(
+                        new ScriptedChatModel().enqueueText("first").enqueueText("second"),
+                        toolService(new WeatherTools()),
+                        memoryProvider,
+                        defaultSettings());
 
         agent.run(request("第一轮"));
         agent.run(request("第二轮"));
@@ -188,8 +222,12 @@ public class ReActAgentTest {
     @Test
     public void shouldClearContextAndValidateRequest() {
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
-        ReActAgent agent = agent(new ScriptedChatModel().enqueueText("done"),
-                toolService(new WeatherTools()), memoryProvider, defaultSettings());
+        ReActAgent agent =
+                agent(
+                        new ScriptedChatModel().enqueueText("done"),
+                        toolService(new WeatherTools()),
+                        memoryProvider,
+                        defaultSettings());
         agent.run(request("一个问题"));
         assertFalse(memoryProvider.get(MEMORY_ID).messages().isEmpty());
 
@@ -235,8 +273,11 @@ public class ReActAgentTest {
         return toolService;
     }
 
-    private static ReActAgent agent(ScriptedChatModel chatModel, ToolService toolService,
-                                    ChatMemoryProvider memoryProvider, AgentSettings settings) {
+    private static ReActAgent agent(
+            ScriptedChatModel chatModel,
+            ToolService toolService,
+            ChatMemoryProvider memoryProvider,
+            AgentSettings settings) {
         return ReActAgent.builder()
                 .agentName("weather-agent")
                 .description("weather demo agent")

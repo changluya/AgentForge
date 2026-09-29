@@ -1,27 +1,28 @@
 package com.changlu.agentforge.llm.tool;
 
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import com.changlu.agentforge.llm.tool.ReturnBehavior;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 
 /**
  * Marks a method as a tool (function) that an LLM may call.
  *
- * <p>AgentForge's {@code @Tool} method marker.</p>
+ * <p>AgentForge's {@code @Tool} method marker.
  *
  * <p>When a method is annotated with {@code @Tool}, a {@link ToolSpecification} is derived from the
- * method signature (method name, parameter names/types and {@link P} annotations) and registered with
- * the model. If the model decides to call the tool, the arguments JSON is bound to method parameters
- * and the method is invoked reflectively.</p>
+ * method signature (method name, parameter names/types and {@link P} annotations) and registered
+ * with the model. If the model decides to call the tool, the arguments JSON is bound to method
+ * parameters and the method is invoked reflectively.
  *
- * <p>Return value handling:</p>
+ * <p>Return value handling:
+ *
  * <ul>
- *   <li>{@code String} — sent to the model as-is;</li>
- *   <li>{@code void} — the literal {@code "Success"} is sent;</li>
- *   <li>any other value — serialized into a JSON string and sent to the model.</li>
+ *   <li>{@code String} — sent to the model as-is;
+ *   <li>{@code void} — the literal {@code "Success"} is sent;
+ *   <li>any other value — serialized into a JSON string and sent to the model.
  * </ul>
  *
  * @author changlu

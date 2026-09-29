@@ -8,9 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Immutable default implementation of {@link ChatRequestParameters}.
- */
+/** Immutable default implementation of {@link ChatRequestParameters}. */
 public final class DefaultChatRequestParameters implements ChatRequestParameters {
 
     private final String modelName;
@@ -29,7 +27,9 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         this.maxTokens = builder.maxTokens;
         this.topP = builder.topP;
         this.stopSequences = immutableList(builder.stopSequences);
-        this.customParameters = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(builder.customParameters));
+        this.customParameters =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, Object>(builder.customParameters));
         this.tools = immutableToolList(builder.tools);
         this.toolChoice = builder.toolChoice;
         this.toolChoiceName = builder.toolChoiceName;
@@ -39,11 +39,9 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         return new Builder();
     }
 
-    /**
-     * Merge request-level parameters over model-level defaults.
-     */
-    public static DefaultChatRequestParameters merge(ChatRequestParameters defaults,
-                                                     ChatRequestParameters overrides) {
+    /** Merge request-level parameters over model-level defaults. */
+    public static DefaultChatRequestParameters merge(
+            ChatRequestParameters defaults, ChatRequestParameters overrides) {
         Builder builder = builder();
         apply(builder, defaults);
         apply(builder, overrides);
@@ -153,8 +151,7 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         private ToolChoice toolChoice;
         private String toolChoiceName;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder modelName(String modelName) {
             this.modelName = modelName;
@@ -177,7 +174,8 @@ public final class DefaultChatRequestParameters implements ChatRequestParameters
         }
 
         public Builder stopSequences(List<String> stopSequences) {
-            this.stopSequences = stopSequences == null ? null : new ArrayList<String>(stopSequences);
+            this.stopSequences =
+                    stopSequences == null ? null : new ArrayList<String>(stopSequences);
             return this;
         }
 

@@ -10,13 +10,13 @@ import java.util.Objects;
 /**
  * Describes the parameters of a tool using a JSON-schema-like structure.
  *
- * <p>AgentForge intentionally keeps the schema as a plain {@code Map} so the core module
- * does not depend on any JSON library, mirroring the "dependency-free" philosophy of
- * {@code agentforge-llm-core}. Provider adapters serialize this structure into their own
- * wire format:</p>
+ * <p>AgentForge intentionally keeps the schema as a plain {@code Map} so the core module does not
+ * depend on any JSON library, mirroring the "dependency-free" philosophy of {@code
+ * agentforge-llm-core}. Provider adapters serialize this structure into their own wire format:
+ *
  * <ul>
- *   <li>OpenAI: {@code tools[].function.parameters}</li>
- *   <li>Anthropic: {@code tools[].input_schema}</li>
+ *   <li>OpenAI: {@code tools[].function.parameters}
+ *   <li>Anthropic: {@code tools[].input_schema}
  * </ul>
  *
  * @author changlu
@@ -31,8 +31,10 @@ public final class ToolParameters {
     private final Map<String, Object> schema;
 
     private ToolParameters(Map<String, Object> schema) {
-        this.schema = Collections.unmodifiableMap(
-                new LinkedHashMap<String, Object>(schema == null ? Collections.<String, Object>emptyMap() : schema));
+        this.schema =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, Object>(
+                                schema == null ? Collections.<String, Object>emptyMap() : schema));
     }
 
     /**
@@ -53,7 +55,8 @@ public final class ToolParameters {
     public Map<String, Object> properties() {
         Object properties = schema.get(PROPERTIES);
         if (properties instanceof Map) {
-            return Collections.unmodifiableMap(new LinkedHashMap<String, Object>((Map<String, Object>) properties));
+            return Collections.unmodifiableMap(
+                    new LinkedHashMap<String, Object>((Map<String, Object>) properties));
         }
         return Collections.emptyMap();
     }
@@ -127,17 +130,15 @@ public final class ToolParameters {
         return new Builder();
     }
 
-    /**
-     * Fluent builder for {@link ToolParameters}.
-     */
+    /** Fluent builder for {@link ToolParameters}. */
     public static final class Builder {
 
-        private final LinkedHashMap<String, Object> properties = new LinkedHashMap<String, Object>();
+        private final LinkedHashMap<String, Object> properties =
+                new LinkedHashMap<String, Object>();
         private final List<String> required = new ArrayList<String>();
         private String type = "object";
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder type(String type) {
             if (type != null && !type.trim().isEmpty()) {
@@ -149,13 +150,15 @@ public final class ToolParameters {
         /**
          * Adds a single property definition.
          *
-         * @param name       property name
-         * @param propertyType JSON-schema type, e.g. {@code string}, {@code number}, {@code boolean}
+         * @param name property name
+         * @param propertyType JSON-schema type, e.g. {@code string}, {@code number}, {@code
+         *     boolean}
          * @param description human readable description
          * @param isRequired whether the property is required
          * @return this builder
          */
-        public Builder addProperty(String name, String propertyType, String description, boolean isRequired) {
+        public Builder addProperty(
+                String name, String propertyType, String description, boolean isRequired) {
             Objects.requireNonNull(name, "name");
             LinkedHashMap<String, Object> definition = new LinkedHashMap<String, Object>();
             if (propertyType != null) {
@@ -179,11 +182,14 @@ public final class ToolParameters {
          * @param isRequired whether the property is required
          * @return this builder
          */
-        public Builder addProperty(String name, Map<String, Object> definition, boolean isRequired) {
+        public Builder addProperty(
+                String name, Map<String, Object> definition, boolean isRequired) {
             Objects.requireNonNull(name, "name");
-            properties.put(name, definition == null
-                    ? Collections.<String, Object>emptyMap()
-                    : new LinkedHashMap<String, Object>(definition));
+            properties.put(
+                    name,
+                    definition == null
+                            ? Collections.<String, Object>emptyMap()
+                            : new LinkedHashMap<String, Object>(definition));
             if (isRequired) {
                 required.add(name);
             }

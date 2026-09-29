@@ -8,13 +8,12 @@ import java.util.Map;
 /**
  * Small JSON codec used internally by AgentForge provider modules.
  *
- * <p>This class is public only because provider adapters live in separate Maven
- * artifacts. It is not intended to be part of the stable public API.</p>
+ * <p>This class is public only because provider adapters live in separate Maven artifacts. It is
+ * not intended to be part of the stable public API.
  */
 public final class Json {
 
-    private Json() {
-    }
+    private Json() {}
 
     public static String stringify(Object value) {
         StringBuilder out = new StringBuilder();
@@ -112,13 +111,27 @@ public final class Json {
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
             switch (c) {
-                case '"': out.append("\\\""); break;
-                case '\\': out.append("\\\\"); break;
-                case '\b': out.append("\\b"); break;
-                case '\f': out.append("\\f"); break;
-                case '\n': out.append("\\n"); break;
-                case '\r': out.append("\\r"); break;
-                case '\t': out.append("\\t"); break;
+                case '"':
+                    out.append("\\\"");
+                    break;
+                case '\\':
+                    out.append("\\\\");
+                    break;
+                case '\b':
+                    out.append("\\b");
+                    break;
+                case '\f':
+                    out.append("\\f");
+                    break;
+                case '\n':
+                    out.append("\\n");
+                    break;
+                case '\r':
+                    out.append("\\r");
+                    break;
+                case '\t':
+                    out.append("\\t");
+                    break;
                 default:
                     if (c < 0x20) {
                         String hex = Integer.toHexString(c);
@@ -229,16 +242,35 @@ public final class Json {
                     }
                     char escaped = source.charAt(index++);
                     switch (escaped) {
-                        case '"': out.append('"'); break;
-                        case '\\': out.append('\\'); break;
-                        case '/': out.append('/'); break;
-                        case 'b': out.append('\b'); break;
-                        case 'f': out.append('\f'); break;
-                        case 'n': out.append('\n'); break;
-                        case 'r': out.append('\r'); break;
-                        case 't': out.append('\t'); break;
-                        case 'u': out.append(parseUnicode()); break;
-                        default: throw error("Unsupported escape sequence \\" + escaped);
+                        case '"':
+                            out.append('"');
+                            break;
+                        case '\\':
+                            out.append('\\');
+                            break;
+                        case '/':
+                            out.append('/');
+                            break;
+                        case 'b':
+                            out.append('\b');
+                            break;
+                        case 'f':
+                            out.append('\f');
+                            break;
+                        case 'n':
+                            out.append('\n');
+                            break;
+                        case 'r':
+                            out.append('\r');
+                            break;
+                        case 't':
+                            out.append('\t');
+                            break;
+                        case 'u':
+                            out.append(parseUnicode());
+                            break;
+                        default:
+                            throw error("Unsupported escape sequence \\" + escaped);
                     }
                 } else {
                     out.append(c);

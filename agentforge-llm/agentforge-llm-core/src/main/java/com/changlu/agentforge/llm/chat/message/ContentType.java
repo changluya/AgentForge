@@ -3,16 +3,14 @@ package com.changlu.agentforge.llm.chat.message;
 /**
  * The kind of content of a {@link Content}, e.g. text or image.
  *
- * <p>Maps to implementations of {@link Content}.</p>
+ * <p>Maps to implementations of {@link Content}.
  *
  * @author changlu
  * @since 2026-09-13
  */
 public enum ContentType {
 
-    /**
-     * Text content.
-     */
+    /** Text content. */
     TEXT(TextContent.class);
 
     private final Class<? extends Content> contentClass;

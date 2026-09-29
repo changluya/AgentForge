@@ -1,7 +1,7 @@
 package com.changlu.agentforge.ai.agent;
 
-import com.changlu.agentforge.ai.agent.domain.AgentRequest;
 import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
+import com.changlu.agentforge.ai.agent.domain.AgentRequest;
 import com.changlu.agentforge.ai.agent.exception.AgentException;
 import com.changlu.agentforge.ai.agent.memory.ChatMemory;
 import com.changlu.agentforge.ai.agent.memory.ChatMemoryProvider;
@@ -21,16 +21,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class BaseAgent implements IAgent {
 
     // 存储每个会话的取消标志
-    protected final Map<Object, AtomicBoolean> cancelFlags = new ConcurrentHashMap<Object, AtomicBoolean>();
+    protected final Map<Object, AtomicBoolean> cancelFlags =
+            new ConcurrentHashMap<Object, AtomicBoolean>();
 
     protected abstract ChatModel getChatModel();
 
     // 包含了ChatMemory
     protected abstract ChatMemoryProvider getChatMemoryProvider();
 
-    /**
-     * 初始化本次运行的上下文：绑定会话记忆 + 写入本轮用户消息
-     */
+    /** 初始化本次运行的上下文：绑定会话记忆 + 写入本轮用户消息 */
     protected AgentChatContext init(AgentRequest request) {
         AgentChatContext chatContext = initParams(request);
 
@@ -45,12 +44,11 @@ public abstract class BaseAgent implements IAgent {
         return AgentChatContext.builder()
                 .request(request)
                 .chatModel(getChatModel())
-                .chatMemory(chatMemory).build();
+                .chatMemory(chatMemory)
+                .build();
     }
 
-    /**
-     * 初始化消息
-     */
+    /** 初始化消息 */
     protected void initMessages(AgentChatContext chatContext) {
         addMessage(chatContext, buildUserMessage(chatContext));
     }
@@ -63,9 +61,8 @@ public abstract class BaseAgent implements IAgent {
      */
     protected UserMessage buildUserMessage(AgentChatContext chatContext) {
         String question = chatContext.getQuestion();
-        return UserMessage.from(question == null || question.trim().isEmpty()
-                ? "请结合上下文回答。"
-                : question.trim());
+        return UserMessage.from(
+                question == null || question.trim().isEmpty() ? "请结合上下文回答。" : question.trim());
     }
 
     protected void addMessage(AgentChatContext chatContext, ChatMessage newMessages) {
@@ -94,8 +91,7 @@ public abstract class BaseAgent implements IAgent {
     }
 
     /**
-     * Agent 实例会被缓存复用，同一个 memoryId 在上一轮被 cancel 后，
-     * cancelFlags 里的取消标记可能残留到下一轮正式启动前。
+     * Agent 实例会被缓存复用，同一个 memoryId 在上一轮被 cancel 后， cancelFlags 里的取消标记可能残留到下一轮正式启动前。
      * 这里在“新一轮启动入口”做一次清理，前提是上层已保证同一 memoryId 不会并发运行。
      */
     protected void prepareForNewRun(Object memoryId) {

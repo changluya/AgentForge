@@ -6,6 +6,7 @@ import com.changlu.agentforge.ai.core.component.llm.models.IModel;
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.StreamingChatModel;
 import com.changlu.agentforge.llm.chat.response.StreamingChatResponseHandler;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -24,8 +25,9 @@ public class BaseModelTest {
     private static final StreamingChatModel NOOP_STREAMING_CHAT_MODEL =
             new StreamingChatModel() {
                 @Override
-                public void chat(com.changlu.agentforge.llm.chat.request.ChatRequest chatRequest,
-                                 StreamingChatResponseHandler handler) {
+                public void chat(
+                        com.changlu.agentforge.llm.chat.request.ChatRequest chatRequest,
+                        StreamingChatResponseHandler handler) {
                     handler.onCompleteResponse(null);
                 }
             };
@@ -46,8 +48,10 @@ public class BaseModelTest {
         }
 
         boolean temperatureConfigured() {
-            String value = received.getProps() == null ? null
-                    : received.getProps().getProperty("temperature");
+            String value =
+                    received.getProps() == null
+                            ? null
+                            : received.getProps().getProperty("temperature");
             return isNotEmpty(value);
         }
     }
@@ -66,16 +70,25 @@ public class BaseModelTest {
     @Test
     public void shouldTreatMissingNullAndBlankValuesAsEmpty() {
         assertFalse(temperatureOf(LlmBasicConfig.builder().modelName("m").build()));
-        assertFalse(temperatureOf(LlmBasicConfig.builder().modelName("m")
-                .prop("temperature", "").build()));
-        assertFalse(temperatureOf(LlmBasicConfig.builder().modelName("m")
-                .prop("temperature", "   ").build()));
+        assertFalse(
+                temperatureOf(
+                        LlmBasicConfig.builder().modelName("m").prop("temperature", "").build()));
+        assertFalse(
+                temperatureOf(
+                        LlmBasicConfig.builder()
+                                .modelName("m")
+                                .prop("temperature", "   ")
+                                .build()));
     }
 
     @Test
     public void shouldRecognizeAConfiguredValue() {
-        assertTrue(temperatureOf(LlmBasicConfig.builder().modelName("m")
-                .prop("temperature", "0.2").build()));
+        assertTrue(
+                temperatureOf(
+                        LlmBasicConfig.builder()
+                                .modelName("m")
+                                .prop("temperature", "0.2")
+                                .build()));
     }
 
     private static boolean temperatureOf(LlmBasicConfig config) {

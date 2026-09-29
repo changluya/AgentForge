@@ -17,34 +17,30 @@ public class LlmFactory {
         // 工具类，禁止实例化
     }
 
-    /**
-     * 构造同步 ChatModel
-     */
+    /** 构造同步 ChatModel */
     public static ChatModel buildChatModel(LlmBasicConfig llmBasicConfig) {
         return loadModel(llmBasicConfig).buildChatModel(llmBasicConfig);
     }
 
-    /**
-     * 构造流式 StreamingChatModel
-     */
+    /** 构造流式 StreamingChatModel */
     public static StreamingChatModel buildStreamChatModel(LlmBasicConfig llmBasicConfig) {
         return loadModel(llmBasicConfig).buildStreamChatModel(llmBasicConfig);
     }
 
-    /**
-     * 根据 providerCode 加载 IModel 实例（内部复用）
-     */
+    /** 根据 providerCode 加载 IModel 实例（内部复用） */
     private static IModel loadModel(LlmBasicConfig llmBasicConfig) {
         LlmEnum llmEnum = LlmEnum.of(llmBasicConfig.getProvider());
         if (llmEnum == null) {
-            throw new IllegalArgumentException("Unsupported provider code: " + llmBasicConfig.getProvider());
+            throw new IllegalArgumentException(
+                    "Unsupported provider code: " + llmBasicConfig.getProvider());
         }
 
         try {
             // 反射无参构造实例
             return llmEnum.getModelClazz().getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to instantiate IModel: " + llmEnum.getModelClazz(), e);
+            throw new RuntimeException(
+                    "Failed to instantiate IModel: " + llmEnum.getModelClazz(), e);
         }
     }
 }

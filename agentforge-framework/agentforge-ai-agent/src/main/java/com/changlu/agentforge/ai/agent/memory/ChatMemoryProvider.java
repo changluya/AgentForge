@@ -10,9 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public interface ChatMemoryProvider {
 
-    /**
-     * 获取（不存在则创建）某个会话的记忆
-     */
+    /** 获取（不存在则创建）某个会话的记忆 */
     ChatMemory get(Object memoryId);
 
     /**

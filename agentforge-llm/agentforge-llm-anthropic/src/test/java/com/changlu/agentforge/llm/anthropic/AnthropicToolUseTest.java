@@ -1,7 +1,5 @@
 package com.changlu.agentforge.llm.anthropic;
 
-import com.changlu.agentforge.llm.tool.spec.ToolParameters;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.SystemMessage;
 import com.changlu.agentforge.llm.chat.message.TextContent;
@@ -17,10 +15,12 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +30,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Verifies Anthropic Messages API {@code tool_use} / {@code tool_result} support in the
- * blocking {@link AnthropicChatModel}.
+ * Verifies Anthropic Messages API {@code tool_use} / {@code tool_result} support in the blocking
+ * {@link AnthropicChatModel}.
  *
  * @author changlu
  * @since 2026-09-13
@@ -40,17 +40,23 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldParseToolUseBlockIntoAiMessage() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"id\":\"msg_1\",\"type\":\"message\",\"model\":\"claude-test\"," +
-                        "\"content\":[" +
-                        "{\"type\":\"text\",\"text\":\"I will check.\"}," +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_1\",\"name\":\"get_weather\"," +
-                        "\"input\":{\"city\":\"hangzhou\",\"unit\":\"celsius\"}}" +
-                        "],\"stop_reason\":\"tool_use\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"id\":\"msg_1\",\"type\":\"message\",\"model\":\"claude-test\","
+                                        + "\"content\":["
+                                        + "{\"type\":\"text\",\"text\":\"I will check.\"},"
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_1\",\"name\":\"get_weather\","
+                                        + "\"input\":{\"city\":\"hangzhou\",\"unit\":\"celsius\"}}"
+                                        + "],\"stop_reason\":\"tool_use\"}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("weather in Hangzhou?"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(
+                                ChatRequest.builder()
+                                        .message(UserMessage.from("weather in Hangzhou?"))
+                                        .build());
 
         AiMessage aiMessage = response.aiMessage();
         assertEquals("I will check.", aiMessage.text());
@@ -67,15 +73,21 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldParseMultipleToolUses() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[" +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_a\",\"name\":\"weather\",\"input\":{\"city\":\"hz\"}}," +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_b\",\"name\":\"weather\",\"input\":{\"city\":\"bj\"}}" +
-                        "],\"stop_reason\":\"tool_use\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":["
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_a\",\"name\":\"weather\",\"input\":{\"city\":\"hz\"}},"
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_b\",\"name\":\"weather\",\"input\":{\"city\":\"bj\"}}"
+                                        + "],\"stop_reason\":\"tool_use\"}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("two cities"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(
+                                ChatRequest.builder()
+                                        .message(UserMessage.from("two cities"))
+                                        .build());
 
         List<ToolExecutionRequest> requests = response.aiMessage().toolExecutionRequests();
         assertEquals(2, requests.size());
@@ -88,23 +100,32 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldSerializeAssistantToolUseAndToolResult() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[{\"type\":\"text\",\"text\":\"22 degrees\"}],\"stop_reason\":\"end_turn\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":[{\"type\":\"text\",\"text\":\"22 degrees\"}],\"stop_reason\":\"end_turn\"}"));
 
-        ToolExecutionRequest request = ToolExecutionRequest.builder()
-                .id("toolu_1")
-                .name("get_weather")
-                .arguments("{\"city\":\"hangzhou\"}")
-                .build();
+        ToolExecutionRequest request =
+                ToolExecutionRequest.builder()
+                        .id("toolu_1")
+                        .name("get_weather")
+                        .arguments("{\"city\":\"hangzhou\"}")
+                        .build();
 
-        model(transport).chat(ChatRequest.builder()
-                .message(SystemMessage.from("You are helpful"))
-                .message(UserMessage.from("weather?"))
-                .message(AiMessage.from(request))
-                .message(ToolExecutionResultMessage.from("toolu_1", "get_weather", "{\"temperature\":22}"))
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(SystemMessage.from("You are helpful"))
+                                .message(UserMessage.from("weather?"))
+                                .message(AiMessage.from(request))
+                                .message(
+                                        ToolExecutionResultMessage.from(
+                                                "toolu_1", "get_weather", "{\"temperature\":22}"))
+                                .build());
 
-        List<Object> messages = Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
+        List<Object> messages =
+                Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
         // user text, assistant tool_use, user tool_result
         assertEquals(3, messages.size());
 
@@ -130,25 +151,31 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldSerializeToolsAndToolChoice() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[{\"type\":\"text\",\"text\":\"ok\"}],\"stop_reason\":\"end_turn\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":[{\"type\":\"text\",\"text\":\"ok\"}],\"stop_reason\":\"end_turn\"}"));
 
-        ToolParameters parameters = ToolParameters.builder()
-                .addProperty("city", "string", "city name", true)
-                .build();
+        ToolParameters parameters =
+                ToolParameters.builder().addProperty("city", "string", "city name", true).build();
 
-        model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .parameters(DefaultChatRequestParameters.builder()
-                        .tool(ToolSpecification.builder()
-                                .name("get_weather")
-                                .description("query weather")
-                                .parameters(parameters)
-                                .build())
-                        .toolChoice(ToolChoice.SPECIFIC)
-                        .toolChoiceName("get_weather")
-                        .build())
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(UserMessage.from("hi"))
+                                .parameters(
+                                        DefaultChatRequestParameters.builder()
+                                                .tool(
+                                                        ToolSpecification.builder()
+                                                                .name("get_weather")
+                                                                .description("query weather")
+                                                                .parameters(parameters)
+                                                                .build())
+                                                .toolChoice(ToolChoice.SPECIFIC)
+                                                .toolChoiceName("get_weather")
+                                                .build())
+                                .build());
 
         Map<String, Object> payload = Json.parseObject(transport.lastRequest.body());
         List<Object> tools = Json.array(payload.get("tools"));
@@ -168,14 +195,23 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldSerializeMultiContentUserMessage() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[{\"type\":\"text\",\"text\":\"ok\"}],\"stop_reason\":\"end_turn\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":[{\"type\":\"text\",\"text\":\"ok\"}],\"stop_reason\":\"end_turn\"}"));
 
-        model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from(TextContent.from("line one"), TextContent.from("line two")))
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(
+                                        UserMessage.from(
+                                                TextContent.from("line one"),
+                                                TextContent.from("line two")))
+                                .build());
 
-        List<Object> messages = Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
+        List<Object> messages =
+                Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
         Map<String, Object> user = Json.object(messages.get(0));
         assertEquals("user", user.get("role"));
         List<Object> content = Json.array(user.get("content"));
@@ -187,12 +223,15 @@ public class AnthropicToolUseTest {
 
     @Test
     public void shouldKeepPlainTextBehaviourWhenNoToolUse() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[{\"type\":\"text\",\"text\":\"hello\"}],\"stop_reason\":\"end_turn\"}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":[{\"type\":\"text\",\"text\":\"hello\"}],\"stop_reason\":\"end_turn\"}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
 
         assertFalse(response.aiMessage().hasToolExecutionRequests());
         assertEquals("hello", response.aiMessage().text());

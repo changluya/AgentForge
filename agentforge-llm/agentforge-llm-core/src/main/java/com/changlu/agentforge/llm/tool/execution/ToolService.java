@@ -1,23 +1,14 @@
 package com.changlu.agentforge.llm.tool.execution;
 
-import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
+import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionResultMessage;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequestParameters;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.llm.chat.response.ChatResponse;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import com.changlu.agentforge.llm.tool.ReturnBehavior;
 import com.changlu.agentforge.llm.tool.Tool;
 import com.changlu.agentforge.llm.tool.ToolExecutor;
@@ -29,17 +20,26 @@ import com.changlu.agentforge.llm.tool.error.ToolExecutionErrorHandler;
 import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 /**
- * Executes the inference-and-tool loop for a {@link ChatModel}: it repeatedly calls the model
- * with the registered tools, executes any {@link ToolExecutionRequest} the model returns, appends
- * the results back as {@link ToolExecutionResultMessage}s, and re-calls the model until no tool is
+ * Executes the inference-and-tool loop for a {@link ChatModel}: it repeatedly calls the model with
+ * the registered tools, executes any {@link ToolExecutionRequest} the model returns, appends the
+ * results back as {@link ToolExecutionResultMessage}s, and re-calls the model until no tool is
  * requested (or the round-trip limit is reached).
  *
- * <p>An AgentForge tool-execution layer.
- * scoped to the self-contained AgentForge LLM core (no AI-Service reflection/chains, no compensation
- * or async machinery).</p>
+ * <p>An AgentForge tool-execution layer. scoped to the self-contained AgentForge LLM core (no
+ * AI-Service reflection/chains, no compensation or async machinery).
  *
- * <p>Usage:</p>
+ * <p>Usage:
+ *
  * <pre>{@code
  * ToolService toolService = new ToolService();
  * toolService.tools(Arrays.asList(new WeatherTools()));   // auto-register every @Tool method
@@ -51,38 +51,41 @@ import com.changlu.agentforge.llm.tool.spec.ToolSpecifications;
  */
 public final class ToolService {
 
-    private static final ToolArgumentsErrorHandler RETHROW_ARGUMENTS_ERROR = (error, context) -> {
-        if (error instanceof RuntimeException) {
-            throw (RuntimeException) error;
-        }
-        throw new RuntimeException(error);
-    };
+    private static final ToolArgumentsErrorHandler RETHROW_ARGUMENTS_ERROR =
+            (error, context) -> {
+                if (error instanceof RuntimeException) {
+                    throw (RuntimeException) error;
+                }
+                throw new RuntimeException(error);
+            };
 
     private static final ToolExecutionErrorHandler DEFAULT_TOOL_EXECUTION_ERROR_HANDLER =
             (error, context) -> ToolErrorHandlerResult.text(error.getMessage());
 
-    private static final Function<ToolExecutionRequest, ToolExecutionResultMessage> THROW_ON_HALLUCINATED =
-            request -> {
-                throw new IllegalArgumentException(
-                        "Model requested a tool '" + request.name() + "' that is not available");
-            };
+    private static final Function<ToolExecutionRequest, ToolExecutionResultMessage>
+            THROW_ON_HALLUCINATED =
+                    request -> {
+                        throw new IllegalArgumentException(
+                                "Model requested a tool '"
+                                        + request.name()
+                                        + "' that is not available");
+                    };
 
     private final List<ToolSpecification> toolSpecifications = new ArrayList<ToolSpecification>();
-    private final Map<String, ToolExecutor> toolExecutors = new LinkedHashMap<String, ToolExecutor>();
-    private final Map<String, ReturnBehavior> returnBehaviors = new LinkedHashMap<String, ReturnBehavior>();
+    private final Map<String, ToolExecutor> toolExecutors =
+            new LinkedHashMap<String, ToolExecutor>();
+    private final Map<String, ReturnBehavior> returnBehaviors =
+            new LinkedHashMap<String, ReturnBehavior>();
 
     private ToolArgumentsErrorHandler argumentsErrorHandler = RETHROW_ARGUMENTS_ERROR;
     private ToolExecutionErrorHandler executionErrorHandler = DEFAULT_TOOL_EXECUTION_ERROR_HANDLER;
-    private Function<ToolExecutionRequest, ToolExecutionResultMessage> hallucinatedToolNameStrategy =
-            THROW_ON_HALLUCINATED;
+    private Function<ToolExecutionRequest, ToolExecutionResultMessage>
+            hallucinatedToolNameStrategy = THROW_ON_HALLUCINATED;
     private int maxToolCallingRoundTrips = 100;
 
-    public ToolService() {
-    }
+    public ToolService() {}
 
-    /**
-     * Registers a set of tools keyed by their {@link ToolSpecification}.
-     */
+    /** Registers a set of tools keyed by their {@link ToolSpecification}. */
     public void tools(Map<ToolSpecification, ToolExecutor> tools) {
         if (tools == null) {
             return;
@@ -92,23 +95,20 @@ public final class ToolService {
         }
     }
 
-    /**
-     * Registers a single tool.
-     */
+    /** Registers a single tool. */
     public void tool(ToolSpecification specification, ToolExecutor executor) {
         registerTool(specification, executor);
     }
 
-    /**
-     * Registers a single tool with an explicit {@link ReturnBehavior}.
-     */
-    public void tool(ToolSpecification specification, ToolExecutor executor, ReturnBehavior returnBehavior) {
+    /** Registers a single tool with an explicit {@link ReturnBehavior}. */
+    public void tool(
+            ToolSpecification specification, ToolExecutor executor, ReturnBehavior returnBehavior) {
         registerTool(specification, executor, returnBehavior);
     }
 
     /**
-     * Scans each provided object for {@link Tool}-annotated methods, derives their
-     * {@link ToolSpecification}s and registers a reflective {@link DefaultToolExecutor}.
+     * Scans each provided object for {@link Tool}-annotated methods, derives their {@link
+     * ToolSpecification}s and registers a reflective {@link DefaultToolExecutor}.
      */
     public void tools(Collection<Object> objectsWithTools) {
         if (objectsWithTools == null) {
@@ -121,14 +121,16 @@ public final class ToolService {
         }
     }
 
-    /**
-     * Registers a single {@link Tool} method of an object.
-     */
+    /** Registers a single {@link Tool} method of an object. */
     public void tool(Object objectWithTool, String methodName) {
-        java.lang.reflect.Method method = findAnnotatedMethod(objectWithTool.getClass(), methodName);
+        java.lang.reflect.Method method =
+                findAnnotatedMethod(objectWithTool.getClass(), methodName);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "Method '" + methodName + "' annotated with @Tool not found on " + objectWithTool.getClass());
+                    "Method '"
+                            + methodName
+                            + "' annotated with @Tool not found on "
+                            + objectWithTool.getClass());
         }
         registerMethod(objectWithTool, method);
     }
@@ -140,14 +142,14 @@ public final class ToolService {
         registerTool(specification, executor, tool.returnBehavior());
     }
 
-    /**
-     * Registers every {@link Tool}-annotated method of an object.
-     */
+    /** Registers every {@link Tool}-annotated method of an object. */
     public void tools(Object objectWithTools) {
         List<addTool> found = findTools(objectWithTools);
         if (found.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Object '" + objectWithTools.getClass().getName() + "' has no methods annotated with @Tool");
+                    "Object '"
+                            + objectWithTools.getClass().getName()
+                            + "' has no methods annotated with @Tool");
         }
         for (addTool tool : found) {
             registerTool(tool.specification(), tool.executor(), tool.returnBehavior());
@@ -167,7 +169,8 @@ public final class ToolService {
     }
 
     public void executionErrorHandler(ToolExecutionErrorHandler handler) {
-        this.executionErrorHandler = handler == null ? DEFAULT_TOOL_EXECUTION_ERROR_HANDLER : handler;
+        this.executionErrorHandler =
+                handler == null ? DEFAULT_TOOL_EXECUTION_ERROR_HANDLER : handler;
     }
 
     public void hallucinatedToolNameStrategy(
@@ -197,12 +200,13 @@ public final class ToolService {
     /**
      * Runs the inference-and-tools loop starting from the given messages.
      *
-     * @param model       the chat model
-     * @param parameters  user-provided request parameters; the registered tools are merged into them
-     * @param messages    the conversation so far (will be appended to during tool rounds)
+     * @param model the chat model
+     * @param parameters user-provided request parameters; the registered tools are merged into them
+     * @param messages the conversation so far (will be appended to during tool rounds)
      * @return the tool-service result
      */
-    public ToolChatResult chat(ChatModel model, ChatRequestParameters parameters, List<ChatMessage> messages) {
+    public ToolChatResult chat(
+            ChatModel model, ChatRequestParameters parameters, List<ChatMessage> messages) {
         List<ChatMessage> working = new ArrayList<ChatMessage>(messages);
         List<ToolExecution> executions = new ArrayList<ToolExecution>();
         List<ChatResponse> intermediateResponses = new ArrayList<ChatResponse>();
@@ -212,10 +216,17 @@ public final class ToolService {
         while (true) {
             if (roundTripsLeft-- == 0) {
                 throw new IllegalStateException(
-                        "Exceeded " + maxToolCallingRoundTrips + " tool calling round trips (maxToolCallingRoundTrips)");
+                        "Exceeded "
+                                + maxToolCallingRoundTrips
+                                + " tool calling round trips (maxToolCallingRoundTrips)");
             }
             ChatRequestParameters requestParameters = requestParameters(parameters);
-            response = model.chat(ChatRequest.builder().messages(working).parameters(requestParameters).build());
+            response =
+                    model.chat(
+                            ChatRequest.builder()
+                                    .messages(working)
+                                    .parameters(requestParameters)
+                                    .build());
             AiMessage aiMessage = response.aiMessage();
             working.add(aiMessage);
 
@@ -238,7 +249,8 @@ public final class ToolService {
                 behaviors.add(behavior == null ? ReturnBehavior.TO_LLM : behavior);
             }
 
-            List<ToolExecutionResultMessage> resultMessages = toResultMessages(aiMessage.toolExecutionRequests(), results);
+            List<ToolExecutionResultMessage> resultMessages =
+                    toResultMessages(aiMessage.toolExecutionRequests(), results);
             working.addAll(resultMessages);
 
             if (shouldReturnImmediately(anyToolErrored, behaviors)) {
@@ -249,18 +261,25 @@ public final class ToolService {
         return ToolChatResult.of(response, executions, intermediateResponses);
     }
 
-    private ToolExecution execute(ToolExecutionRequest request, List<ChatMessage> working,
-                                  List<ToolExecution> executions) {
+    private ToolExecution execute(
+            ToolExecutionRequest request,
+            List<ChatMessage> working,
+            List<ToolExecution> executions) {
         ToolExecutor executor = toolExecutors.get(request.name());
         if (executor == null) {
             ToolExecutionResultMessage message = hallucinatedToolNameStrategy.apply(request);
             working.add(message);
-            ToolExecution execution = ToolExecution.builder()
-                    .request(request)
-                    .result(ToolExecutionResult.builder().isError(true).text(message.text()).build())
-                    .startTime(LocalDateTime.now())
-                    .finishTime(LocalDateTime.now())
-                    .build();
+            ToolExecution execution =
+                    ToolExecution.builder()
+                            .request(request)
+                            .result(
+                                    ToolExecutionResult.builder()
+                                            .isError(true)
+                                            .text(message.text())
+                                            .build())
+                            .startTime(LocalDateTime.now())
+                            .finishTime(LocalDateTime.now())
+                            .build();
             executions.add(execution);
             return execution;
         }
@@ -272,22 +291,29 @@ public final class ToolService {
         } catch (RuntimeException error) {
             result = ToolExecutionResult.failure(errorText(error), error);
         }
-        ToolExecution execution = ToolExecution.builder()
-                .request(request)
-                .result(result)
-                .startTime(start)
-                .finishTime(LocalDateTime.now())
-                .build();
+        ToolExecution execution =
+                ToolExecution.builder()
+                        .request(request)
+                        .result(result)
+                        .startTime(start)
+                        .finishTime(LocalDateTime.now())
+                        .build();
         executions.add(execution);
         return execution;
     }
 
-    private ToolExecutionResult executeWithErrorHandling(ToolExecutor executor, ToolExecutionRequest request) {
+    private ToolExecutionResult executeWithErrorHandling(
+            ToolExecutor executor, ToolExecutionRequest request) {
         try {
             return executor.executeWithResult(request, null);
         } catch (ToolArgumentsException e) {
-            ToolErrorHandlerResult handled = argumentsErrorHandler.handle(e,
-                    ToolErrorContext.builder().toolExecutionRequest(request).rawError(e).build());
+            ToolErrorHandlerResult handled =
+                    argumentsErrorHandler.handle(
+                            e,
+                            ToolErrorContext.builder()
+                                    .toolExecutionRequest(request)
+                                    .rawError(e)
+                                    .build());
             if (handled != null) {
                 return ToolExecutionResult.builder()
                         .isError(true)
@@ -297,8 +323,13 @@ public final class ToolService {
             }
             throw e;
         } catch (RuntimeException e) {
-            ToolErrorHandlerResult handled = executionErrorHandler.handle(e,
-                    ToolErrorContext.builder().toolExecutionRequest(request).rawError(e).build());
+            ToolErrorHandlerResult handled =
+                    executionErrorHandler.handle(
+                            e,
+                            ToolErrorContext.builder()
+                                    .toolExecutionRequest(request)
+                                    .rawError(e)
+                                    .build());
             if (handled != null) {
                 return ToolExecutionResult.builder()
                         .isError(true)
@@ -311,12 +342,13 @@ public final class ToolService {
     }
 
     private List<ToolExecutionResultMessage> toResultMessages(
-            List<ToolExecutionRequest> requests, Map<ToolExecutionRequest, ToolExecutionResult> results) {
+            List<ToolExecutionRequest> requests,
+            Map<ToolExecutionRequest, ToolExecutionResult> results) {
         List<ToolExecutionResultMessage> messages = new ArrayList<ToolExecutionResultMessage>();
         for (ToolExecutionRequest request : requests) {
             ToolExecutionResult result = results.get(request);
-            ToolExecutionResultMessage message = new ToolExecutionResultMessage(
-                    request.id(), request.name(), result.text());
+            ToolExecutionResultMessage message =
+                    new ToolExecutionResultMessage(request.id(), request.name(), result.text());
             messages.add(message);
         }
         return messages;
@@ -326,9 +358,10 @@ public final class ToolService {
         if (toolSpecifications.isEmpty()) {
             return userParameters;
         }
-        DefaultChatRequestParameters toolParameters = DefaultChatRequestParameters.builder()
-                .tools(new ArrayList<ToolSpecification>(toolSpecifications))
-                .build();
+        DefaultChatRequestParameters toolParameters =
+                DefaultChatRequestParameters.builder()
+                        .tools(new ArrayList<ToolSpecification>(toolSpecifications))
+                        .build();
         // User parameters override non-tool fields; registered tools are always included.
         return DefaultChatRequestParameters.merge(toolParameters, userParameters);
     }
@@ -337,7 +370,8 @@ public final class ToolService {
         registerTool(specification, executor, ReturnBehavior.TO_LLM);
     }
 
-    private void registerTool(ToolSpecification specification, ToolExecutor executor, ReturnBehavior returnBehavior) {
+    private void registerTool(
+            ToolSpecification specification, ToolExecutor executor, ReturnBehavior returnBehavior) {
         if (specification == null || executor == null) {
             return;
         }
@@ -352,7 +386,8 @@ public final class ToolService {
         }
     }
 
-    private static boolean shouldReturnImmediately(boolean anyToolErrored, List<ReturnBehavior> behaviors) {
+    private static boolean shouldReturnImmediately(
+            boolean anyToolErrored, List<ReturnBehavior> behaviors) {
         if (anyToolErrored) {
             return false;
         }
@@ -406,13 +441,14 @@ public final class ToolService {
     }
 
     private static List<java.lang.reflect.Method> allConcreteMethods(Class<?> clazz) {
-        Map<String, java.lang.reflect.Method> bySignature = new LinkedHashMap<String, java.lang.reflect.Method>();
+        Map<String, java.lang.reflect.Method> bySignature =
+                new LinkedHashMap<String, java.lang.reflect.Method>();
         collectConcreteMethods(clazz, bySignature);
         return new ArrayList<java.lang.reflect.Method>(bySignature.values());
     }
 
-    private static void collectConcreteMethods(Class<?> clazz,
-                                               Map<String, java.lang.reflect.Method> bySignature) {
+    private static void collectConcreteMethods(
+            Class<?> clazz, Map<String, java.lang.reflect.Method> bySignature) {
         if (clazz == null || clazz == Object.class) {
             return;
         }
@@ -436,15 +472,16 @@ public final class ToolService {
         return sb.append(')').toString();
     }
 
-    /**
-     * Holder used during reflection scanning.
-     */
+    /** Holder used during reflection scanning. */
     private static final class addTool {
         private final ToolSpecification specification;
         private final ToolExecutor executor;
         private final ReturnBehavior returnBehavior;
 
-        private addTool(ToolSpecification specification, ToolExecutor executor, ReturnBehavior returnBehavior) {
+        private addTool(
+                ToolSpecification specification,
+                ToolExecutor executor,
+                ReturnBehavior returnBehavior) {
             this.specification = specification;
             this.executor = executor;
             this.returnBehavior = returnBehavior;
@@ -463,25 +500,29 @@ public final class ToolService {
         }
     }
 
-    /**
-     * Result of a {@link ToolService} inference-and-tools loop.
-     */
+    /** Result of a {@link ToolService} inference-and-tools loop. */
     public static final class ToolChatResult {
 
         private final ChatResponse finalResponse;
         private final List<ToolExecution> toolExecutions;
         private final List<ChatResponse> intermediateResponses;
 
-        private ToolChatResult(ChatResponse finalResponse, List<ToolExecution> toolExecutions,
-                               List<ChatResponse> intermediateResponses) {
+        private ToolChatResult(
+                ChatResponse finalResponse,
+                List<ToolExecution> toolExecutions,
+                List<ChatResponse> intermediateResponses) {
             this.finalResponse = finalResponse;
-            this.toolExecutions = Collections.unmodifiableList(new ArrayList<ToolExecution>(toolExecutions));
+            this.toolExecutions =
+                    Collections.unmodifiableList(new ArrayList<ToolExecution>(toolExecutions));
             this.intermediateResponses =
-                    Collections.unmodifiableList(new ArrayList<ChatResponse>(intermediateResponses));
+                    Collections.unmodifiableList(
+                            new ArrayList<ChatResponse>(intermediateResponses));
         }
 
-        static ToolChatResult of(ChatResponse finalResponse, List<ToolExecution> toolExecutions,
-                                 List<ChatResponse> intermediateResponses) {
+        static ToolChatResult of(
+                ChatResponse finalResponse,
+                List<ToolExecution> toolExecutions,
+                List<ChatResponse> intermediateResponses) {
             return new ToolChatResult(finalResponse, toolExecutions, intermediateResponses);
         }
 

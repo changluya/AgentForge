@@ -3,18 +3,17 @@ package com.changlu.agentforge.llm.tool;
 /**
  * Per-tool setting controlling what happens with a tool's result after execution.
  *
- * 
- *
  * <ul>
- *   <li>{@link #TO_LLM} (default): the tool result is appended to the conversation and sent back
- *       to the LLM for further processing — the tool loop runs another turn.</li>
+ *   <li>{@link #TO_LLM} (default): the tool result is appended to the conversation and sent back to
+ *       the LLM for further processing — the tool loop runs another turn.
  *   <li>{@link #IMMEDIATE}: the tool result is returned to the caller directly and the loop stops.
- *       Only meaningful when the caller is prepared to consume raw tool results.</li>
+ *       Only meaningful when the caller is prepared to consume raw tool results.
  *   <li>{@link #IMMEDIATE_IF_LAST}: the loop returns immediately if and only if this is the last
- *       tool call in the response (and no tool errored).</li>
+ *       tool call in the response (and no tool errored).
  * </ul>
  *
- * <p>Immediate-return rule applied after each LLM response (any tool error forces reprocess):</p>
+ * <p>Immediate-return rule applied after each LLM response (any tool error forces reprocess):
+ *
  * <pre>
  *   []                                                    -> reprocess (no tool calls)
  *   [TO_LLM, ...] with any TO_LLM                         -> reprocess
@@ -35,13 +34,9 @@ public enum ReturnBehavior {
      */
     TO_LLM,
 
-    /**
-     * Return the tool result to the caller immediately, short-circuiting the loop.
-     */
+    /** Return the tool result to the caller immediately, short-circuiting the loop. */
     IMMEDIATE,
 
-    /**
-     * Return the tool result to the caller only when this tool is the last one invoked.
-     */
+    /** Return the tool result to the caller only when this tool is the last one invoked. */
     IMMEDIATE_IF_LAST
 }

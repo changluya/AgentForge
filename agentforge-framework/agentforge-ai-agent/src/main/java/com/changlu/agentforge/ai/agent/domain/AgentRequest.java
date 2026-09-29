@@ -11,8 +11,7 @@ public class AgentRequest {
 
     private String question;
 
-    public AgentRequest() {
-    }
+    public AgentRequest() {}
 
     private AgentRequest(AgentRequestBuilder builder) {
         this.memoryId = builder.memoryId;

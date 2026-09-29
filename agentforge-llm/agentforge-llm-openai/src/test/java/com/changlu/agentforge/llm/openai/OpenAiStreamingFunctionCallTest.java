@@ -11,6 +11,7 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.http.StreamingHttpResponseHandler;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Verifies that streamed OpenAI {@code tool_calls} delta fragments are merged by index
- * into complete {@link ToolExecutionRequest}s on the final {@link ChatResponse}.
+ * Verifies that streamed OpenAI {@code tool_calls} delta fragments are merged by index into
+ * complete {@link ToolExecutionRequest}s on the final {@link ChatResponse}.
  *
  * @author changlu
  * @since 2026-09-13
@@ -35,16 +36,18 @@ public class OpenAiStreamingFunctionCallTest {
 
     @Test
     public void shouldMergeSingleStreamedToolCall() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"role\":\"assistant\",\"content\":null}}]}",
-                "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"getWeather\",\"arguments\":\"\"}}]}}]}",
-                "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"{\\\"city\\\":\"}}]}}]}",
-                "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"hangzhou\\\"}\"}}]}}]}",
-                "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"role\":\"assistant\",\"content\":null}}]}",
+                        "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"getWeather\",\"arguments\":\"\"}}]}}]}",
+                        "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"{\\\"city\\\":\"}}]}}]}",
+                        "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"hangzhou\\\"}\"}}]}}]}",
+                        "data: {\"id\":\"c1\",\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
+                        "data: [DONE]");
 
         RecordingHandler handler = new RecordingHandler();
-        model(transport).chat(ChatRequest.builder().message(UserMessage.from("weather?")).build(), handler);
+        model(transport)
+                .chat(ChatRequest.builder().message(UserMessage.from("weather?")).build(), handler);
 
         assertTrue(handler.await());
         assertNull(handler.error);
@@ -62,21 +65,23 @@ public class OpenAiStreamingFunctionCallTest {
 
     @Test
     public void shouldMergeMultipleInterleavedStreamedToolCalls() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"choices\":[{\"delta\":{\"tool_calls\":[" +
-                        "{\"index\":0,\"id\":\"call_a\",\"function\":{\"name\":\"weather\"}}," +
-                        "{\"index\":1,\"id\":\"call_b\",\"function\":{\"name\":\"weather\"}}]}}]}",
-                "data: {\"choices\":[{\"delta\":{\"tool_calls\":[" +
-                        "{\"index\":0,\"function\":{\"arguments\":\"{\\\"city\\\":\\\"hz\\\"}\"}}," +
-                        "{\"index\":1,\"function\":{\"arguments\":\"{\\\"city\\\":\\\"bj\\\"}\"}}]}}]}",
-                "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"choices\":[{\"delta\":{\"tool_calls\":["
+                                + "{\"index\":0,\"id\":\"call_a\",\"function\":{\"name\":\"weather\"}},"
+                                + "{\"index\":1,\"id\":\"call_b\",\"function\":{\"name\":\"weather\"}}]}}]}",
+                        "data: {\"choices\":[{\"delta\":{\"tool_calls\":["
+                                + "{\"index\":0,\"function\":{\"arguments\":\"{\\\"city\\\":\\\"hz\\\"}\"}},"
+                                + "{\"index\":1,\"function\":{\"arguments\":\"{\\\"city\\\":\\\"bj\\\"}\"}}]}}]}",
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
+                        "data: [DONE]");
 
         RecordingHandler handler = new RecordingHandler();
         model(transport).chat("weather for two cities", handler);
 
         assertTrue(handler.await());
-        List<ToolExecutionRequest> requests = handler.completeResponse.aiMessage().toolExecutionRequests();
+        List<ToolExecutionRequest> requests =
+                handler.completeResponse.aiMessage().toolExecutionRequests();
         assertEquals(2, requests.size());
         assertEquals("call_a", requests.get(0).id());
         assertEquals("{\"city\":\"hz\"}", requests.get(0).arguments());
@@ -86,12 +91,13 @@ public class OpenAiStreamingFunctionCallTest {
 
     @Test
     public void shouldMergeTextAndToolCallInSameStream() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"choices\":[{\"delta\":{\"content\":\"Checking\"}}]}",
-                "data: {\"choices\":[{\"delta\":{\"content\":\" weather\"}}]}",
-                "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_x\",\"function\":{\"name\":\"getWeather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}}]}}]}",
-                "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"Checking\"}}]}",
+                        "data: {\"choices\":[{\"delta\":{\"content\":\" weather\"}}]}",
+                        "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_x\",\"function\":{\"name\":\"getWeather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}}]}}]}",
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
+                        "data: [DONE]");
 
         RecordingHandler handler = new RecordingHandler();
         model(transport).chat("weather?", handler);
@@ -108,17 +114,19 @@ public class OpenAiStreamingFunctionCallTest {
     public void shouldHandleStreamedToolCallsWithoutIndex() throws InterruptedException {
         // Some OpenAI-compatible gateways omit the index field. The first fragment carries
         // the id/name, later fragments only carry argument deltas.
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"id\":\"call_n\",\"function\":{\"name\":\"getWeather\"}}]}}]}",
-                "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"function\":{\"arguments\":\"{\\\"a\\\":1}\"}}]}}]}",
-                "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"id\":\"call_n\",\"function\":{\"name\":\"getWeather\"}}]}}]}",
+                        "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"function\":{\"arguments\":\"{\\\"a\\\":1}\"}}]}}]}",
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"tool_calls\"}]}",
+                        "data: [DONE]");
 
         RecordingHandler handler = new RecordingHandler();
         model(transport).chat("weather?", handler);
 
         assertTrue(handler.await());
-        List<ToolExecutionRequest> requests = handler.completeResponse.aiMessage().toolExecutionRequests();
+        List<ToolExecutionRequest> requests =
+                handler.completeResponse.aiMessage().toolExecutionRequests();
         assertEquals(1, requests.size());
         assertEquals("call_n", requests.get(0).id());
         assertEquals("getWeather", requests.get(0).name());

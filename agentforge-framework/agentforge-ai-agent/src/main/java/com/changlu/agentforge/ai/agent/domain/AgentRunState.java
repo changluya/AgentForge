@@ -6,7 +6,6 @@ package com.changlu.agentforge.ai.agent.domain;
  * @date 2026/9/16
  */
 public enum AgentRunState {
-
     SUCCESS(0, "任务执行成功"),
 
     MODEL_CALL_ERROR(1001, "模型调用异常"),

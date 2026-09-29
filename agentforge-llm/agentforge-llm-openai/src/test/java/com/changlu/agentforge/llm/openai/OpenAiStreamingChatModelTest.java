@@ -13,6 +13,7 @@ import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.http.StreamingHttpResponseHandler;
 import com.changlu.agentforge.llm.internal.json.Json;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -32,8 +33,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests OpenAI Chat Completions streaming behavior. The real-endpoint test is
- * opt-in and is skipped when no endpoint configuration is provided.
+ * Tests OpenAI Chat Completions streaming behavior. The real-endpoint test is opt-in and is skipped
+ * when no endpoint configuration is provided.
  *
  * @author changlu
  * @date 2026/09/13
@@ -48,15 +49,16 @@ public class OpenAiStreamingChatModelTest {
     /**
      * Optional real-endpoint verification.
      *
-     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.</p>
+     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.
+     *
      * <ul>
-     *     <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.</li>
-     *     <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.</li>
-     *     <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.</li>
+     *   <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.
+     *   <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.
+     *   <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.
      * </ul>
      *
-     * <p>When the API key is blank, the test is skipped so normal unit-test runs
-     * do not make a network request. The endpoint may be any OpenAI-compatible service.</p>
+     * <p>When the API key is blank, the test is skipped so normal unit-test runs do not make a
+     * network request. The endpoint may be any OpenAI-compatible service.
      */
     @Test
     public void shouldStreamFromRealEndpointWithUserConfiguration() throws InterruptedException {
@@ -65,29 +67,37 @@ public class OpenAiStreamingChatModelTest {
         String modelName = REAL_ENDPOINT_MODEL_NAME;
 
         if (isBlank(baseUrl) || isBlank(apiKey) || isBlank(modelName)) {
-            System.out.println("Skip real OpenAI streaming endpoint test: modify the REAL_ENDPOINT_* constants first.");
+            System.out.println(
+                    "Skip real OpenAI streaming endpoint test: modify the REAL_ENDPOINT_* constants first.");
             return;
         }
 
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
-                .modelName(modelName)
-                .temperature(0.0)
-                .maxTokens(64)
-                .build();
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .baseUrl(baseUrl)
+                        .apiKey(apiKey)
+                        .modelName(modelName)
+                        .temperature(0.0)
+                        .maxTokens(64)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
-        model.chat(ChatRequest.builder()
-                .message(UserMessage.from("Reply with one short sentence confirming the connection works."))
-                .build(), handler);
+        model.chat(
+                ChatRequest.builder()
+                        .message(
+                                UserMessage.from(
+                                        "Reply with one short sentence confirming the connection works."))
+                        .build(),
+                handler);
 
-        assertTrue("Timed out waiting for the streaming response",
+        assertTrue(
+                "Timed out waiting for the streaming response",
                 handler.await(60, TimeUnit.SECONDS));
         assertNull(handler.error);
         assertNotNull(handler.completeResponse);
         assertNotNull(handler.completeResponse.aiMessage());
-        assertTrue("The streaming response should contain text",
+        assertTrue(
+                "The streaming response should contain text",
                 !isBlank(handler.completeResponse.aiMessage().text()));
 
         System.out.println("Real OpenAI streaming endpoint test succeeded.");
@@ -102,27 +112,31 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldStreamPartialResponsesAndBuildCompleteResponse() {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"created\":123,\"choices\":[{\"delta\":{\"role\":\"assistant\",\"content\":\"Hel\"},\"finish_reason\":null}]}",
-                "",
-                "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[{\"delta\":{\"content\":\"lo\"},\"finish_reason\":null}]}",
-                "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}",
-                "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[],\"usage\":{\"prompt_tokens\":4,\"completion_tokens\":2,\"total_tokens\":6}}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"created\":123,\"choices\":[{\"delta\":{\"role\":\"assistant\",\"content\":\"Hel\"},\"finish_reason\":null}]}",
+                        "",
+                        "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[{\"delta\":{\"content\":\"lo\"},\"finish_reason\":null}]}",
+                        "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}",
+                        "data: {\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"choices\":[],\"usage\":{\"prompt_tokens\":4,\"completion_tokens\":2,\"total_tokens\":6}}",
+                        "data: [DONE]");
 
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .apiKey("test-key")
-                .modelName("gpt-test")
-                .temperature(0.2)
-                .customHeader("X-Test", "yes")
-                .httpTransport(transport)
-                .build();
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .apiKey("test-key")
+                        .modelName("gpt-test")
+                        .temperature(0.2)
+                        .customHeader("X-Test", "yes")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
-        model.chat(ChatRequest.builder()
-                .message(SystemMessage.from("Be concise"))
-                .message(UserMessage.from("Hi"))
-                .build(), handler);
+        model.chat(
+                ChatRequest.builder()
+                        .message(SystemMessage.from("Be concise"))
+                        .message(UserMessage.from("Hi"))
+                        .build(),
+                handler);
 
         assertEquals(Arrays.asList("Hel", "lo"), handler.partials);
         assertNull(handler.error);
@@ -134,7 +148,8 @@ public class OpenAiStreamingChatModelTest {
         assertEquals(6L, handler.completeResponse.tokenUsage().totalTokens());
         assertEquals("chatcmpl-1", handler.completeResponse.metadata().get("id"));
         assertEquals("gpt-test", handler.completeResponse.metadata().get("model"));
-        assertEquals(123L, ((Number) handler.completeResponse.metadata().get("created")).longValue());
+        assertEquals(
+                123L, ((Number) handler.completeResponse.metadata().get("created")).longValue());
 
         assertEquals("https://api.openai.com/v1/chat/completions", transport.lastRequest.url());
         assertEquals("Bearer test-key", transport.lastRequest.headers().get("Authorization"));
@@ -156,30 +171,32 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldApplyRequestParametersOverModelDefaults() {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"length\"}]}",
-                "data: [DONE]");
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .modelName("default-model")
-                .temperature(0.1)
-                .maxTokens(100)
-                .topP(0.8)
-                .customParameter("seed", 1)
-                .httpTransport(transport)
-                .build();
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"length\"}]}",
+                        "data: [DONE]");
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .modelName("default-model")
+                        .temperature(0.1)
+                        .maxTokens(100)
+                        .topP(0.8)
+                        .customParameter("seed", 1)
+                        .httpTransport(transport)
+                        .build();
 
-        DefaultChatRequestParameters overrides = DefaultChatRequestParameters.builder()
-                .modelName("request-model")
-                .temperature(0.7)
-                .maxTokens(20)
-                .topP(0.9)
-                .customParameter("seed", 2)
-                .build();
+        DefaultChatRequestParameters overrides =
+                DefaultChatRequestParameters.builder()
+                        .modelName("request-model")
+                        .temperature(0.7)
+                        .maxTokens(20)
+                        .topP(0.9)
+                        .customParameter("seed", 2)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
-        model.chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .parameters(overrides)
-                .build(), handler);
+        model.chat(
+                ChatRequest.builder().message(UserMessage.from("hi")).parameters(overrides).build(),
+                handler);
 
         Map<String, Object> payload = Json.parseObject(transport.lastRequest.body());
         assertEquals("request-model", payload.get("model"));
@@ -193,23 +210,25 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldForwardReasoningContentDeltas() {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
-                        "{\"reasoning_content\":\"先查一下\"},\"finish_reason\":null}]}",
-                "",
-                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
-                        "{\"reasoning_content\":\"天气\"},\"finish_reason\":null}]}",
-                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":" +
-                        "{\"content\":\"Hangzhou 22C\"},\"finish_reason\":null}]}",
-                "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":{}," +
-                        "\"finish_reason\":\"stop\"}]}",
-                "data: [DONE]");
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":"
+                                + "{\"reasoning_content\":\"先查一下\"},\"finish_reason\":null}]}",
+                        "",
+                        "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":"
+                                + "{\"reasoning_content\":\"天气\"},\"finish_reason\":null}]}",
+                        "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":"
+                                + "{\"content\":\"Hangzhou 22C\"},\"finish_reason\":null}]}",
+                        "data: {\"id\":\"chatcmpl-r1\",\"model\":\"deepseek-test\",\"choices\":[{\"delta\":{},"
+                                + "\"finish_reason\":\"stop\"}]}",
+                        "data: [DONE]");
 
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .apiKey("test-key")
-                .modelName("deepseek-test")
-                .httpTransport(transport)
-                .build();
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .apiKey("test-key")
+                        .modelName("deepseek-test")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
         model.chat("weather?", handler);
@@ -223,15 +242,17 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldWorkWithOpenAiCompatibleEndpointWithoutApiKey() {
-        StreamingTransport transport = StreamingTransport.success(
-                "data: {\"choices\":[{\"delta\":{\"content\":\"local\"},\"finish_reason\":\"stop\"}]}"
-                // Intentionally no [DONE]: EOF should still produce the final response.
-        );
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .baseUrl("http://localhost:11434/v1/")
-                .modelName("local-model")
-                .httpTransport(transport)
-                .build();
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"local\"},\"finish_reason\":\"stop\"}]}"
+                        // Intentionally no [DONE]: EOF should still produce the final response.
+                        );
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .baseUrl("http://localhost:11434/v1/")
+                        .modelName("local-model")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
         model.chat("hello", handler);
@@ -243,12 +264,16 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldExposeHttpFailureAsLlmException() {
-        StreamingTransport transport = new StreamingTransport(429,
-                Collections.singletonList("{\"error\":{\"message\":\"rate limit\"}}"), null);
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        StreamingTransport transport =
+                new StreamingTransport(
+                        429,
+                        Collections.singletonList("{\"error\":{\"message\":\"rate limit\"}}"),
+                        null);
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .modelName("gpt-test")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
         model.chat("hello", handler);
@@ -263,10 +288,11 @@ public class OpenAiStreamingChatModelTest {
     @Test
     public void shouldReportMalformedSseChunk() {
         StreamingTransport transport = StreamingTransport.success("data: {not-json}");
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .modelName("gpt-test")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
         model.chat("hello", handler);
@@ -278,12 +304,14 @@ public class OpenAiStreamingChatModelTest {
 
     @Test
     public void shouldWrapStreamingTransportFailure() {
-        StreamingTransport transport = new StreamingTransport(200,
-                Collections.<String>emptyList(), new IOException("network down"));
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        StreamingTransport transport =
+                new StreamingTransport(
+                        200, Collections.<String>emptyList(), new IOException("network down"));
+        OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .modelName("gpt-test")
+                        .httpTransport(transport)
+                        .build();
         RecordingHandler handler = new RecordingHandler();
 
         model.chat("hello", handler);
@@ -296,18 +324,18 @@ public class OpenAiStreamingChatModelTest {
     @Test
     public void shouldValidateModelAndHandler() {
         final StreamingTransport transport = StreamingTransport.success("data: [DONE]");
-        final OpenAiStreamingChatModel missingModel = OpenAiStreamingChatModel.builder()
-                .httpTransport(transport)
-                .build();
+        final OpenAiStreamingChatModel missingModel =
+                OpenAiStreamingChatModel.builder().httpTransport(transport).build();
         final ChatRequest request = ChatRequest.builder().message(UserMessage.from("hi")).build();
         final RecordingHandler handler = new RecordingHandler();
 
         assertThrows(IllegalStateException.class, () -> missingModel.chat(request, handler));
 
-        final OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        final OpenAiStreamingChatModel model =
+                OpenAiStreamingChatModel.builder()
+                        .modelName("gpt-test")
+                        .httpTransport(transport)
+                        .build();
         assertThrows(IllegalArgumentException.class, () -> model.chat((ChatRequest) null, handler));
         assertThrows(IllegalArgumentException.class, () -> model.chat(request, null));
     }

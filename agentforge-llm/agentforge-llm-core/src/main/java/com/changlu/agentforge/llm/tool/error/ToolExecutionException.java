@@ -3,8 +3,6 @@ package com.changlu.agentforge.llm.tool.error;
 /**
  * Indicates that something went wrong while executing the tool itself.
  *
- * 
- *
  * @author changlu
  * @since 2026-09-13
  */

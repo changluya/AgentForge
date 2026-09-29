@@ -3,11 +3,9 @@ package com.changlu.agentforge.llm.tool.error;
 import java.util.Objects;
 
 /**
- * A structured value returned by a {@link ToolArgumentsErrorHandler} or
- * {@link ToolExecutionErrorHandler} instead of throwing, letting the error message be sent back
- * to the LLM so it can correct itself and retry.
- *
- * 
+ * A structured value returned by a {@link ToolArgumentsErrorHandler} or {@link
+ * ToolExecutionErrorHandler} instead of throwing, letting the error message be sent back to the LLM
+ * so it can correct itself and retry.
  *
  * @author changlu
  * @since 2026-09-13
@@ -46,7 +44,8 @@ public final class ToolErrorHandlerResult {
     }
 
     /**
-     * Creates a result carrying a text message that will be sent back to the LLM as the tool result.
+     * Creates a result carrying a text message that will be sent back to the LLM as the tool
+     * result.
      *
      * @param text error message for the LLM
      * @return the error-handler result

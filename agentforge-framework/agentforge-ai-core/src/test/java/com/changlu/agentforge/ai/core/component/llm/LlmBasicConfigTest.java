@@ -3,6 +3,7 @@ package com.changlu.agentforge.ai.core.component.llm;
 import com.changlu.agentforge.ai.core.component.llm.config.LlmBasicConfig;
 import com.changlu.agentforge.ai.core.component.llm.constant.LlmConstant;
 import com.changlu.agentforge.ai.core.component.llm.enums.LlmEnum;
+
 import org.junit.Test;
 
 import java.util.Properties;
@@ -20,14 +21,15 @@ public class LlmBasicConfigTest {
 
     @Test
     public void shouldReadValuesFromBuilder() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .url("https://api.openai.com/v1")
-                .modelName("gpt-4o-mini")
-                .apiKey("sk-test")
-                .prop(LlmConstant.TEMPERATURE, "0.2")
-                .prop(LlmConstant.MAX_TOKENS, "1024")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .url("https://api.openai.com/v1")
+                        .modelName("gpt-4o-mini")
+                        .apiKey("sk-test")
+                        .prop(LlmConstant.TEMPERATURE, "0.2")
+                        .prop(LlmConstant.MAX_TOKENS, "1024")
+                        .build();
 
         assertEquals(Integer.valueOf(1), config.getProvider());
         assertEquals("https://api.openai.com/v1", config.getUrl());
@@ -60,10 +62,8 @@ public class LlmBasicConfigTest {
     public void shouldLeavePropsNullUntilAPropertyIsSet() {
         assertNull(LlmBasicConfig.builder().modelName("m").build().getProps());
 
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .modelName("m")
-                .prop(LlmConstant.TIMEOUT, "30")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder().modelName("m").prop(LlmConstant.TIMEOUT, "30").build();
         assertEquals(1, config.getProps().size());
         assertEquals("30", config.getProps().getProperty(LlmConstant.TIMEOUT));
     }
@@ -75,10 +75,7 @@ public class LlmBasicConfigTest {
         Properties second = new Properties();
         second.setProperty(LlmConstant.TEMPERATURE, "0.8");
 
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .props(first)
-                .props(second)
-                .build();
+        LlmBasicConfig config = LlmBasicConfig.builder().props(first).props(second).build();
 
         assertEquals("0.8", config.getProps().getProperty(LlmConstant.TEMPERATURE));
         assertEquals(1, config.getProps().size());

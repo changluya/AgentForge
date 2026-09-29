@@ -26,13 +26,13 @@ import java.util.Map;
 /**
  * OpenAI Chat Completions streaming implementation of {@link StreamingChatModel}.
  *
- * <p>The implementation follows the same high-level contract used by LangChain4j:
- * the request is sent with {@code stream=true}, token usage is requested through
- * {@code stream_options.include_usage=true}, every SSE delta is forwarded as a partial
- * response, and all chunks are accumulated into a normalized {@link ChatResponse}.</p>
+ * <p>The implementation follows the same high-level contract used by LangChain4j: the request is
+ * sent with {@code stream=true}, token usage is requested through {@code
+ * stream_options.include_usage=true}, every SSE delta is forwarded as a partial response, and all
+ * chunks are accumulated into a normalized {@link ChatResponse}.
  *
- * <p>The configurable base URL also allows OpenAI-compatible endpoints to reuse the
- * same implementation.</p>
+ * <p>The configurable base URL also allows OpenAI-compatible endpoints to reuse the same
+ * implementation.
  *
  * @author changlu
  * @date 2026/09/13
@@ -52,16 +52,18 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
     private OpenAiStreamingChatModel(Builder builder) {
         this.baseUrl = trimTrailingSlash(builder.baseUrl);
         this.apiKey = builder.apiKey;
-        this.defaultParameters = DefaultChatRequestParameters.builder()
-                .modelName(builder.modelName)
-                .temperature(builder.temperature)
-                .maxTokens(builder.maxTokens)
-                .topP(builder.topP)
-                .stopSequences(builder.stopSequences)
-                .customParameters(builder.customParameters)
-                .build();
-        this.customHeaders = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(builder.customHeaders));
+        this.defaultParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName(builder.modelName)
+                        .temperature(builder.temperature)
+                        .maxTokens(builder.maxTokens)
+                        .topP(builder.topP)
+                        .stopSequences(builder.stopSequences)
+                        .customParameters(builder.customParameters)
+                        .build();
+        this.customHeaders =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, String>(builder.customHeaders));
         this.httpTransport = builder.httpTransport;
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
@@ -80,19 +82,20 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             throw new IllegalArgumentException("handler must not be null");
         }
 
-        DefaultChatRequestParameters parameters = DefaultChatRequestParameters.merge(
-                defaultParameters, chatRequest.parameters());
+        DefaultChatRequestParameters parameters =
+                DefaultChatRequestParameters.merge(defaultParameters, chatRequest.parameters());
         requireModelName(parameters.modelName());
 
-        HttpRequest request = HttpRequest.builder()
-                .url(baseUrl + "/chat/completions")
-                .header("Content-Type", "application/json")
-                .header("Accept", "text/event-stream")
-                .headers(customHeaders)
-                .body(Json.stringify(buildPayload(chatRequest, parameters)))
-                .connectTimeoutMillis(connectTimeoutMillis)
-                .readTimeoutMillis(readTimeoutMillis)
-                .build();
+        HttpRequest request =
+                HttpRequest.builder()
+                        .url(baseUrl + "/chat/completions")
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "text/event-stream")
+                        .headers(customHeaders)
+                        .body(Json.stringify(buildPayload(chatRequest, parameters)))
+                        .connectTimeoutMillis(connectTimeoutMillis)
+                        .readTimeoutMillis(readTimeoutMillis)
+                        .build();
 
         if (apiKey != null && !apiKey.trim().isEmpty()) {
             request = copyWithHeader(request, "Authorization", "Bearer " + apiKey);
@@ -106,7 +109,8 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         }
     }
 
-    private static Map<String, Object> buildPayload(ChatRequest request, ChatRequestParameters parameters) {
+    private static Map<String, Object> buildPayload(
+            ChatRequest request, ChatRequestParameters parameters) {
         LinkedHashMap<String, Object> payload = new LinkedHashMap<String, Object>();
         if (parameters.customParameters() != null) {
             payload.putAll(parameters.customParameters());
@@ -160,7 +164,8 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
     private static void requireModelName(String modelName) {
         if (modelName == null || modelName.trim().isEmpty()) {
-            throw new IllegalStateException("OpenAI modelName must be configured on the model or request");
+            throw new IllegalStateException(
+                    "OpenAI modelName must be configured on the model or request");
         }
     }
 
@@ -190,8 +195,7 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         private int connectTimeoutMillis = 10_000;
         private int readTimeoutMillis = 60_000;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -224,7 +228,8 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         }
 
         public Builder stopSequences(List<String> stopSequences) {
-            this.stopSequences = stopSequences == null ? null : new ArrayList<String>(stopSequences);
+            this.stopSequences =
+                    stopSequences == null ? null : new ArrayList<String>(stopSequences);
             return this;
         }
 
@@ -239,7 +244,8 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         }
 
         public Builder httpTransport(HttpTransport httpTransport) {
-            if (httpTransport == null) throw new IllegalArgumentException("httpTransport must not be null");
+            if (httpTransport == null)
+                throw new IllegalArgumentException("httpTransport must not be null");
             this.httpTransport = httpTransport;
             return this;
         }
@@ -326,8 +332,11 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         public synchronized void onComplete() {
             if (terminated) return;
             if (!isSuccessfulStatus(statusCode)) {
-                fail(new LlmException("OpenAI streaming request failed with HTTP " + statusCode,
-                        statusCode, errorBody.toString()));
+                fail(
+                        new LlmException(
+                                "OpenAI streaming request failed with HTTP " + statusCode,
+                                statusCode,
+                                errorBody.toString()));
                 return;
             }
             complete();
@@ -395,8 +404,8 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         }
 
         /**
-         * DeepSeek 及多数 OpenAI-compatible 推理模型把思考内容放在
-         * {@code reasoning_content}，部分实现用 {@code thinking}，这里两者都兼容。
+         * DeepSeek 及多数 OpenAI-compatible 推理模型把思考内容放在 {@code reasoning_content}，部分实现用 {@code
+         * thinking}，这里两者都兼容。
          */
         private static String extractThinking(Map<String, Object> delta) {
             String thinking = Json.string(delta.get("reasoning_content"));
@@ -416,9 +425,10 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
                     continue;
                 }
                 boolean hasIndex = toolCallDelta.get("index") instanceof Number;
-                int index = hasIndex
-                        ? ((Number) toolCallDelta.get("index")).intValue()
-                        : fallbackToolCallIndex;
+                int index =
+                        hasIndex
+                                ? ((Number) toolCallDelta.get("index")).intValue()
+                                : fallbackToolCallIndex;
                 ToolCallAccumulator accumulator = toolCallAccumulators.get(index);
                 if (accumulator == null) {
                     accumulator = new ToolCallAccumulator();
@@ -458,23 +468,26 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             String thinkingText = thinking.length() == 0 ? null : thinking.toString();
             AiMessage aiMessage;
             if (toolExecutionRequests.isEmpty()) {
-                aiMessage = thinkingText == null
-                        ? AiMessage.from(text.toString())
-                        : AiMessage.builder()
-                                .text(text.toString())
-                                .thinking(thinkingText)
-                                .build();
+                aiMessage =
+                        thinkingText == null
+                                ? AiMessage.from(text.toString())
+                                : AiMessage.builder()
+                                        .text(text.toString())
+                                        .thinking(thinkingText)
+                                        .build();
             } else {
-                aiMessage = AiMessage.builder()
-                        .text(text.length() == 0 ? null : text.toString())
-                        .thinking(thinkingText)
-                        .toolExecutionRequests(toolExecutionRequests)
-                        .build();
+                aiMessage =
+                        AiMessage.builder()
+                                .text(text.length() == 0 ? null : text.toString())
+                                .thinking(thinkingText)
+                                .toolExecutionRequests(toolExecutionRequests)
+                                .build();
             }
-            ChatResponse.Builder response = ChatResponse.builder()
-                    .aiMessage(aiMessage)
-                    .finishReason(finishReason)
-                    .metadata(metadata);
+            ChatResponse.Builder response =
+                    ChatResponse.builder()
+                            .aiMessage(aiMessage)
+                            .finishReason(finishReason)
+                            .metadata(metadata);
             if (tokenUsage != null) {
                 response.tokenUsage(tokenUsage);
             }
@@ -488,11 +501,12 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
         private List<ToolExecutionRequest> buildToolExecutionRequests() {
             ArrayList<ToolExecutionRequest> requests = new ArrayList<ToolExecutionRequest>();
             for (ToolCallAccumulator accumulator : toolCallAccumulators.values()) {
-                requests.add(ToolExecutionRequest.builder()
-                        .id(accumulator.id)
-                        .name(accumulator.name.toString())
-                        .arguments(accumulator.arguments.toString())
-                        .build());
+                requests.add(
+                        ToolExecutionRequest.builder()
+                                .id(accumulator.id)
+                                .name(accumulator.name.toString())
+                                .arguments(accumulator.arguments.toString())
+                                .build());
             }
             return requests;
         }
@@ -511,9 +525,7 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             return statusCode >= 200 && statusCode < 300;
         }
 
-        /**
-         * Accumulates one streamed tool call, merging id/name/arguments fragments.
-         */
+        /** Accumulates one streamed tool call, merging id/name/arguments fragments. */
         private static final class ToolCallAccumulator {
             private String id;
             private final StringBuilder name = new StringBuilder();

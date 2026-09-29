@@ -17,7 +17,8 @@ public final class HttpRequest {
     private HttpRequest(Builder builder) {
         this.url = Objects.requireNonNull(builder.url, "url");
         this.method = builder.method;
-        this.headers = Collections.unmodifiableMap(new LinkedHashMap<String, String>(builder.headers));
+        this.headers =
+                Collections.unmodifiableMap(new LinkedHashMap<String, String>(builder.headers));
         this.body = builder.body;
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
@@ -59,8 +60,7 @@ public final class HttpRequest {
         private int connectTimeoutMillis = 10_000;
         private int readTimeoutMillis = 60_000;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder url(String url) {
             this.url = url;

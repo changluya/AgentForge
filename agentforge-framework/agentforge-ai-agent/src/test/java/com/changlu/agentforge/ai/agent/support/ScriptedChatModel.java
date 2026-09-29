@@ -24,19 +24,23 @@ public class ScriptedChatModel implements ChatModel {
     private String failureMessage = "mock model failure";
 
     public ScriptedChatModel enqueueText(String text) {
-        scripted.add(ChatResponse.builder()
-                .aiMessage(AiMessage.from(text))
-                .finishReason(FinishReason.STOP)
-                .build());
+        scripted.add(
+                ChatResponse.builder()
+                        .aiMessage(AiMessage.from(text))
+                        .finishReason(FinishReason.STOP)
+                        .build());
         return this;
     }
 
     public ScriptedChatModel enqueueToolCall(String id, String name, String arguments) {
-        scripted.add(ChatResponse.builder()
-                .aiMessage(AiMessage.from(Collections.singletonList(
-                        ToolExecutionRequest.from(id, name, arguments))))
-                .finishReason(FinishReason.TOOL_EXECUTION)
-                .build());
+        scripted.add(
+                ChatResponse.builder()
+                        .aiMessage(
+                                AiMessage.from(
+                                        Collections.singletonList(
+                                                ToolExecutionRequest.from(id, name, arguments))))
+                        .finishReason(FinishReason.TOOL_EXECUTION)
+                        .build());
         return this;
     }
 

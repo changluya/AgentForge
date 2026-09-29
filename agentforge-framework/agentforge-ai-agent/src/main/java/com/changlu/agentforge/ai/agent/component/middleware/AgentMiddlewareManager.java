@@ -82,9 +82,7 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 清空所有中间件
-     */
+    /** 清空所有中间件 */
     public void clear() {
         middlewares.clear();
         sortedMiddlewares.clear();
@@ -110,9 +108,7 @@ public class AgentMiddlewareManager {
         return Collections.unmodifiableList(streamingMiddlewares);
     }
 
-    /**
-     * 按注册顺序整理中间件，并挑出需要接收流式事件的中间件
-     */
+    /** 按注册顺序整理中间件，并挑出需要接收流式事件的中间件 */
     private void sortMiddlewares() {
         sortedMiddlewares.clear();
         streamingMiddlewares.clear();
@@ -120,7 +116,8 @@ public class AgentMiddlewareManager {
         for (IAgentMiddleware middleware : middlewares) {
             sortedMiddlewares.add(middleware);
             if (middleware instanceof IStreamingIAgentMiddleware) {
-                IStreamingIAgentMiddleware streamingMiddleware = (IStreamingIAgentMiddleware) middleware;
+                IStreamingIAgentMiddleware streamingMiddleware =
+                        (IStreamingIAgentMiddleware) middleware;
                 if (streamingMiddleware.handlesStreamingEvents()) {
                     streamingMiddlewares.add(streamingMiddleware);
                 }
@@ -151,9 +148,7 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发单轮loop开始回调
-     */
+    /** 触发单轮loop开始回调 */
     public void triggerBeforeLoop(int currentStep, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
@@ -169,16 +164,18 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发单轮loop结束回调
-     */
-    public void triggerAfterLoop(int currentStep, StepResult stepResult, AgentChatContext chatContext) {
+    /** 触发单轮loop结束回调 */
+    public void triggerAfterLoop(
+            int currentStep, StepResult stepResult, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }
 
-        log.fine("触发loop结束中间件，步骤: " + currentStep
-                + ", 状态: " + (stepResult != null ? stepResult.getState() : "null"));
+        log.fine(
+                "触发loop结束中间件，步骤: "
+                        + currentStep
+                        + ", 状态: "
+                        + (stepResult != null ? stepResult.getState() : "null"));
         for (IAgentMiddleware middleware : sortedMiddlewares) {
             try {
                 middleware.afterLoop(currentStep, stepResult, chatContext);
@@ -188,9 +185,7 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发单轮loop异常回调
-     */
+    /** 触发单轮loop异常回调 */
     public void triggerOnLoopError(int currentStep, Throwable error, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
@@ -211,13 +206,12 @@ public class AgentMiddlewareManager {
     /**
      * 触发流式响应片段事件
      *
-     * @param currentStep     当前步骤号
+     * @param currentStep 当前步骤号
      * @param partialResponse 流式响应片段
-     * @param chatContext     聊天上下文
+     * @param chatContext 聊天上下文
      */
-    public void triggerOnPartialResponse(int currentStep,
-                                         String partialResponse,
-                                         AgentChatContext chatContext) {
+    public void triggerOnPartialResponse(
+            int currentStep, String partialResponse, AgentChatContext chatContext) {
         if (streamingMiddlewares.isEmpty()) {
             return;
         }
@@ -235,13 +229,12 @@ public class AgentMiddlewareManager {
     /**
      * 触发流式思考内容片段事件
      *
-     * @param currentStep     当前步骤号
+     * @param currentStep 当前步骤号
      * @param partialThinking 流式思考内容片段
-     * @param chatContext     聊天上下文
+     * @param chatContext 聊天上下文
      */
-    public void triggerOnPartialThinking(int currentStep,
-                                         PartialThinking partialThinking,
-                                         AgentChatContext chatContext) {
+    public void triggerOnPartialThinking(
+            int currentStep, PartialThinking partialThinking, AgentChatContext chatContext) {
         if (streamingMiddlewares.isEmpty()) {
             return;
         }
@@ -259,13 +252,12 @@ public class AgentMiddlewareManager {
     /**
      * 触发中间响应事件（该轮模型返回了工具调用请求）
      *
-     * @param currentStep          当前步骤号
+     * @param currentStep 当前步骤号
      * @param intermediateResponse 中间响应（通常包含ToolExecutionRequest）
-     * @param chatContext          聊天上下文
+     * @param chatContext 聊天上下文
      */
-    public void triggerOnIntermediateResponse(int currentStep,
-                                              ChatResponse intermediateResponse,
-                                              AgentChatContext chatContext) {
+    public void triggerOnIntermediateResponse(
+            int currentStep, ChatResponse intermediateResponse, AgentChatContext chatContext) {
         if (streamingMiddlewares.isEmpty()) {
             return;
         }
@@ -274,8 +266,10 @@ public class AgentMiddlewareManager {
             try {
                 middleware.onIntermediateResponse(currentStep, intermediateResponse, chatContext);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "中间件 " + name(middleware)
-                        + " 执行 onIntermediateResponse 时出错", e);
+                log.log(
+                        Level.SEVERE,
+                        "中间件 " + name(middleware) + " 执行 onIntermediateResponse 时出错",
+                        e);
                 // 继续执行其他中间件，不中断流程
             }
         }
@@ -283,10 +277,9 @@ public class AgentMiddlewareManager {
 
     // ===================== 工具执行相关方法 ===================== //
 
-    /**
-     * 触发工具执行前的中间件（单个工具）
-     */
-    public void triggerBeforeToolExecution(ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
+    /** 触发工具执行前的中间件（单个工具） */
+    public void triggerBeforeToolExecution(
+            ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }
@@ -301,12 +294,9 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发工具执行后的中间件（单个工具），结果会沿中间件链依次传递
-     */
-    public String triggerAfterToolExecution(ToolExecutionRequest toolRequest,
-                                            String toolResult,
-                                            AgentChatContext chatContext) {
+    /** 触发工具执行后的中间件（单个工具），结果会沿中间件链依次传递 */
+    public String triggerAfterToolExecution(
+            ToolExecutionRequest toolRequest, String toolResult, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return toolResult;
         }
@@ -324,12 +314,9 @@ public class AgentMiddlewareManager {
         return res;
     }
 
-    /**
-     * 触发工具执行异常回调
-     */
-    public void triggerOnToolExecutionError(ToolExecutionRequest toolRequest,
-                                            Throwable error,
-                                            AgentChatContext chatContext) {
+    /** 触发工具执行异常回调 */
+    public void triggerOnToolExecutionError(
+            ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }
@@ -338,7 +325,10 @@ public class AgentMiddlewareManager {
             try {
                 middleware.onToolExecutionError(toolRequest, error, chatContext);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "中间件 " + name(middleware) + " 执行 onToolExecutionError 时出错", e);
+                log.log(
+                        Level.SEVERE,
+                        "中间件 " + name(middleware) + " 执行 onToolExecutionError 时出错",
+                        e);
             }
         }
     }
@@ -350,9 +340,8 @@ public class AgentMiddlewareManager {
      *
      * @return 处理后的ChatRequest，如果某个中间件返回null则中断后续调用
      */
-    public ChatRequest triggerBeforeModelCall(int currentStep,
-                                              ChatRequest chatRequest,
-                                              AgentChatContext chatContext) {
+    public ChatRequest triggerBeforeModelCall(
+            int currentStep, ChatRequest chatRequest, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return chatRequest;
         }
@@ -362,7 +351,8 @@ public class AgentMiddlewareManager {
 
         for (IAgentMiddleware middleware : sortedMiddlewares) {
             try {
-                processedRequest = middleware.beforeModelCall(currentStep, processedRequest, chatContext);
+                processedRequest =
+                        middleware.beforeModelCall(currentStep, processedRequest, chatContext);
                 if (processedRequest == null) {
                     log.info("中间件 " + name(middleware) + " 中断了模型调用");
                     // 中断调用
@@ -377,13 +367,12 @@ public class AgentMiddlewareManager {
         return processedRequest;
     }
 
-    /**
-     * 触发模型调用后的中间件
-     */
-    public ChatResponse triggerAfterModelCall(int currentStep,
-                                              ChatRequest chatRequest,
-                                              ChatResponse chatResponse,
-                                              AgentChatContext chatContext) {
+    /** 触发模型调用后的中间件 */
+    public ChatResponse triggerAfterModelCall(
+            int currentStep,
+            ChatRequest chatRequest,
+            ChatResponse chatResponse,
+            AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty() || chatResponse == null) {
             return chatResponse;
         }
@@ -393,8 +382,9 @@ public class AgentMiddlewareManager {
 
         for (IAgentMiddleware middleware : sortedMiddlewares) {
             try {
-                processedResponse = middleware.afterModelCall(currentStep, chatRequest,
-                        processedResponse, chatContext);
+                processedResponse =
+                        middleware.afterModelCall(
+                                currentStep, chatRequest, processedResponse, chatContext);
                 if (processedResponse == null) {
                     log.fine("中间件 " + name(middleware) + " 返回null响应，将使用原始响应");
                     return chatResponse;
@@ -408,13 +398,12 @@ public class AgentMiddlewareManager {
         return processedResponse;
     }
 
-    /**
-     * 触发模型调用错误的中间件
-     */
-    public void triggerOnModelCallError(int currentStep,
-                                        ChatRequest chatRequest,
-                                        Throwable error,
-                                        AgentChatContext chatContext) {
+    /** 触发模型调用错误的中间件 */
+    public void triggerOnModelCallError(
+            int currentStep,
+            ChatRequest chatRequest,
+            Throwable error,
+            AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }
@@ -429,26 +418,30 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发AI调用重试的中间件
-     */
-    public void triggerOnAiCallRetry(int currentStep,
-                                     ChatRequest chatRequest,
-                                     AgentChatContext chatContext,
-                                     int retryCount,
-                                     int maxRetries,
-                                     long delayMs,
-                                     Exception lastException) {
+    /** 触发AI调用重试的中间件 */
+    public void triggerOnAiCallRetry(
+            int currentStep,
+            ChatRequest chatRequest,
+            AgentChatContext chatContext,
+            int retryCount,
+            int maxRetries,
+            long delayMs,
+            Exception lastException) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }
 
-        log.fine("触发AI调用重试的中间件，步骤: " + currentStep
-                + ", 重试次数: " + retryCount + "/" + maxRetries);
+        log.fine("触发AI调用重试的中间件，步骤: " + currentStep + ", 重试次数: " + retryCount + "/" + maxRetries);
         for (IAgentMiddleware middleware : sortedMiddlewares) {
             try {
-                middleware.onAiCallRetry(currentStep, chatRequest, chatContext,
-                        retryCount, maxRetries, delayMs, lastException);
+                middleware.onAiCallRetry(
+                        currentStep,
+                        chatRequest,
+                        chatContext,
+                        retryCount,
+                        maxRetries,
+                        delayMs,
+                        lastException);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "中间件 " + name(middleware) + " 执行 onAiCallRetry 时出错", e);
             }
@@ -461,7 +454,7 @@ public class AgentMiddlewareManager {
      * 触发Agent正常停止的中间件
      *
      * @param currentStep 当前步骤号
-     * @param res         停止结果（由上层构建）
+     * @param res 停止结果（由上层构建）
      * @param chatContext 聊天上下文
      */
     public void triggerOnStop(int currentStep, StopResult res, AgentChatContext chatContext) {
@@ -469,8 +462,11 @@ public class AgentMiddlewareManager {
             return;
         }
 
-        log.fine("触发Agent停止的中间件，步骤: " + currentStep
-                + ", 状态: " + (res != null ? res.getStopResultState() : "null"));
+        log.fine(
+                "触发Agent停止的中间件，步骤: "
+                        + currentStep
+                        + ", 状态: "
+                        + (res != null ? res.getStopResultState() : "null"));
         for (IAgentMiddleware middleware : sortedMiddlewares) {
             try {
                 middleware.onStop(currentStep, res, chatContext);
@@ -480,10 +476,9 @@ public class AgentMiddlewareManager {
         }
     }
 
-    /**
-     * 触发Agent错误停止的中间件
-     */
-    public void triggerOnStopWithError(int currentStep, Throwable error, AgentChatContext chatContext) {
+    /** 触发Agent错误停止的中间件 */
+    public void triggerOnStopWithError(
+            int currentStep, Throwable error, AgentChatContext chatContext) {
         if (sortedMiddlewares.isEmpty()) {
             return;
         }

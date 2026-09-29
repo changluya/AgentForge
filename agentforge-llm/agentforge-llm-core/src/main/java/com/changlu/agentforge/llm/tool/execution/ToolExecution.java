@@ -1,15 +1,14 @@
 package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Represents a single tool execution: the {@link ToolExecutionRequest} and the resulting
- * {@link ToolExecutionResult}, plus optional timing and the memory-id the execution ran under.
- *
- * 
+ * Represents a single tool execution: the {@link ToolExecutionRequest} and the resulting {@link
+ * ToolExecutionResult}, plus optional timing and the memory-id the execution ran under.
  *
  * @author changlu
  * @since 2026-09-13
@@ -91,10 +90,14 @@ public final class ToolExecution {
     @Override
     public String toString() {
         return "ToolExecution{"
-                + "request=" + request
-                + ", result=" + result
-                + ", startTime=" + startTime
-                + ", finishTime=" + finishTime
+                + "request="
+                + request
+                + ", result="
+                + result
+                + ", startTime="
+                + startTime
+                + ", finishTime="
+                + finishTime
                 + '}';
     }
 
@@ -110,8 +113,7 @@ public final class ToolExecution {
         private LocalDateTime finishTime;
         private Object memoryId;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder request(ToolExecutionRequest request) {
             this.request = request;

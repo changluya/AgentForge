@@ -1,7 +1,7 @@
 package com.changlu.agentforge.ai.agent.tool;
 
-import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
 import com.changlu.agentforge.ai.agent.component.middleware.AgentMiddlewareManager;
+import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionResultMessage;
 import com.changlu.agentforge.llm.tool.ToolExecutor;
@@ -33,34 +33,36 @@ public class AgentToolExecutor {
     /**
      * 顺序执行本轮模型请求的全部工具
      *
-     * @param currentStep  当前步骤
+     * @param currentStep 当前步骤
      * @param toolRequests 模型返回的工具调用请求
-     * @param chatContext  对话上下文
-     * @param listener     每个工具执行完成后的回调，可为null
+     * @param chatContext 对话上下文
+     * @param listener 每个工具执行完成后的回调，可为null
      * @return 工具执行结果消息列表
      */
-    public List<ToolExecutionResultMessage> execute(int currentStep,
-                                                   List<ToolExecutionRequest> toolRequests,
-                                                   AgentChatContext chatContext,
-                                                   Consumer<ToolExecution> listener) {
+    public List<ToolExecutionResultMessage> execute(
+            int currentStep,
+            List<ToolExecutionRequest> toolRequests,
+            AgentChatContext chatContext,
+            Consumer<ToolExecution> listener) {
         return execute(currentStep, toolRequests, chatContext, listener, null);
     }
 
     /**
      * 顺序执行本轮模型请求的全部工具，并在每个工具前后触发中间件回调
      *
-     * @param currentStep       当前步骤
-     * @param toolRequests      模型返回的工具调用请求
-     * @param chatContext       对话上下文
-     * @param listener          每个工具执行完成后的回调，可为null
+     * @param currentStep 当前步骤
+     * @param toolRequests 模型返回的工具调用请求
+     * @param chatContext 对话上下文
+     * @param listener 每个工具执行完成后的回调，可为null
      * @param middlewareManager 中间件管理器，可为null
      * @return 工具执行结果消息列表
      */
-    public List<ToolExecutionResultMessage> execute(int currentStep,
-                                                   List<ToolExecutionRequest> toolRequests,
-                                                   AgentChatContext chatContext,
-                                                   Consumer<ToolExecution> listener,
-                                                   AgentMiddlewareManager middlewareManager) {
+    public List<ToolExecutionResultMessage> execute(
+            int currentStep,
+            List<ToolExecutionRequest> toolRequests,
+            AgentChatContext chatContext,
+            Consumer<ToolExecution> listener,
+            AgentMiddlewareManager middlewareManager) {
         List<ToolExecutionResultMessage> toolMessages = new ArrayList<ToolExecutionResultMessage>();
         if (toolRequests == null || toolRequests.isEmpty()) {
             return toolMessages;
@@ -74,7 +76,8 @@ public class AgentToolExecutor {
             }
 
             LocalDateTime startTime = LocalDateTime.now();
-            ToolExecutionResult result = executeTool(executorMap, toolRequest, chatContext, middlewareManager);
+            ToolExecutionResult result =
+                    executeTool(executorMap, toolRequest, chatContext, middlewareManager);
             LocalDateTime finishTime = LocalDateTime.now();
 
             String text = result.text();
@@ -86,32 +89,39 @@ public class AgentToolExecutor {
                 text = EMPTY_RESULT_TEXT;
             }
 
-            ToolExecutionResultMessage toolMessage = ToolExecutionResultMessage.builder()
-                    .id(toolRequest.id())
-                    .toolName(toolRequest.name())
-                    .text(text)
-                    .isError(result.isError())
-                    .build();
+            ToolExecutionResultMessage toolMessage =
+                    ToolExecutionResultMessage.builder()
+                            .id(toolRequest.id())
+                            .toolName(toolRequest.name())
+                            .text(text)
+                            .isError(result.isError())
+                            .build();
             chatContext.getChatMemory().add(toolMessage);
             toolMessages.add(toolMessage);
 
             if (listener != null) {
-                listener.accept(ToolExecution.builder()
-                        .request(toolRequest)
-                        .result(ToolExecutionResult.builder().isError(result.isError()).text(text).build())
-                        .startTime(startTime)
-                        .finishTime(finishTime)
-                        .memoryId(chatContext.getMemoryId())
-                        .build());
+                listener.accept(
+                        ToolExecution.builder()
+                                .request(toolRequest)
+                                .result(
+                                        ToolExecutionResult.builder()
+                                                .isError(result.isError())
+                                                .text(text)
+                                                .build())
+                                .startTime(startTime)
+                                .finishTime(finishTime)
+                                .memoryId(chatContext.getMemoryId())
+                                .build());
             }
         }
         return toolMessages;
     }
 
-    private ToolExecutionResult executeTool(Map<String, ToolExecutor> executorMap,
-                                            ToolExecutionRequest toolRequest,
-                                            AgentChatContext chatContext,
-                                            AgentMiddlewareManager middlewareManager) {
+    private ToolExecutionResult executeTool(
+            Map<String, ToolExecutor> executorMap,
+            ToolExecutionRequest toolRequest,
+            AgentChatContext chatContext,
+            AgentMiddlewareManager middlewareManager) {
         ToolExecutor toolExecutor = executorMap.get(toolRequest.name());
         if (toolExecutor == null) {
             return ToolExecutionResult.failure("未找到工具执行器: " + toolRequest.name(), null);

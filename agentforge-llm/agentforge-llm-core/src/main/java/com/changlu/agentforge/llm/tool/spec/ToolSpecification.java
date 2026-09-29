@@ -8,10 +8,10 @@ import java.util.Objects;
 /**
  * Describes a tool (function) that the model is allowed to call.
  *
- * 
- * an optional {@link ToolParameters} JSON schema and an optional {@code strict} flag.</p>
+ * <p>an optional {@link ToolParameters} JSON schema and an optional {@code strict} flag.
  *
- * <p>Provider adapters map this to their own wire format:</p>
+ * <p>Provider adapters map this to their own wire format:
+ *
  * <pre>
  * OpenAI     : {"type":"function","function":{"name","description","parameters","strict"}}
  * Anthropic  : {"name","description","input_schema"}
@@ -55,7 +55,8 @@ public final class ToolSpecification {
     }
 
     /**
-     * @return true when the provider should enforce strict schema validation, or {@code null} when unset
+     * @return true when the provider should enforce strict schema validation, or {@code null} when
+     *     unset
      */
     public Boolean strict() {
         return strict;
@@ -92,11 +93,18 @@ public final class ToolSpecification {
     @Override
     public String toString() {
         return "ToolSpecification{"
-                + "name='" + name + '\''
-                + ", description='" + description + '\''
-                + ", parameters=" + parameters
-                + ", strict=" + strict
-                + ", metadata=" + metadata
+                + "name='"
+                + name
+                + '\''
+                + ", description='"
+                + description
+                + '\''
+                + ", parameters="
+                + parameters
+                + ", strict="
+                + strict
+                + ", metadata="
+                + metadata
                 + '}';
     }
 
@@ -113,7 +121,8 @@ public final class ToolSpecification {
                 .metadata(metadata);
     }
 
-    public static ToolSpecification from(String name, String description, ToolParameters parameters) {
+    public static ToolSpecification from(
+            String name, String description, ToolParameters parameters) {
         return builder().name(name).description(description).parameters(parameters).build();
     }
 
@@ -132,8 +141,7 @@ public final class ToolSpecification {
         private Boolean strict;
         private final Map<String, Object> metadata = new LinkedHashMap<String, Object>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder name(String name) {
             this.name = name;

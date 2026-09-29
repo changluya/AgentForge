@@ -8,9 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Immutable provider-neutral chat request.
- */
+/** Immutable provider-neutral chat request. */
 public final class ChatRequest {
 
     private final List<ChatMessage> messages;
@@ -40,8 +38,7 @@ public final class ChatRequest {
         private final List<ChatMessage> messages = new ArrayList<ChatMessage>();
         private ChatRequestParameters parameters;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder message(ChatMessage message) {
             this.messages.add(Objects.requireNonNull(message, "message"));

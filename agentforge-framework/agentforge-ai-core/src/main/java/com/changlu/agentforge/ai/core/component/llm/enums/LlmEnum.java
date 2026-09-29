@@ -12,7 +12,8 @@ import com.changlu.agentforge.ai.core.component.llm.models.OpenAiModel;
  */
 public enum LlmEnum {
 
-    // OpenAI Chat Completions 协议，同时兼容 OpenAI-compatible 服务（DashScope / Ollama / Xinference 等，配置对应 url 即可）
+    // OpenAI Chat Completions 协议，同时兼容 OpenAI-compatible 服务（DashScope / Ollama / Xinference 等，配置对应
+    // url 即可）
     OPENAI(1, "OpenAI", OpenAiModel.class),
     ANTHROPIC(2, "Anthropic", AnthropicModel.class);
 
@@ -38,9 +39,7 @@ public enum LlmEnum {
         return modelClazz;
     }
 
-    /**
-     * 根据 code 获取枚举
-     */
+    /** 根据 code 获取枚举 */
     public static LlmEnum of(Integer code) {
         for (LlmEnum e : values()) {
             if (code != null && e.code == code) {

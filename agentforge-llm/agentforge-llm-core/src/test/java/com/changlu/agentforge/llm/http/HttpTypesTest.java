@@ -11,11 +11,12 @@ public class HttpTypesTest {
 
     @Test
     public void shouldBuildImmutableHttpRequestWithDefaults() {
-        HttpRequest request = HttpRequest.builder()
-                .url("https://example.test")
-                .header("X-Test", "value")
-                .body("{}")
-                .build();
+        HttpRequest request =
+                HttpRequest.builder()
+                        .url("https://example.test")
+                        .header("X-Test", "value")
+                        .body("{}")
+                        .build();
 
         assertEquals("https://example.test", request.url());
         assertEquals("POST", request.method());
@@ -23,8 +24,8 @@ public class HttpTypesTest {
         assertEquals("{}", request.body());
         assertEquals(10000, request.connectTimeoutMillis());
         assertEquals(60000, request.readTimeoutMillis());
-        assertThrows(UnsupportedOperationException.class,
-                () -> request.headers().put("X-New", "no"));
+        assertThrows(
+                UnsupportedOperationException.class, () -> request.headers().put("X-New", "no"));
     }
 
     @Test

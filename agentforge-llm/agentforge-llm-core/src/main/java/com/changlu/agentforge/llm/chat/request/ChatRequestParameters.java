@@ -8,12 +8,11 @@ import java.util.Map;
 /**
  * Common request parameters understood by chat model providers.
  *
- * <p>Provider implementations may interpret unsupported fields differently.
- * Provider-specific options can be passed through {@link #customParameters()}.</p>
+ * <p>Provider implementations may interpret unsupported fields differently. Provider-specific
+ * options can be passed through {@link #customParameters()}.
  *
- * <p>Tool calling is described by {@link #tools()} plus {@link #toolChoice()}.
- * Both accessors have default implementations so existing parameter
- * implementations remain source compatible.</p>
+ * <p>Tool calling is described by {@link #tools()} plus {@link #toolChoice()}. Both accessors have
+ * default implementations so existing parameter implementations remain source compatible.
  */
 public interface ChatRequestParameters {
 

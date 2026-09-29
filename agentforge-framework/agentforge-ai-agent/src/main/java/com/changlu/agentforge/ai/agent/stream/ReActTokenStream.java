@@ -1,8 +1,8 @@
 package com.changlu.agentforge.ai.agent.stream;
 
 import com.changlu.agentforge.ai.agent.component.middleware.AgentMiddlewareManager;
-import com.changlu.agentforge.ai.agent.domain.AgentSettings;
 import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
+import com.changlu.agentforge.ai.agent.domain.AgentSettings;
 import com.changlu.agentforge.ai.agent.domain.StopResult;
 import com.changlu.agentforge.ai.agent.exception.AgentException;
 import com.changlu.agentforge.ai.agent.exception.CancelException;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 /**
  * @description ReAct流式执行：每一轮用StreamingChatModel发起请求，遇到工具调用则执行act并自动进入下一轮，
- * 直到模型给出最终回答或达到步长上限；执行过程同步触发中间件回调
+ *     直到模型给出最终回答或达到步长上限；执行过程同步触发中间件回调
  * @author changlu
  * @date 2026/9/16
  */
@@ -57,31 +57,41 @@ public class ReActTokenStream implements TokenStream {
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
-    public ReActTokenStream(AgentChatContext chatContext,
-                            StreamingChatModel streamingChatModel,
-                            AgentToolExecutor toolExecutor,
-                            List<ToolSpecification> toolSpecifications,
-                            AgentSettings agentSettings,
-                            Map<Object, AtomicBoolean> cancelFlags) {
-        this(chatContext, streamingChatModel, toolExecutor, toolSpecifications,
-                agentSettings, cancelFlags, null);
+    public ReActTokenStream(
+            AgentChatContext chatContext,
+            StreamingChatModel streamingChatModel,
+            AgentToolExecutor toolExecutor,
+            List<ToolSpecification> toolSpecifications,
+            AgentSettings agentSettings,
+            Map<Object, AtomicBoolean> cancelFlags) {
+        this(
+                chatContext,
+                streamingChatModel,
+                toolExecutor,
+                toolSpecifications,
+                agentSettings,
+                cancelFlags,
+                null);
     }
 
-    public ReActTokenStream(AgentChatContext chatContext,
-                            StreamingChatModel streamingChatModel,
-                            AgentToolExecutor toolExecutor,
-                            List<ToolSpecification> toolSpecifications,
-                            AgentSettings agentSettings,
-                            Map<Object, AtomicBoolean> cancelFlags,
-                            AgentMiddlewareManager middlewareManager) {
+    public ReActTokenStream(
+            AgentChatContext chatContext,
+            StreamingChatModel streamingChatModel,
+            AgentToolExecutor toolExecutor,
+            List<ToolSpecification> toolSpecifications,
+            AgentSettings agentSettings,
+            Map<Object, AtomicBoolean> cancelFlags,
+            AgentMiddlewareManager middlewareManager) {
         if (streamingChatModel == null) {
             throw new AgentException("streamingChatModel is null, need set");
         }
         this.chatContext = chatContext;
         this.streamingChatModel = streamingChatModel;
         this.toolExecutor = toolExecutor;
-        this.toolSpecifications = toolSpecifications == null
-                ? new ArrayList<ToolSpecification>() : toolSpecifications;
+        this.toolSpecifications =
+                toolSpecifications == null
+                        ? new ArrayList<ToolSpecification>()
+                        : toolSpecifications;
         this.agentSettings = agentSettings;
         this.cancelFlags = cancelFlags;
         this.middlewareManager = middlewareManager;
@@ -148,8 +158,9 @@ public class ReActTokenStream implements TokenStream {
 
     private void chat(final int currentStep) {
         if (isCancelled()) {
-            handleCancel(currentStep, String.format("会话：%s 在第%d步被取消",
-                    chatContext.getMemoryId(), currentStep));
+            handleCancel(
+                    currentStep,
+                    String.format("会话：%s 在第%d步被取消", chatContext.getMemoryId(), currentStep));
             return;
         }
         int maxSteps = agentSettings.getMaxSteps();
@@ -162,19 +173,23 @@ public class ReActTokenStream implements TokenStream {
         if (!toolSpecifications.isEmpty()) {
             parameters.tools(new ArrayList<ToolSpecification>(toolSpecifications));
         }
-        ChatRequest chatRequest = ChatRequest.builder()
-                .messages(chatContext.getChatMemory().messages())
-                .parameters(parameters.build())
-                .build();
+        ChatRequest chatRequest =
+                ChatRequest.builder()
+                        .messages(chatContext.getChatMemory().messages())
+                        .parameters(parameters.build())
+                        .build();
 
         ChatRequest processedRequest = chatRequest;
         if (middlewareManager != null) {
             middlewareManager.triggerBeforeLoop(currentStep, chatContext);
-            processedRequest = middlewareManager.triggerBeforeModelCall(
-                    currentStep, chatRequest, chatContext);
+            processedRequest =
+                    middlewareManager.triggerBeforeModelCall(currentStep, chatRequest, chatContext);
             if (processedRequest == null) {
                 // 中间件中断本轮模型调用，按取消态收敛后结束
-                notifyStop(currentStep, StopResultState.CANCEL, MODEL_CALL_INTERRUPTED,
+                notifyStop(
+                        currentStep,
+                        StopResultState.CANCEL,
+                        MODEL_CALL_INTERRUPTED,
                         new AgentException(MODEL_CALL_INTERRUPTED));
                 notifyError(new AgentException(MODEL_CALL_INTERRUPTED));
                 return;
@@ -183,71 +198,81 @@ public class ReActTokenStream implements TokenStream {
         currentChatRequest = processedRequest;
 
         final ChatRequest callRequest = processedRequest;
-        streamingChatModel.chat(callRequest, new StreamingChatResponseHandler() {
-            @Override
-            public void onPartialResponse(String partialResponse) {
-                if (middlewareManager != null) {
-                    middlewareManager.triggerOnPartialResponse(currentStep, partialResponse, chatContext);
-                }
-                if (partialResponseHandler != null) {
-                    partialResponseHandler.accept(partialResponse);
-                }
-            }
+        streamingChatModel.chat(
+                callRequest,
+                new StreamingChatResponseHandler() {
+                    @Override
+                    public void onPartialResponse(String partialResponse) {
+                        if (middlewareManager != null) {
+                            middlewareManager.triggerOnPartialResponse(
+                                    currentStep, partialResponse, chatContext);
+                        }
+                        if (partialResponseHandler != null) {
+                            partialResponseHandler.accept(partialResponse);
+                        }
+                    }
 
-            @Override
-            public void onPartialThinking(String partialThinking) {
-                PartialThinking thinking = new PartialThinking(partialThinking);
-                if (middlewareManager != null) {
-                    middlewareManager.triggerOnPartialThinking(currentStep, thinking, chatContext);
-                }
-                if (partialThinkingHandler != null) {
-                    partialThinkingHandler.accept(thinking);
-                }
-            }
+                    @Override
+                    public void onPartialThinking(String partialThinking) {
+                        PartialThinking thinking = new PartialThinking(partialThinking);
+                        if (middlewareManager != null) {
+                            middlewareManager.triggerOnPartialThinking(
+                                    currentStep, thinking, chatContext);
+                        }
+                        if (partialThinkingHandler != null) {
+                            partialThinkingHandler.accept(thinking);
+                        }
+                    }
 
-            @Override
-            public void onCompleteResponse(ChatResponse completeResponse) {
-                onRoundComplete(currentStep, completeResponse);
-            }
+                    @Override
+                    public void onCompleteResponse(ChatResponse completeResponse) {
+                        onRoundComplete(currentStep, completeResponse);
+                    }
 
-            @Override
-            public void onError(Throwable error) {
-                handleError(currentStep, error);
-            }
-        });
+                    @Override
+                    public void onError(Throwable error) {
+                        handleError(currentStep, error);
+                    }
+                });
     }
 
     private void onRoundComplete(int currentStep, ChatResponse response) {
         if (middlewareManager != null) {
             // 触发模型调用后的中间件
-            response = middlewareManager.triggerAfterModelCall(
-                    currentStep, currentChatRequest, response, chatContext);
+            response =
+                    middlewareManager.triggerAfterModelCall(
+                            currentStep, currentChatRequest, response, chatContext);
         }
 
         AiMessage aiMessage = response.aiMessage();
         chatContext.getChatMemory().add(aiMessage);
 
         if (isCancelled()) {
-            handleCancel(currentStep, String.format("会话：%s 流式执行被取消",
-                    chatContext.getMemoryId()));
+            handleCancel(currentStep, String.format("会话：%s 流式执行被取消", chatContext.getMemoryId()));
             return;
         }
 
         // check是否还需要tools调用情况
         if (!aiMessage.hasToolExecutionRequests()) {
             if (middlewareManager != null) {
-                middlewareManager.triggerAfterLoop(currentStep,
-                        StepResult.toStop(aiMessage.text()), chatContext);
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.NORMAL, aiMessage.text()), chatContext);
+                middlewareManager.triggerAfterLoop(
+                        currentStep, StepResult.toStop(aiMessage.text()), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep,
+                        stopResult(StopResultState.NORMAL, aiMessage.text()),
+                        chatContext);
             }
             handleComplete(response);
             return;
         }
 
         // act：执行本轮工具并把结果写回记忆，随后自动进入下一轮think
-        toolExecutor.execute(currentStep, aiMessage.toolExecutionRequests(), chatContext,
-                toolExecutedHandler, middlewareManager);
+        toolExecutor.execute(
+                currentStep,
+                aiMessage.toolExecutionRequests(),
+                chatContext,
+                toolExecutedHandler,
+                middlewareManager);
         if (middlewareManager != null) {
             // 中间响应：本轮的模型响应携带工具调用请求，工具执行完成后在下一轮思考前触发
             middlewareManager.triggerOnIntermediateResponse(currentStep, response, chatContext);
@@ -280,11 +305,15 @@ public class ReActTokenStream implements TokenStream {
         if (middlewareManager != null) {
             middlewareManager.triggerOnLoopError(currentStep, error, chatContext);
             if (isMaxStepsError(error)) {
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.MAX_STEPS, error.getMessage()), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep,
+                        stopResult(StopResultState.MAX_STEPS, error.getMessage()),
+                        chatContext);
             } else if (error instanceof CancelException) {
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.CANCEL, error.getMessage()), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep,
+                        stopResult(StopResultState.CANCEL, error.getMessage()),
+                        chatContext);
             } else {
                 middlewareManager.triggerOnStopWithError(currentStep, error, chatContext);
             }
@@ -293,7 +322,8 @@ public class ReActTokenStream implements TokenStream {
     }
 
     // onLoopError + onStop 成对触发
-    private void notifyStop(int currentStep, StopResultState state, String runRes, Throwable error) {
+    private void notifyStop(
+            int currentStep, StopResultState state, String runRes, Throwable error) {
         if (middlewareManager == null) {
             return;
         }
@@ -325,10 +355,7 @@ public class ReActTokenStream implements TokenStream {
     }
 
     private static StopResult stopResult(StopResultState state, String runRes) {
-        return StopResult.builder()
-                .stopResultState(state)
-                .runRes(runRes)
-                .build();
+        return StopResult.builder().stopResultState(state).runRes(runRes).build();
     }
 
     private boolean isCancelled() {

@@ -3,13 +3,12 @@ package com.changlu.agentforge.llm.tool.error;
 /**
  * Handler for {@link ToolExecutionException}s thrown while executing a tool.
  *
- * 
+ * <p>There are two ways to handle an error:
  *
- * <p>There are two ways to handle an error:</p>
  * <ol>
- *   <li>Return {@link ToolErrorHandlerResult#text(String)} — the message is sent back to the LLM
- *       as the tool result.</li>
- *   <li>Throw an exception — this stops the tool loop and propagates to the caller.</li>
+ *   <li>Return {@link ToolErrorHandlerResult#text(String)} — the message is sent back to the LLM as
+ *       the tool result.
+ *   <li>Throw an exception — this stops the tool loop and propagates to the caller.
  * </ol>
  *
  * @author changlu

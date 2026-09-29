@@ -6,7 +6,8 @@ package com.changlu.agentforge.ai.agent.step;
  * @date 2026/9/16
  */
 public enum StepState {
-
-    RUNNING, FINISHED, STOP, CANCEL;
-
+    RUNNING,
+    FINISHED,
+    STOP,
+    CANCEL;
 }

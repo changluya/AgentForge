@@ -8,9 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation for a parameter of a {@link Tool}-annotated method.
  *
- * 
- * parameter name the LLM will see (useful when javac is not run with {@code -parameters},
- * otherwise reflection returns {@code arg0}, {@code arg1}, ...) and provide a description.</p>
+ * <p>parameter name the LLM will see (useful when javac is not run with {@code -parameters},
+ * otherwise reflection returns {@code arg0}, {@code arg1}, ...) and provide a description.
  *
  * <pre>{@code
  * @Tool

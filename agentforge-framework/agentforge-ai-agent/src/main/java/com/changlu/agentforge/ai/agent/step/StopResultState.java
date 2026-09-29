@@ -6,7 +6,6 @@ package com.changlu.agentforge.ai.agent.step;
  * @date 2026/9/16
  */
 public enum StopResultState {
-
     NORMAL(0, "normal stop"),
 
     CANCEL(1, "cancel stop"),

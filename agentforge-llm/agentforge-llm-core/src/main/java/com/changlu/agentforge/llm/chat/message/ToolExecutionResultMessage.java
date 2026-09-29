@@ -8,10 +8,10 @@ import java.util.Objects;
 /**
  * Represents the result returned by a tool execution.
  *
- * <p>This first AgentForge implementation keeps tool results text based so it fits
- * the current LLM core without introducing the multimodal Content hierarchy yet.
- * The API already carries the important LangChain4j-style metadata needed by later
- * tool-calling work: tool call id, tool name, error state and arbitrary attributes.</p>
+ * <p>This first AgentForge implementation keeps tool results text based so it fits the current LLM
+ * core without introducing the multimodal Content hierarchy yet. The API already carries the
+ * important LangChain4j-style metadata needed by later tool-calling work: tool call id, tool name,
+ * error state and arbitrary attributes.
  *
  * @author changlu
  * @since 2026-09-13
@@ -90,11 +90,19 @@ public final class ToolExecutionResultMessage implements ChatMessage {
     @Override
     public String toString() {
         return "ToolExecutionResultMessage{"
-                + "id='" + id + '\''
-                + ", toolName='" + toolName + '\''
-                + ", text='" + text + '\''
-                + ", isError=" + isError
-                + ", attributes=" + attributes
+                + "id='"
+                + id
+                + '\''
+                + ", toolName='"
+                + toolName
+                + '\''
+                + ", text='"
+                + text
+                + '\''
+                + ", isError="
+                + isError
+                + ", attributes="
+                + attributes
                 + '}';
     }
 
@@ -111,7 +119,8 @@ public final class ToolExecutionResultMessage implements ChatMessage {
                 .attributes(attributes);
     }
 
-    public static ToolExecutionResultMessage from(String id, String toolName, String toolExecutionResult) {
+    public static ToolExecutionResultMessage from(
+            String id, String toolName, String toolExecutionResult) {
         return new ToolExecutionResultMessage(id, toolName, toolExecutionResult);
     }
 
@@ -135,8 +144,7 @@ public final class ToolExecutionResultMessage implements ChatMessage {
         private Boolean isError;
         private Map<String, Object> attributes;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder id(String id) {
             this.id = id;

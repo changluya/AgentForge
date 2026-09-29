@@ -7,7 +7,6 @@ package com.changlu.agentforge.llm.chat.message;
  * @since 2026-09-13
  */
 public enum ChatMessageType {
-
     SYSTEM(SystemMessage.class),
     USER(UserMessage.class),
     AI(AiMessage.class),

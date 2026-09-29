@@ -1,11 +1,12 @@
 package com.changlu.agentforge.llm.openai;
 
-import com.changlu.agentforge.llm.tool.Tool;
-import com.changlu.agentforge.llm.tool.P;
-import com.changlu.agentforge.llm.tool.execution.ToolService;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
 import com.changlu.agentforge.llm.chat.message.UserMessage;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
+import com.changlu.agentforge.llm.tool.P;
+import com.changlu.agentforge.llm.tool.Tool;
+import com.changlu.agentforge.llm.tool.execution.ToolService;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,12 +25,12 @@ import static org.junit.Assert.assertTrue;
  *
  * <p>It is skipped by default unless a {@code live-endpoint.properties} file (Git-ignored, see the
  * {@code .gitignore} entry and {@code live-endpoint.example.properties} template) is present with a
- * non-blank {@code baseUrl}/{@code modelName}/{@code apiKey}. Credentials are therefore never hard-coded
- * in the test source.</p>
+ * non-blank {@code baseUrl}/{@code modelName}/{@code apiKey}. Credentials are therefore never
+ * hard-coded in the test source.
  *
  * <p>The test registers a {@code getWeather} tool, sends a user message, and lets the model decide
  * to call the tool. {@link ToolService} then executes it and, on a second round, returns the final
- * assistant answer.</p>
+ * assistant answer.
  *
  * @author changlu
  * @since 2026-09-13
@@ -51,35 +52,38 @@ public class OpenAiLiveFunctionCallTest {
         String modelName = config.getProperty("modelName", "").trim();
         String apiKey = config.getProperty("apiKey", "").trim();
         if (baseUrl.isEmpty() || modelName.isEmpty() || apiKey.isEmpty()) {
-            System.out.println("Skip live function-call test: no live-endpoint.properties config (see "
-                    + "live-endpoint.example.properties template).");
+            System.out.println(
+                    "Skip live function-call test: no live-endpoint.properties config (see "
+                            + "live-endpoint.example.properties template).");
             return;
         }
 
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
-                .modelName(modelName)
-                .temperature(0.0)
-                .build();
+        OpenAiChatModel model =
+                OpenAiChatModel.builder()
+                        .baseUrl(baseUrl)
+                        .apiKey(apiKey)
+                        .modelName(modelName)
+                        .temperature(0.0)
+                        .build();
 
         ToolService toolService = new ToolService();
         toolService.tool(new WeatherTools(), "getWeather");
 
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(UserMessage.from("What is the weather in Hangzhou? Answer in one short sentence."));
+        messages.add(
+                UserMessage.from("What is the weather in Hangzhou? Answer in one short sentence."));
 
-        ToolService.ToolChatResult result = toolService.chat(
-                model,
-                DefaultChatRequestParameters.builder().build(),
-                messages);
+        ToolService.ToolChatResult result =
+                toolService.chat(model, DefaultChatRequestParameters.builder().build(), messages);
 
         assertNotNull(result.finalResponse());
         assertNotNull(result.finalResponse().aiMessage());
-        assertTrue("Expected a final assistant answer", 
+        assertTrue(
+                "Expected a final assistant answer",
                 result.finalResponse().aiMessage().text() != null);
         assertFalse("Tool should have been executed", result.toolExecutions().isEmpty());
-        assertTrue("getWeather tool result should be non-error",
+        assertTrue(
+                "getWeather tool result should be non-error",
                 !result.toolExecutions().get(0).hasFailed());
 
         System.out.println("Live function-call succeeded.");
@@ -89,8 +93,10 @@ public class OpenAiLiveFunctionCallTest {
 
     private static Properties loadConfig() {
         Properties config = new Properties();
-        try (InputStream in = OpenAiLiveFunctionCallTest.class.getClassLoader()
-                .getResourceAsStream("live-endpoint.properties")) {
+        try (InputStream in =
+                OpenAiLiveFunctionCallTest.class
+                        .getClassLoader()
+                        .getResourceAsStream("live-endpoint.properties")) {
             if (in != null) {
                 config.load(in);
             }

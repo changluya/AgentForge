@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Dependency-free HTTP transport based on JDK {@link HttpURLConnection}.
  *
- * <p>Streaming requests are consumed on daemon worker threads so the caller is not blocked
- * while an SSE response is being read.</p>
+ * <p>Streaming requests are consumed on daemon worker threads so the caller is not blocked while an
+ * SSE response is being read.
  *
  * @author changlu
  * @date 2026/09/13
@@ -27,15 +27,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class JdkHttpTransport implements HttpTransport {
 
     private static final AtomicInteger STREAM_THREAD_SEQUENCE = new AtomicInteger();
-    private static final ExecutorService STREAM_EXECUTOR = Executors.newCachedThreadPool(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable runnable) {
-            Thread thread = new Thread(runnable,
-                    "agentforge-http-stream-" + STREAM_THREAD_SEQUENCE.incrementAndGet());
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
+    private static final ExecutorService STREAM_EXECUTOR =
+            Executors.newCachedThreadPool(
+                    new ThreadFactory() {
+                        @Override
+                        public Thread newThread(Runnable runnable) {
+                            Thread thread =
+                                    new Thread(
+                                            runnable,
+                                            "agentforge-http-stream-"
+                                                    + STREAM_THREAD_SEQUENCE.incrementAndGet());
+                            thread.setDaemon(true);
+                            return thread;
+                        }
+                    });
 
     @Override
     public HttpResponse execute(HttpRequest request) throws IOException {
@@ -51,19 +56,21 @@ public final class JdkHttpTransport implements HttpTransport {
     }
 
     @Override
-    public void executeStreaming(final HttpRequest request, final StreamingHttpResponseHandler handler) {
+    public void executeStreaming(
+            final HttpRequest request, final StreamingHttpResponseHandler handler) {
         if (request == null) {
             throw new IllegalArgumentException("request must not be null");
         }
         if (handler == null) {
             throw new IllegalArgumentException("handler must not be null");
         }
-        STREAM_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                stream(request, handler);
-            }
-        });
+        STREAM_EXECUTOR.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        stream(request, handler);
+                    }
+                });
     }
 
     private static void stream(HttpRequest request, StreamingHttpResponseHandler handler) {
@@ -77,7 +84,8 @@ public final class JdkHttpTransport implements HttpTransport {
 
             InputStream stream = responseStream(connection, status);
             if (stream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
                 try {
                     String line;
                     while ((line = reader.readLine()) != null) {
@@ -130,7 +138,8 @@ public final class JdkHttpTransport implements HttpTransport {
         }
     }
 
-    private static InputStream responseStream(HttpURLConnection connection, int status) throws IOException {
+    private static InputStream responseStream(HttpURLConnection connection, int status)
+            throws IOException {
         return status >= 200 && status < 400
                 ? connection.getInputStream()
                 : connection.getErrorStream();
@@ -140,7 +149,8 @@ public final class JdkHttpTransport implements HttpTransport {
         if (stream == null) {
             return "";
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         try {
             StringBuilder builder = new StringBuilder();
             char[] buffer = new char[4096];

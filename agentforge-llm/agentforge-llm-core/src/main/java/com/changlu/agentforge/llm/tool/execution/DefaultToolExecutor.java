@@ -2,26 +2,27 @@ package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.P;
+import com.changlu.agentforge.llm.tool.ToolExecutor;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
+import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
-import com.changlu.agentforge.llm.tool.ToolExecutor;
-import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
-import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
-import com.changlu.agentforge.llm.tool.P;
 
 /**
  * A {@link ToolExecutor} that executes a {@link Tool}-annotated method reflectively.
  *
- * 
- * arguments of a {@link ToolExecutionRequest} to method parameters (performing light type coercion)
- * and invokes the target method. The return value is turned into the text sent to the LLM:</p>
+ * <p>arguments of a {@link ToolExecutionRequest} to method parameters (performing light type
+ * coercion) and invokes the target method. The return value is turned into the text sent to the
+ * LLM:
+ *
  * <ul>
- *   <li>{@code String} — returned as-is;</li>
- *   <li>{@code void} — the literal {@code "Success"};</li>
- *   <li>anything else — serialized into a JSON string.</li>
+ *   <li>{@code String} — returned as-is;
+ *   <li>{@code void} — the literal {@code "Success"};
+ *   <li>anything else — serialized into a JSON string.
  * </ul>
  *
  * @author changlu
@@ -44,10 +45,7 @@ public class DefaultToolExecutor implements ToolExecutor {
     @Override
     public ToolExecutionResult executeWithResult(ToolExecutionRequest request, Object memoryId) {
         Object result = invoke(request);
-        return ToolExecutionResult.builder()
-                .result(result)
-                .text(text(result))
-                .build();
+        return ToolExecutionResult.builder().result(result).text(text(result)).build();
     }
 
     @Override
@@ -62,13 +60,15 @@ public class DefaultToolExecutor implements ToolExecutor {
             method.setAccessible(true);
             return method.invoke(object, arguments);
         } catch (IllegalAccessException e) {
-            throw new ToolExecutionException("Cannot access tool method '" + method.getName() + "'", e);
+            throw new ToolExecutionException(
+                    "Cannot access tool method '" + method.getName() + "'", e);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause() == null ? e : e.getCause();
             if (cause instanceof ToolArgumentsException) {
                 throw (ToolArgumentsException) cause;
             }
-            throw new ToolExecutionException("Tool '" + request.name() + "' execution failed", cause);
+            throw new ToolExecutionException(
+                    "Tool '" + request.name() + "' execution failed", cause);
         }
     }
 
@@ -100,16 +100,23 @@ public class DefaultToolExecutor implements ToolExecutor {
 
     private static String parameterName(Parameter parameter) {
         P pAnnotation = parameter.getAnnotation(P.class);
-        if (pAnnotation != null && pAnnotation.name() != null && !pAnnotation.name().trim().isEmpty()) {
+        if (pAnnotation != null
+                && pAnnotation.name() != null
+                && !pAnnotation.name().trim().isEmpty()) {
             return pAnnotation.name();
         }
         return parameter.getName();
     }
 
-    private static Object coerce(Object value, Class<?> targetType, String parameterName, String toolName) {
+    private static Object coerce(
+            Object value, Class<?> targetType, String parameterName, String toolName) {
         if (value == null) {
             throw new ToolArgumentsException(
-                    "Missing required argument '" + parameterName + "' for tool '" + toolName + "'");
+                    "Missing required argument '"
+                            + parameterName
+                            + "' for tool '"
+                            + toolName
+                            + "'");
         }
         if (targetType == String.class) {
             return String.valueOf(value);
@@ -159,18 +166,32 @@ public class DefaultToolExecutor implements ToolExecutor {
             return new java.math.BigDecimal(String.valueOf(value));
         } catch (NumberFormatException e) {
             throw new ToolArgumentsException(
-                    "Argument '" + parameterName + "' of tool '" + toolName + "' must be a number, but got: " + value, e);
+                    "Argument '"
+                            + parameterName
+                            + "' of tool '"
+                            + toolName
+                            + "' must be a number, but got: "
+                            + value,
+                    e);
         }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Object enumValue(Class<?> enumClass, String raw, String parameterName, String toolName) {
+    private static Object enumValue(
+            Class<?> enumClass, String raw, String parameterName, String toolName) {
         try {
             return Enum.valueOf((Class<? extends Enum>) enumClass, raw);
         } catch (IllegalArgumentException e) {
             throw new ToolArgumentsException(
-                    "Argument '" + parameterName + "' of tool '" + toolName + "' must be one of "
-                            + java.util.Arrays.toString(enumClass.getEnumConstants()) + ", but got: " + raw, e);
+                    "Argument '"
+                            + parameterName
+                            + "' of tool '"
+                            + toolName
+                            + "' must be one of "
+                            + java.util.Arrays.toString(enumClass.getEnumConstants())
+                            + ", but got: "
+                            + raw,
+                    e);
         }
     }
 }

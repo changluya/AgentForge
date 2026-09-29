@@ -15,9 +15,7 @@ public final class PartialThinking {
         this.text = text;
     }
 
-    /**
-     * 返回本次增量思考文本片段
-     */
+    /** 返回本次增量思考文本片段 */
     public String text() {
         return text;
     }

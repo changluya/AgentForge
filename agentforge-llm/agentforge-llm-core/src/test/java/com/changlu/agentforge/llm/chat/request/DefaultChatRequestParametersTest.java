@@ -13,24 +13,27 @@ public class DefaultChatRequestParametersTest {
 
     @Test
     public void shouldMergeOverridesOverDefaults() {
-        DefaultChatRequestParameters defaults = DefaultChatRequestParameters.builder()
-                .modelName("default-model")
-                .temperature(0.2)
-                .maxTokens(100)
-                .topP(0.9)
-                .stopSequences(Arrays.asList("END"))
-                .customParameter("defaultOnly", "yes")
-                .customParameter("shared", "default")
-                .build();
+        DefaultChatRequestParameters defaults =
+                DefaultChatRequestParameters.builder()
+                        .modelName("default-model")
+                        .temperature(0.2)
+                        .maxTokens(100)
+                        .topP(0.9)
+                        .stopSequences(Arrays.asList("END"))
+                        .customParameter("defaultOnly", "yes")
+                        .customParameter("shared", "default")
+                        .build();
 
-        DefaultChatRequestParameters overrides = DefaultChatRequestParameters.builder()
-                .modelName("request-model")
-                .temperature(0.8)
-                .customParameter("requestOnly", "yes")
-                .customParameter("shared", "request")
-                .build();
+        DefaultChatRequestParameters overrides =
+                DefaultChatRequestParameters.builder()
+                        .modelName("request-model")
+                        .temperature(0.8)
+                        .customParameter("requestOnly", "yes")
+                        .customParameter("shared", "request")
+                        .build();
 
-        DefaultChatRequestParameters merged = DefaultChatRequestParameters.merge(defaults, overrides);
+        DefaultChatRequestParameters merged =
+                DefaultChatRequestParameters.merge(defaults, overrides);
 
         assertEquals("request-model", merged.modelName());
         assertEquals(Double.valueOf(0.8), merged.temperature());
@@ -49,19 +52,21 @@ public class DefaultChatRequestParametersTest {
         Map<String, Object> custom = new LinkedHashMap<String, Object>();
         custom.put("seed", 7);
 
-        DefaultChatRequestParameters parameters = DefaultChatRequestParameters.builder()
-                .stopSequences(stops)
-                .customParameters(custom)
-                .build();
+        DefaultChatRequestParameters parameters =
+                DefaultChatRequestParameters.builder()
+                        .stopSequences(stops)
+                        .customParameters(custom)
+                        .build();
 
         stops.add("LATER");
         custom.put("seed", 8);
 
         assertEquals(Arrays.asList("STOP"), parameters.stopSequences());
         assertEquals(7, parameters.customParameters().get("seed"));
-        assertThrows(UnsupportedOperationException.class,
-                () -> parameters.stopSequences().add("NO"));
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(
+                UnsupportedOperationException.class, () -> parameters.stopSequences().add("NO"));
+        assertThrows(
+                UnsupportedOperationException.class,
                 () -> parameters.customParameters().put("x", "y"));
     }
 }

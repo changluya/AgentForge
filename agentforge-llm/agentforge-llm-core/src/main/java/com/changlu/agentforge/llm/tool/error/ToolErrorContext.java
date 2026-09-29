@@ -1,14 +1,15 @@
 package com.changlu.agentforge.llm.tool.error;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
-import java.util.Objects;
 import com.changlu.agentforge.llm.tool.execution.ToolExecution;
+
+import java.util.Objects;
 
 /**
  * Context passed to a {@link ToolArgumentsErrorHandler} or {@link ToolExecutionErrorHandler}.
  *
  * <p>Carries the tool execution request, the {@link ToolExecution} (when available) and the raw
- * (cause-unwrapped) error.</p>
+ * (cause-unwrapped) error.
  *
  * @author changlu
  * @since 2026-09-13
@@ -46,9 +47,12 @@ public final class ToolErrorContext {
     @Override
     public String toString() {
         return "ToolErrorContext{"
-                + "toolExecutionRequest=" + Objects.toString(toolExecutionRequest)
-                + ", toolExecution=" + Objects.toString(toolExecution)
-                + ", rawError=" + rawError
+                + "toolExecutionRequest="
+                + Objects.toString(toolExecutionRequest)
+                + ", toolExecution="
+                + Objects.toString(toolExecution)
+                + ", rawError="
+                + rawError
                 + '}';
     }
 
@@ -62,8 +66,7 @@ public final class ToolErrorContext {
         private ToolExecution toolExecution;
         private Throwable rawError;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder toolExecutionRequest(ToolExecutionRequest toolExecutionRequest) {
             this.toolExecutionRequest = toolExecutionRequest;

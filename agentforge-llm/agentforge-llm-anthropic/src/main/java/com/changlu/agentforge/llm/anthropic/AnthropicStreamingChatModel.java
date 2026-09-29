@@ -27,18 +27,19 @@ import java.util.Map;
  * Anthropic Messages API streaming implementation of {@link StreamingChatModel}.
  *
  * <p>The request is sent with {@code stream=true} and the Anthropic SSE event protocol is
- * interpreted as follows:</p>
+ * interpreted as follows:
+ *
  * <ul>
- *   <li>{@code message_start}: message metadata and input tokens</li>
- *   <li>{@code content_block_start}: opens a text or {@code tool_use} block</li>
- *   <li>{@code content_block_delta}: {@code text_delta} is forwarded to
- *       {@link StreamingChatResponseHandler#onPartialResponse(String)};
- *       {@code input_json_delta} fragments are appended to the tool call of the same index</li>
- *   <li>{@code message_delta}: stop reason and output tokens</li>
+ *   <li>{@code message_start}: message metadata and input tokens
+ *   <li>{@code content_block_start}: opens a text or {@code tool_use} block
+ *   <li>{@code content_block_delta}: {@code text_delta} is forwarded to {@link
+ *       StreamingChatResponseHandler#onPartialResponse(String)}; {@code input_json_delta} fragments
+ *       are appended to the tool call of the same index
+ *   <li>{@code message_delta}: stop reason and output tokens
  * </ul>
  *
- * <p>Like LangChain4j, partial tool calls are merged and only exposed as complete
- * {@link ToolExecutionRequest}s on the final {@link ChatResponse}.</p>
+ * <p>Like LangChain4j, partial tool calls are merged and only exposed as complete {@link
+ * ToolExecutionRequest}s on the final {@link ChatResponse}.
  *
  * @author changlu
  * @date 2026-09-13
@@ -62,16 +63,18 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         this.baseUrl = trimTrailingSlash(builder.baseUrl);
         this.apiKey = builder.apiKey;
         this.anthropicVersion = builder.anthropicVersion;
-        this.defaultParameters = DefaultChatRequestParameters.builder()
-                .modelName(builder.modelName)
-                .temperature(builder.temperature)
-                .maxTokens(builder.maxTokens)
-                .topP(builder.topP)
-                .stopSequences(builder.stopSequences)
-                .customParameters(builder.customParameters)
-                .build();
-        this.customHeaders = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(builder.customHeaders));
+        this.defaultParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName(builder.modelName)
+                        .temperature(builder.temperature)
+                        .maxTokens(builder.maxTokens)
+                        .topP(builder.topP)
+                        .stopSequences(builder.stopSequences)
+                        .customParameters(builder.customParameters)
+                        .build();
+        this.customHeaders =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, String>(builder.customHeaders));
         this.httpTransport = builder.httpTransport;
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
@@ -90,22 +93,23 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             throw new IllegalArgumentException("handler must not be null");
         }
 
-        DefaultChatRequestParameters parameters = DefaultChatRequestParameters.merge(
-                defaultParameters, chatRequest.parameters());
+        DefaultChatRequestParameters parameters =
+                DefaultChatRequestParameters.merge(defaultParameters, chatRequest.parameters());
         requireModelName(parameters.modelName());
         requireApiKey(apiKey);
 
-        HttpRequest request = HttpRequest.builder()
-                .url(baseUrl + "/v1/messages")
-                .header("Content-Type", "application/json")
-                .header("Accept", "text/event-stream")
-                .header("x-api-key", apiKey)
-                .header("anthropic-version", anthropicVersion)
-                .headers(customHeaders)
-                .body(Json.stringify(buildPayload(chatRequest, parameters)))
-                .connectTimeoutMillis(connectTimeoutMillis)
-                .readTimeoutMillis(readTimeoutMillis)
-                .build();
+        HttpRequest request =
+                HttpRequest.builder()
+                        .url(baseUrl + "/v1/messages")
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "text/event-stream")
+                        .header("x-api-key", apiKey)
+                        .header("anthropic-version", anthropicVersion)
+                        .headers(customHeaders)
+                        .body(Json.stringify(buildPayload(chatRequest, parameters)))
+                        .connectTimeoutMillis(connectTimeoutMillis)
+                        .readTimeoutMillis(readTimeoutMillis)
+                        .build();
 
         final AnthropicStreamState state = new AnthropicStreamState(handler);
         try {
@@ -115,13 +119,16 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         }
     }
 
-    private static Map<String, Object> buildPayload(ChatRequest request, ChatRequestParameters parameters) {
+    private static Map<String, Object> buildPayload(
+            ChatRequest request, ChatRequestParameters parameters) {
         LinkedHashMap<String, Object> payload = new LinkedHashMap<String, Object>();
         if (parameters.customParameters() != null) {
             payload.putAll(parameters.customParameters());
         }
         payload.put("model", parameters.modelName());
-        payload.put("max_tokens", parameters.maxTokens() == null ? DEFAULT_MAX_TOKENS : parameters.maxTokens());
+        payload.put(
+                "max_tokens",
+                parameters.maxTokens() == null ? DEFAULT_MAX_TOKENS : parameters.maxTokens());
         putIfNotNull(payload, "temperature", parameters.temperature());
         putIfNotNull(payload, "top_p", parameters.topP());
         putIfNotNull(payload, "stop_sequences", parameters.stopSequences());
@@ -156,7 +163,8 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
 
     private static void requireModelName(String modelName) {
         if (modelName == null || modelName.trim().isEmpty()) {
-            throw new IllegalStateException("Anthropic modelName must be configured on the model or request");
+            throw new IllegalStateException(
+                    "Anthropic modelName must be configured on the model or request");
         }
     }
 
@@ -193,8 +201,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         private int connectTimeoutMillis = 10_000;
         private int readTimeoutMillis = 60_000;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -234,7 +241,8 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         }
 
         public Builder stopSequences(List<String> stopSequences) {
-            this.stopSequences = stopSequences == null ? null : new ArrayList<String>(stopSequences);
+            this.stopSequences =
+                    stopSequences == null ? null : new ArrayList<String>(stopSequences);
             return this;
         }
 
@@ -249,7 +257,8 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         }
 
         public Builder httpTransport(HttpTransport httpTransport) {
-            if (httpTransport == null) throw new IllegalArgumentException("httpTransport must not be null");
+            if (httpTransport == null)
+                throw new IllegalArgumentException("httpTransport must not be null");
             this.httpTransport = httpTransport;
             return this;
         }
@@ -342,8 +351,11 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         public synchronized void onComplete() {
             if (terminated) return;
             if (!isSuccessfulStatus(statusCode)) {
-                fail(new LlmException("Anthropic streaming request failed with HTTP " + statusCode,
-                        statusCode, errorBody.toString()));
+                fail(
+                        new LlmException(
+                                "Anthropic streaming request failed with HTTP " + statusCode,
+                                statusCode,
+                                errorBody.toString()));
                 return;
             }
             dispatchFrame();
@@ -390,8 +402,11 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
                 applyMessageDelta(root);
             } else if ("error".equals(eventName)) {
                 Map<String, Object> error = Json.object(root.get("error"));
-                fail(new LlmException("Anthropic streaming error", null,
-                        error == null ? Json.stringify(root) : Json.stringify(error)));
+                fail(
+                        new LlmException(
+                                "Anthropic streaming error",
+                                null,
+                                error == null ? Json.stringify(root) : Json.stringify(error)));
             }
             // content_block_stop / message_stop require no handling.
         }
@@ -479,10 +494,14 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             if (usage == null) {
                 return;
             }
-            long input = Json.longValue(usage.get("input_tokens"),
-                    tokenUsage == null ? 0L : tokenUsage.inputTokens());
-            long output = Json.longValue(usage.get("output_tokens"),
-                    tokenUsage == null ? 0L : tokenUsage.outputTokens());
+            long input =
+                    Json.longValue(
+                            usage.get("input_tokens"),
+                            tokenUsage == null ? 0L : tokenUsage.inputTokens());
+            long output =
+                    Json.longValue(
+                            usage.get("output_tokens"),
+                            tokenUsage == null ? 0L : tokenUsage.outputTokens());
             tokenUsage = TokenUsage.of(input, output);
         }
 
@@ -502,23 +521,26 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             String thinkingText = thinking.length() == 0 ? null : thinking.toString();
             AiMessage aiMessage;
             if (toolExecutionRequests.isEmpty()) {
-                aiMessage = thinkingText == null
-                        ? AiMessage.from(text.toString())
-                        : AiMessage.builder()
-                                .text(text.toString())
-                                .thinking(thinkingText)
-                                .build();
+                aiMessage =
+                        thinkingText == null
+                                ? AiMessage.from(text.toString())
+                                : AiMessage.builder()
+                                        .text(text.toString())
+                                        .thinking(thinkingText)
+                                        .build();
             } else {
-                aiMessage = AiMessage.builder()
-                        .text(text.length() == 0 ? null : text.toString())
-                        .thinking(thinkingText)
-                        .toolExecutionRequests(toolExecutionRequests)
-                        .build();
+                aiMessage =
+                        AiMessage.builder()
+                                .text(text.length() == 0 ? null : text.toString())
+                                .thinking(thinkingText)
+                                .toolExecutionRequests(toolExecutionRequests)
+                                .build();
             }
-            ChatResponse.Builder response = ChatResponse.builder()
-                    .aiMessage(aiMessage)
-                    .finishReason(finishReason)
-                    .metadata(metadata);
+            ChatResponse.Builder response =
+                    ChatResponse.builder()
+                            .aiMessage(aiMessage)
+                            .finishReason(finishReason)
+                            .metadata(metadata);
             if (tokenUsage != null) {
                 response.tokenUsage(tokenUsage);
             }
@@ -532,11 +554,12 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         private List<ToolExecutionRequest> buildToolExecutionRequests() {
             ArrayList<ToolExecutionRequest> requests = new ArrayList<ToolExecutionRequest>();
             for (ToolUseAccumulator accumulator : toolUseAccumulators.values()) {
-                requests.add(ToolExecutionRequest.builder()
-                        .id(accumulator.id)
-                        .name(accumulator.name)
-                        .arguments(accumulator.arguments())
-                        .build());
+                requests.add(
+                        ToolExecutionRequest.builder()
+                                .id(accumulator.id)
+                                .name(accumulator.name)
+                                .arguments(accumulator.arguments())
+                                .build());
             }
             return requests;
         }
@@ -556,9 +579,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
         }
     }
 
-    /**
-     * Holds one streamed {@code tool_use} block until the stream completes.
-     */
+    /** Holds one streamed {@code tool_use} block until the stream completes. */
     private static final class ToolUseAccumulator {
         private String id;
         private String name;

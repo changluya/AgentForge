@@ -10,6 +10,7 @@ import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.response.ChatResponse;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -140,20 +141,38 @@ public class AgentMiddlewareManagerTest {
         manager.triggerOnLoopError(1, new IllegalStateException("boom"), CONTEXT);
         manager.triggerBeforeToolExecution(toolRequest(), CONTEXT);
         assertEquals("t", manager.triggerAfterToolExecution(toolRequest(), "t", CONTEXT));
-        manager.triggerOnToolExecutionError(toolRequest(), new IllegalStateException("boom"), CONTEXT);
+        manager.triggerOnToolExecutionError(
+                toolRequest(), new IllegalStateException("boom"), CONTEXT);
         manager.triggerOnModelCallError(1, null, new IllegalStateException("boom"), CONTEXT);
-        manager.triggerOnAiCallRetry(1, null, CONTEXT, 1, 2, 100L, new IllegalStateException("boom"));
-        manager.triggerOnStop(1, StopResult.builder()
-                .stopResultState(StopResultState.NORMAL).runRes("x").build(), CONTEXT);
+        manager.triggerOnAiCallRetry(
+                1, null, CONTEXT, 1, 2, 100L, new IllegalStateException("boom"));
+        manager.triggerOnStop(
+                1,
+                StopResult.builder().stopResultState(StopResultState.NORMAL).runRes("x").build(),
+                CONTEXT);
         manager.triggerOnStopWithError(1, new IllegalStateException("boom"), CONTEXT);
         manager.triggerOnPartialResponse(1, "delta", CONTEXT);
         manager.triggerOnPartialThinking(1, new PartialThinking("reasoning"), CONTEXT);
         manager.triggerOnIntermediateResponse(1, response(), CONTEXT);
 
         // 抛异常的中间件不影响后续中间件
-        assertEquals(Arrays.asList("init", "beforeLoop", "afterLoop", "loopError", "beforeTool",
-                "afterTool", "toolError", "modelError", "retry", "stop", "stopError", "partial",
-                "think", "intermediate"), called);
+        assertEquals(
+                Arrays.asList(
+                        "init",
+                        "beforeLoop",
+                        "afterLoop",
+                        "loopError",
+                        "beforeTool",
+                        "afterTool",
+                        "toolError",
+                        "modelError",
+                        "retry",
+                        "stop",
+                        "stopError",
+                        "partial",
+                        "think",
+                        "intermediate"),
+                called);
     }
 
     @Test
@@ -161,13 +180,14 @@ public class AgentMiddlewareManagerTest {
         final List<String> called = new ArrayList<String>();
         AgentMiddlewareManager manager = new AgentMiddlewareManager();
         manager.register(new Recording(called));
-        manager.register(new StreamingMiddleware("s", true) {
-            @Override
-            public void onPartialResponse(int currentStep, String partialResponse,
-                                          AgentChatContext chatContext) {
-                called.add("partial:" + partialResponse);
-            }
-        });
+        manager.register(
+                new StreamingMiddleware("s", true) {
+                    @Override
+                    public void onPartialResponse(
+                            int currentStep, String partialResponse, AgentChatContext chatContext) {
+                        called.add("partial:" + partialResponse);
+                    }
+                });
 
         manager.triggerOnPartialResponse(1, "delta", CONTEXT);
 
@@ -180,24 +200,30 @@ public class AgentMiddlewareManagerTest {
         final List<String> called = new ArrayList<String>();
         AgentMiddlewareManager manager = new AgentMiddlewareManager();
         manager.register(new Recording(called));
-        manager.register(new StreamingMiddleware("s", true) {
-            @Override
-            public void onPartialThinking(int currentStep, PartialThinking partialThinking,
-                                          AgentChatContext chatContext) {
-                called.add("think:" + partialThinking.text());
-            }
+        manager.register(
+                new StreamingMiddleware("s", true) {
+                    @Override
+                    public void onPartialThinking(
+                            int currentStep,
+                            PartialThinking partialThinking,
+                            AgentChatContext chatContext) {
+                        called.add("think:" + partialThinking.text());
+                    }
 
-            @Override
-            public void onIntermediateResponse(int currentStep, ChatResponse intermediateResponse,
-                                               AgentChatContext chatContext) {
-                called.add("intermediate");
-            }
-        });
+                    @Override
+                    public void onIntermediateResponse(
+                            int currentStep,
+                            ChatResponse intermediateResponse,
+                            AgentChatContext chatContext) {
+                        called.add("intermediate");
+                    }
+                });
 
         manager.triggerOnPartialThinking(1, new PartialThinking("reasoning"), CONTEXT);
         manager.triggerOnIntermediateResponse(1, response(), CONTEXT);
 
-        assertEquals(Arrays.asList("think", "think:reasoning", "intermediate", "intermediate"), called);
+        assertEquals(
+                Arrays.asList("think", "think:reasoning", "intermediate", "intermediate"), called);
     }
 
     @Test
@@ -219,11 +245,14 @@ public class AgentMiddlewareManagerTest {
         manager.triggerOnIntermediateResponse(1, response(), CONTEXT);
     }
 
-    private static IAgentMiddleware suffixMiddleware(final String suffix, final List<String> called) {
+    private static IAgentMiddleware suffixMiddleware(
+            final String suffix, final List<String> called) {
         return new IAgentMiddleware() {
             @Override
-            public String afterToolExecution(ToolExecutionRequest toolRequest, String toolResult,
-                                             AgentChatContext chatContext) {
+            public String afterToolExecution(
+                    ToolExecutionRequest toolRequest,
+                    String toolResult,
+                    AgentChatContext chatContext) {
                 called.add(suffix.substring(1));
                 return toolResult + suffix;
             }
@@ -259,7 +288,8 @@ public class AgentMiddlewareManagerTest {
         private final boolean abortModelCall;
         private final boolean nullResponse;
 
-        ChainingMiddleware(String id, List<String> called, boolean abortModelCall, boolean nullResponse) {
+        ChainingMiddleware(
+                String id, List<String> called, boolean abortModelCall, boolean nullResponse) {
             this.id = id;
             this.called = called;
             this.abortModelCall = abortModelCall;
@@ -267,15 +297,18 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public ChatRequest beforeModelCall(int currentStep, ChatRequest chatRequest,
-                                           AgentChatContext chatContext) {
+        public ChatRequest beforeModelCall(
+                int currentStep, ChatRequest chatRequest, AgentChatContext chatContext) {
             called.add(id);
             return abortModelCall ? null : chatRequest;
         }
 
         @Override
-        public ChatResponse afterModelCall(int currentStep, ChatRequest chatRequest,
-                                           ChatResponse chatResponse, AgentChatContext chatContext) {
+        public ChatResponse afterModelCall(
+                int currentStep,
+                ChatRequest chatRequest,
+                ChatResponse chatResponse,
+                AgentChatContext chatContext) {
             called.add(id);
             return nullResponse ? null : chatResponse;
         }
@@ -297,7 +330,8 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void afterLoop(int currentStep, StepResult stepResult, AgentChatContext chatContext) {
+        public void afterLoop(
+                int currentStep, StepResult stepResult, AgentChatContext chatContext) {
             boom();
         }
 
@@ -307,32 +341,42 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void beforeToolExecution(ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
+        public void beforeToolExecution(
+                ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public String afterToolExecution(ToolExecutionRequest toolRequest, String toolResult,
-                                         AgentChatContext chatContext) {
+        public String afterToolExecution(
+                ToolExecutionRequest toolRequest, String toolResult, AgentChatContext chatContext) {
             boom();
             return toolResult;
         }
 
         @Override
-        public void onToolExecutionError(ToolExecutionRequest toolRequest, Throwable error,
-                                         AgentChatContext chatContext) {
+        public void onToolExecutionError(
+                ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public void onModelCallError(int currentStep, ChatRequest chatRequest, Throwable error,
-                                     AgentChatContext chatContext) {
+        public void onModelCallError(
+                int currentStep,
+                ChatRequest chatRequest,
+                Throwable error,
+                AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public void onAiCallRetry(int currentStep, ChatRequest chatRequest, AgentChatContext chatContext,
-                                  int retryCount, int maxRetries, long delayMs, Exception lastException) {
+        public void onAiCallRetry(
+                int currentStep,
+                ChatRequest chatRequest,
+                AgentChatContext chatContext,
+                int retryCount,
+                int maxRetries,
+                long delayMs,
+                Exception lastException) {
             boom();
         }
 
@@ -342,25 +386,26 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void onStopWithError(int currentStep, Throwable error, AgentChatContext chatContext) {
+        public void onStopWithError(
+                int currentStep, Throwable error, AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public void onPartialResponse(int currentStep, String partialResponse,
-                                      AgentChatContext chatContext) {
+        public void onPartialResponse(
+                int currentStep, String partialResponse, AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public void onPartialThinking(int currentStep, PartialThinking partialThinking,
-                                      AgentChatContext chatContext) {
+        public void onPartialThinking(
+                int currentStep, PartialThinking partialThinking, AgentChatContext chatContext) {
             boom();
         }
 
         @Override
-        public void onIntermediateResponse(int currentStep, ChatResponse intermediateResponse,
-                                           AgentChatContext chatContext) {
+        public void onIntermediateResponse(
+                int currentStep, ChatResponse intermediateResponse, AgentChatContext chatContext) {
             boom();
         }
     }
@@ -383,7 +428,8 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void afterLoop(int currentStep, StepResult stepResult, AgentChatContext chatContext) {
+        public void afterLoop(
+                int currentStep, StepResult stepResult, AgentChatContext chatContext) {
             called.add("afterLoop");
         }
 
@@ -393,32 +439,42 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void beforeToolExecution(ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
+        public void beforeToolExecution(
+                ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
             called.add("beforeTool");
         }
 
         @Override
-        public String afterToolExecution(ToolExecutionRequest toolRequest, String toolResult,
-                                         AgentChatContext chatContext) {
+        public String afterToolExecution(
+                ToolExecutionRequest toolRequest, String toolResult, AgentChatContext chatContext) {
             called.add("afterTool");
             return toolResult;
         }
 
         @Override
-        public void onToolExecutionError(ToolExecutionRequest toolRequest, Throwable error,
-                                         AgentChatContext chatContext) {
+        public void onToolExecutionError(
+                ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {
             called.add("toolError");
         }
 
         @Override
-        public void onModelCallError(int currentStep, ChatRequest chatRequest, Throwable error,
-                                     AgentChatContext chatContext) {
+        public void onModelCallError(
+                int currentStep,
+                ChatRequest chatRequest,
+                Throwable error,
+                AgentChatContext chatContext) {
             called.add("modelError");
         }
 
         @Override
-        public void onAiCallRetry(int currentStep, ChatRequest chatRequest, AgentChatContext chatContext,
-                                  int retryCount, int maxRetries, long delayMs, Exception lastException) {
+        public void onAiCallRetry(
+                int currentStep,
+                ChatRequest chatRequest,
+                AgentChatContext chatContext,
+                int retryCount,
+                int maxRetries,
+                long delayMs,
+                Exception lastException) {
             called.add("retry");
         }
 
@@ -428,25 +484,26 @@ public class AgentMiddlewareManagerTest {
         }
 
         @Override
-        public void onStopWithError(int currentStep, Throwable error, AgentChatContext chatContext) {
+        public void onStopWithError(
+                int currentStep, Throwable error, AgentChatContext chatContext) {
             called.add("stopError");
         }
 
         @Override
-        public void onPartialResponse(int currentStep, String partialResponse,
-                                      AgentChatContext chatContext) {
+        public void onPartialResponse(
+                int currentStep, String partialResponse, AgentChatContext chatContext) {
             called.add("partial");
         }
 
         @Override
-        public void onPartialThinking(int currentStep, PartialThinking partialThinking,
-                                      AgentChatContext chatContext) {
+        public void onPartialThinking(
+                int currentStep, PartialThinking partialThinking, AgentChatContext chatContext) {
             called.add("think");
         }
 
         @Override
-        public void onIntermediateResponse(int currentStep, ChatResponse intermediateResponse,
-                                           AgentChatContext chatContext) {
+        public void onIntermediateResponse(
+                int currentStep, ChatResponse intermediateResponse, AgentChatContext chatContext) {
             called.add("intermediate");
         }
     }

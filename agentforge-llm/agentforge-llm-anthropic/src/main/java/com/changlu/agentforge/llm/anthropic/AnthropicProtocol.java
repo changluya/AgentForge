@@ -1,6 +1,5 @@
 package com.changlu.agentforge.llm.anthropic;
 
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessageType;
@@ -12,6 +11,7 @@ import com.changlu.agentforge.llm.chat.message.UserMessage;
 import com.changlu.agentforge.llm.chat.request.ChatRequestParameters;
 import com.changlu.agentforge.llm.chat.request.ToolChoice;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,19 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Shared Anthropic Messages wire-protocol helpers used by both
- * {@link AnthropicChatModel} and {@link AnthropicStreamingChatModel}.
+ * Shared Anthropic Messages wire-protocol helpers used by both {@link AnthropicChatModel} and
+ * {@link AnthropicStreamingChatModel}.
  *
- * <p>Package-private on purpose: it is an implementation detail of the Anthropic adapter,
- * not part of the public AgentForge API.</p>
+ * <p>Package-private on purpose: it is an implementation detail of the Anthropic adapter, not part
+ * of the public AgentForge API.
  *
  * @author changlu
  * @since 2026-09-13
  */
 final class AnthropicProtocol {
 
-    private AnthropicProtocol() {
-    }
+    private AnthropicProtocol() {}
 
     static String collectSystemMessages(List<ChatMessage> messages) {
         StringBuilder system = new StringBuilder();
@@ -55,7 +54,8 @@ final class AnthropicProtocol {
             if (message instanceof ToolExecutionResultMessage) {
                 item.put("role", "user");
                 item.put("content", toolResultContent((ToolExecutionResultMessage) message));
-            } else if (message instanceof AiMessage && ((AiMessage) message).hasToolExecutionRequests()) {
+            } else if (message instanceof AiMessage
+                    && ((AiMessage) message).hasToolExecutionRequests()) {
                 item.put("role", "assistant");
                 item.put("content", assistantContent((AiMessage) message));
             } else if (message instanceof UserMessage && !((UserMessage) message).hasSingleText()) {
@@ -68,7 +68,8 @@ final class AnthropicProtocol {
             result.add(item);
         }
         if (result.isEmpty()) {
-            throw new IllegalArgumentException("Anthropic request requires at least one user/assistant message");
+            throw new IllegalArgumentException(
+                    "Anthropic request requires at least one user/assistant message");
         }
         return result;
     }
@@ -116,9 +117,10 @@ final class AnthropicProtocol {
             toolUseBlock.put("type", "tool_use");
             toolUseBlock.put("id", toolExecutionRequest.id());
             toolUseBlock.put("name", toolExecutionRequest.name());
-            Object input = toolExecutionRequest.arguments() == null
-                    ? Collections.emptyMap()
-                    : Json.parse(toolExecutionRequest.arguments());
+            Object input =
+                    toolExecutionRequest.arguments() == null
+                            ? Collections.emptyMap()
+                            : Json.parse(toolExecutionRequest.arguments());
             toolUseBlock.put("input", input == null ? Collections.emptyMap() : input);
             content.add(toolUseBlock);
         }
@@ -180,14 +182,17 @@ final class AnthropicProtocol {
             Map<String, Object> block = Json.object(blockValue);
             if (block == null) continue;
             if ("tool_use".equals(Json.string(block.get("type")))) {
-                String argumentsJson = Json.stringify(block.get("input") == null
-                        ? Collections.emptyMap()
-                        : block.get("input"));
-                requests.add(ToolExecutionRequest.builder()
-                        .id(Json.string(block.get("id")))
-                        .name(Json.string(block.get("name")))
-                        .arguments(argumentsJson)
-                        .build());
+                String argumentsJson =
+                        Json.stringify(
+                                block.get("input") == null
+                                        ? Collections.emptyMap()
+                                        : block.get("input"));
+                requests.add(
+                        ToolExecutionRequest.builder()
+                                .id(Json.string(block.get("id")))
+                                .name(Json.string(block.get("name")))
+                                .arguments(argumentsJson)
+                                .build());
             }
         }
         return requests;

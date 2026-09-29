@@ -1,7 +1,5 @@
 package com.changlu.agentforge.llm.openai;
 
-import com.changlu.agentforge.llm.tool.spec.ToolParameters;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.SystemMessage;
 import com.changlu.agentforge.llm.chat.message.TextContent;
@@ -17,11 +15,13 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +31,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Verifies OpenAI Chat Completions function-calling support: request-side tool
- * declarations, response-side {@code tool_calls} parsing and the assistant/tool
- * message round-trip.
+ * Verifies OpenAI Chat Completions function-calling support: request-side tool declarations,
+ * response-side {@code tool_calls} parsing and the assistant/tool message round-trip.
  *
  * @author changlu
  * @since 2026-09-13
@@ -42,16 +41,24 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldParseSingleToolCallIntoAiMessage() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"id\":\"chatcmpl-9\",\"model\":\"gpt-test\",\"choices\":[{" +
-                        "\"message\":{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[" +
-                        "{\"id\":\"call_1\",\"type\":\"function\",\"function\":{" +
-                        "\"name\":\"getWeather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}}]}," +
-                        "\"finish_reason\":\"tool_calls\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"id\":\"chatcmpl-9\",\"model\":\"gpt-test\",\"choices\":[{"
+                                        + "\"message\":{\"role\":\"assistant\",\"content\":null,\"tool_calls\":["
+                                        + "{\"id\":\"call_1\",\"type\":\"function\",\"function\":{"
+                                        + "\"name\":\"getWeather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}}]},"
+                                        + "\"finish_reason\":\"tool_calls\"}]}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("What is the weather in Hangzhou?"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(
+                                ChatRequest.builder()
+                                        .message(
+                                                UserMessage.from(
+                                                        "What is the weather in Hangzhou?"))
+                                        .build());
 
         AiMessage aiMessage = response.aiMessage();
         assertTrue(aiMessage.hasToolExecutionRequests());
@@ -67,49 +74,65 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldParseMultipleToolCallsAndMixedText() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{" +
-                        "\"message\":{\"role\":\"assistant\",\"content\":\"two cities\"," +
-                        "\"tool_calls\":[" +
-                        "{\"id\":\"call_a\",\"type\":\"function\",\"function\":{\"name\":\"weather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}}," +
-                        "{\"id\":\"call_b\",\"type\":\"function\",\"function\":{\"name\":\"weather\",\"arguments\":\"{\\\"city\\\":\\\"beijing\\\"}\"}}" +
-                        "]},\"finish_reason\":\"tool_calls\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{"
+                                        + "\"message\":{\"role\":\"assistant\",\"content\":\"two cities\","
+                                        + "\"tool_calls\":["
+                                        + "{\"id\":\"call_a\",\"type\":\"function\",\"function\":{\"name\":\"weather\",\"arguments\":\"{\\\"city\\\":\\\"hangzhou\\\"}\"}},"
+                                        + "{\"id\":\"call_b\",\"type\":\"function\",\"function\":{\"name\":\"weather\",\"arguments\":\"{\\\"city\\\":\\\"beijing\\\"}\"}}"
+                                        + "]},\"finish_reason\":\"tool_calls\"}]}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("weather for two cities"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(
+                                ChatRequest.builder()
+                                        .message(UserMessage.from("weather for two cities"))
+                                        .build());
 
         AiMessage aiMessage = response.aiMessage();
         assertEquals("two cities", aiMessage.text());
         assertEquals(2, aiMessage.toolExecutionRequests().size());
         assertEquals("call_a", aiMessage.toolExecutionRequests().get(0).id());
-        assertEquals("{\"city\":\"hangzhou\"}", aiMessage.toolExecutionRequests().get(0).arguments());
+        assertEquals(
+                "{\"city\":\"hangzhou\"}", aiMessage.toolExecutionRequests().get(0).arguments());
         assertEquals("call_b", aiMessage.toolExecutionRequests().get(1).id());
-        assertEquals("{\"city\":\"beijing\"}", aiMessage.toolExecutionRequests().get(1).arguments());
+        assertEquals(
+                "{\"city\":\"beijing\"}", aiMessage.toolExecutionRequests().get(1).arguments());
     }
 
     @Test
     public void shouldSerializeToolsAndToolChoiceOnRequest() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
 
-        ToolParameters parameters = ToolParameters.builder()
-                .addProperty("city", "string", "city name", true)
-                .addProperty("unit", "string", "celsius or fahrenheit", false)
-                .build();
-        ToolSpecification weather = ToolSpecification.builder()
-                .name("getWeather")
-                .description("query weather of a city")
-                .parameters(parameters)
-                .build();
+        ToolParameters parameters =
+                ToolParameters.builder()
+                        .addProperty("city", "string", "city name", true)
+                        .addProperty("unit", "string", "celsius or fahrenheit", false)
+                        .build();
+        ToolSpecification weather =
+                ToolSpecification.builder()
+                        .name("getWeather")
+                        .description("query weather of a city")
+                        .parameters(parameters)
+                        .build();
 
-        model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .parameters(DefaultChatRequestParameters.builder()
-                        .tools(Collections.singletonList(weather))
-                        .toolChoice(ToolChoice.REQUIRED)
-                        .build())
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(UserMessage.from("hi"))
+                                .parameters(
+                                        DefaultChatRequestParameters.builder()
+                                                .tools(Collections.singletonList(weather))
+                                                .toolChoice(ToolChoice.REQUIRED)
+                                                .build())
+                                .build());
 
         Map<String, Object> payload = Json.parseObject(transport.lastRequest.body());
         List<Object> tools = Json.array(payload.get("tools"));
@@ -133,17 +156,26 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldSerializeSpecificToolChoice() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
 
-        model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .parameters(DefaultChatRequestParameters.builder()
-                        .tool(ToolSpecification.builder().name("getWeather").build())
-                        .toolChoice(ToolChoice.SPECIFIC)
-                        .toolChoiceName("getWeather")
-                        .build())
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(UserMessage.from("hi"))
+                                .parameters(
+                                        DefaultChatRequestParameters.builder()
+                                                .tool(
+                                                        ToolSpecification.builder()
+                                                                .name("getWeather")
+                                                                .build())
+                                                .toolChoice(ToolChoice.SPECIFIC)
+                                                .toolChoiceName("getWeather")
+                                                .build())
+                                .build());
 
         Map<String, Object> payload = Json.parseObject(transport.lastRequest.body());
         Map<String, Object> toolChoice = Json.object(payload.get("tool_choice"));
@@ -153,23 +185,32 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldRoundTripAssistantToolCallsAndToolResults() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":\"sunny\"},\"finish_reason\":\"stop\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":\"sunny\"},\"finish_reason\":\"stop\"}]}"));
 
-        ToolExecutionRequest request = ToolExecutionRequest.builder()
-                .id("call_1")
-                .name("getWeather")
-                .arguments("{\"city\":\"hangzhou\"}")
-                .build();
+        ToolExecutionRequest request =
+                ToolExecutionRequest.builder()
+                        .id("call_1")
+                        .name("getWeather")
+                        .arguments("{\"city\":\"hangzhou\"}")
+                        .build();
 
-        model(transport).chat(ChatRequest.builder()
-                .message(SystemMessage.from("You are helpful"))
-                .message(UserMessage.from("weather?"))
-                .message(AiMessage.from(request))
-                .message(ToolExecutionResultMessage.from("call_1", "getWeather", "{\"temperature\":22}"))
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(SystemMessage.from("You are helpful"))
+                                .message(UserMessage.from("weather?"))
+                                .message(AiMessage.from(request))
+                                .message(
+                                        ToolExecutionResultMessage.from(
+                                                "call_1", "getWeather", "{\"temperature\":22}"))
+                                .build());
 
-        List<Object> messages = Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
+        List<Object> messages =
+                Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
         assertEquals(4, messages.size());
 
         Map<String, Object> assistant = Json.object(messages.get(2));
@@ -192,12 +233,15 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldKeepPlainTextBehaviourWhenNoToolCalls() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"plain\"},\"finish_reason\":\"stop\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"plain\"},\"finish_reason\":\"stop\"}]}"));
 
-        ChatResponse response = model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("hi"))
-                .build());
+        ChatResponse response =
+                model(transport)
+                        .chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
 
         assertFalse(response.aiMessage().hasToolExecutionRequests());
         assertEquals("plain", response.aiMessage().text());
@@ -206,14 +250,24 @@ public class OpenAiFunctionCallTest {
 
     @Test
     public void shouldSerializeMultiContentUserMessage() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}"));
 
-        model(transport).chat(ChatRequest.builder()
-                .message(UserMessage.from("alice", TextContent.from("describe"), TextContent.from(" this image")))
-                .build());
+        model(transport)
+                .chat(
+                        ChatRequest.builder()
+                                .message(
+                                        UserMessage.from(
+                                                "alice",
+                                                TextContent.from("describe"),
+                                                TextContent.from(" this image")))
+                                .build());
 
-        List<Object> messages = Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
+        List<Object> messages =
+                Json.array(Json.parseObject(transport.lastRequest.body()).get("messages"));
         Map<String, Object> user = Json.object(messages.get(0));
         assertEquals("user", user.get("role"));
         assertEquals("alice", user.get("name"));

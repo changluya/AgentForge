@@ -22,8 +22,7 @@ public class LlmBasicConfig {
     // 大模型相关配置参数
     private Properties props;
 
-    public LlmBasicConfig() {
-    }
+    public LlmBasicConfig() {}
 
     private LlmBasicConfig(Builder builder) {
         this.provider = builder.provider;

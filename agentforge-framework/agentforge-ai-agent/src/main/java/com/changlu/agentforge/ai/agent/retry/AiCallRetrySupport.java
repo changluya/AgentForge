@@ -13,9 +13,7 @@ public class AiCallRetrySupport {
         // 工具类，禁止实例化
     }
 
-    /**
-     * 重试监听：每次准备进入下一次重试前回调一次
-     */
+    /** 重试监听：每次准备进入下一次重试前回调一次 */
     @FunctionalInterface
     public interface RetryListener {
         void onRetry(int retryCount, int maxRetries, Exception lastException, long delayMs);
@@ -36,10 +34,8 @@ public class AiCallRetrySupport {
      * @param delayMillis 首次重试等待时间，后续每次翻倍
      * @param listener 重试回调，可为null
      */
-    public static <T> T execute(Supplier<T> callable,
-                                int retryCount,
-                                long delayMillis,
-                                RetryListener listener) {
+    public static <T> T execute(
+            Supplier<T> callable, int retryCount, long delayMillis, RetryListener listener) {
         int maxRetries = Math.max(retryCount, 0);
         int attempts = maxRetries + 1;
         long delay = Math.max(delayMillis, 0L);

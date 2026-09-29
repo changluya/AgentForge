@@ -23,10 +23,8 @@ public class OpenAiModel extends BaseModel {
         String apiKey = llmBasicConfig.getApiKey();
         Properties props = llmBasicConfig.getProps();
 
-        OpenAiChatModel.Builder builder = OpenAiChatModel.builder()
-                .baseUrl(url)
-                .modelName(modelName)
-                .apiKey(apiKey);
+        OpenAiChatModel.Builder builder =
+                OpenAiChatModel.builder().baseUrl(url).modelName(modelName).apiKey(apiKey);
 
         // 通用参数配置
         configureCommonParams(builder, props);
@@ -41,10 +39,8 @@ public class OpenAiModel extends BaseModel {
         String apiKey = llmBasicConfig.getApiKey();
         Properties props = llmBasicConfig.getProps();
 
-        OpenAiStreamingChatModel.Builder builder = OpenAiStreamingChatModel.builder()
-                .baseUrl(url)
-                .modelName(modelName)
-                .apiKey(apiKey);
+        OpenAiStreamingChatModel.Builder builder =
+                OpenAiStreamingChatModel.builder().baseUrl(url).modelName(modelName).apiKey(apiKey);
 
         // 通用参数配置
         configureCommonParams(builder, props);

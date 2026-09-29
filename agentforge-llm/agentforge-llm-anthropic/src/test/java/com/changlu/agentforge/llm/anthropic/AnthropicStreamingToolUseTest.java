@@ -11,6 +11,7 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.http.StreamingHttpResponseHandler;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Verifies that streamed Anthropic {@code tool_use} content blocks are accumulated by
- * index and surfaced as complete {@link ToolExecutionRequest}s on the final response.
+ * Verifies that streamed Anthropic {@code tool_use} content blocks are accumulated by index and
+ * surfaced as complete {@link ToolExecutionRequest}s on the final response.
  *
  * @author changlu
  * @since 2026-09-13
@@ -35,22 +36,34 @@ public class AnthropicStreamingToolUseTest {
 
     @Test
     public void shouldMergeStreamedToolUseInputJson() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                sse("message_start", "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_1\"," +
-                        "\"model\":\"claude-test\",\"usage\":{\"input_tokens\":10,\"output_tokens\":0}}}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":" +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_1\",\"name\":\"get_weather\",\"input\":{}}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"hangzhou\\\"}\"}}"),
-                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
-                sse("message_delta", "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\"}," +
-                        "\"usage\":{\"output_tokens\":7}}"),
-                sse("message_stop", "{\"type\":\"message_stop\"}"));
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        sse(
+                                "message_start",
+                                "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_1\","
+                                        + "\"model\":\"claude-test\",\"usage\":{\"input_tokens\":10,\"output_tokens\":0}}}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":"
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_1\",\"name\":\"get_weather\",\"input\":{}}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"hangzhou\\\"}\"}}"),
+                        sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
+                        sse(
+                                "message_delta",
+                                "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\"},"
+                                        + "\"usage\":{\"output_tokens\":7}}"),
+                        sse("message_stop", "{\"type\":\"message_stop\"}"));
 
         RecordingHandler handler = new RecordingHandler();
-        model(transport).chat(ChatRequest.builder().message(UserMessage.from("weather?")).build(), handler);
+        model(transport)
+                .chat(ChatRequest.builder().message(UserMessage.from("weather?")).build(), handler);
 
         assertTrue(handler.await());
         assertNull(handler.error);
@@ -71,25 +84,44 @@ public class AnthropicStreamingToolUseTest {
 
     @Test
     public void shouldMergeTextAndMultipleToolUses() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                sse("message_start", "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_2\"}}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":" +
-                        "{\"type\":\"text\",\"text\":\"\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"text_delta\",\"text\":\"Two \"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"text_delta\",\"text\":\"cities\"}}"),
-                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":1,\"content_block\":" +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_a\",\"name\":\"weather\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":1,\"delta\":" +
-                        "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\\\"hz\\\"}\"}}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":2,\"content_block\":" +
-                        "{\"type\":\"tool_use\",\"id\":\"toolu_b\",\"name\":\"weather\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":2,\"delta\":" +
-                        "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\\\"bj\\\"}\"}}"),
-                sse("message_delta", "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\"}}"),
-                sse("message_stop", "{\"type\":\"message_stop\"}"));
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        sse(
+                                "message_start",
+                                "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_2\"}}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":"
+                                        + "{\"type\":\"text\",\"text\":\"\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"text_delta\",\"text\":\"Two \"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"text_delta\",\"text\":\"cities\"}}"),
+                        sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":1,\"content_block\":"
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_a\",\"name\":\"weather\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":1,\"delta\":"
+                                        + "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\\\"hz\\\"}\"}}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":2,\"content_block\":"
+                                        + "{\"type\":\"tool_use\",\"id\":\"toolu_b\",\"name\":\"weather\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":2,\"delta\":"
+                                        + "{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"city\\\":\\\"bj\\\"}\"}}"),
+                        sse(
+                                "message_delta",
+                                "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\"}}"),
+                        sse("message_stop", "{\"type\":\"message_stop\"}"));
 
         RecordingHandler handler = new RecordingHandler();
         model(transport).chat("two cities", handler);
@@ -109,22 +141,37 @@ public class AnthropicStreamingToolUseTest {
 
     @Test
     public void shouldForwardThinkingDeltas() throws InterruptedException {
-        StreamingTransport transport = StreamingTransport.success(
-                sse("message_start", "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_3\"}}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":" +
-                        "{\"type\":\"thinking\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"thinking_delta\",\"thinking\":\"先\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":" +
-                        "{\"type\":\"thinking_delta\",\"thinking\":\"查天气\"}}"),
-                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
-                sse("content_block_start", "{\"type\":\"content_block_start\",\"index\":1,\"content_block\":" +
-                        "{\"type\":\"text\",\"text\":\"\"}}"),
-                sse("content_block_delta", "{\"type\":\"content_block_delta\",\"index\":1,\"delta\":" +
-                        "{\"type\":\"text_delta\",\"text\":\"Hangzhou 22C\"}}"),
-                sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":1}"),
-                sse("message_delta", "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"}}"),
-                sse("message_stop", "{\"type\":\"message_stop\"}"));
+        StreamingTransport transport =
+                StreamingTransport.success(
+                        sse(
+                                "message_start",
+                                "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_3\"}}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":0,\"content_block\":"
+                                        + "{\"type\":\"thinking\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"thinking_delta\",\"thinking\":\"先\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":"
+                                        + "{\"type\":\"thinking_delta\",\"thinking\":\"查天气\"}}"),
+                        sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":0}"),
+                        sse(
+                                "content_block_start",
+                                "{\"type\":\"content_block_start\",\"index\":1,\"content_block\":"
+                                        + "{\"type\":\"text\",\"text\":\"\"}}"),
+                        sse(
+                                "content_block_delta",
+                                "{\"type\":\"content_block_delta\",\"index\":1,\"delta\":"
+                                        + "{\"type\":\"text_delta\",\"text\":\"Hangzhou 22C\"}}"),
+                        sse("content_block_stop", "{\"type\":\"content_block_stop\",\"index\":1}"),
+                        sse(
+                                "message_delta",
+                                "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"}}"),
+                        sse("message_stop", "{\"type\":\"message_stop\"}"));
 
         RecordingHandler handler = new RecordingHandler();
         model(transport).chat("weather?", handler);

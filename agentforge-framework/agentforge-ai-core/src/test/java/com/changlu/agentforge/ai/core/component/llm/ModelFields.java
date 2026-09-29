@@ -5,15 +5,14 @@ import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
 import java.lang.reflect.Field;
 
 /**
- * @description 测试辅助：AgentForge 的 ChatModel adapter 不暴露 getter，这里反射读取构建结果，
- * 用于断言 LlmBasicConfig 的参数确实被映射到了具体模型对象上
+ * @description 测试辅助：AgentForge 的 ChatModel adapter 不暴露 getter，这里反射读取构建结果， 用于断言 LlmBasicConfig
+ *     的参数确实被映射到了具体模型对象上
  * @author changlu
  * @date 2026/9/16
  */
 final class ModelFields {
 
-    private ModelFields() {
-    }
+    private ModelFields() {}
 
     static String string(Object model, String fieldName) {
         return (String) read(model, fieldName);
@@ -33,7 +32,8 @@ final class ModelFields {
             field.setAccessible(true);
             return field.get(model);
         } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Cannot read field '" + fieldName + "' of " + model.getClass(), e);
+            throw new IllegalStateException(
+                    "Cannot read field '" + fieldName + "' of " + model.getClass(), e);
         }
     }
 }

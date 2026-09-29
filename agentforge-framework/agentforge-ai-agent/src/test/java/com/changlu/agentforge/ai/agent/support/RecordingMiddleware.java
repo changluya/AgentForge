@@ -79,8 +79,11 @@ public class RecordingMiddleware implements IStreamingIAgentMiddleware {
 
     @Override
     public void afterLoop(int currentStep, StepResult stepResult, AgentChatContext chatContext) {
-        record("afterLoop:" + currentStep + ":"
-                + (stepResult == null ? "null" : stepResult.getState()));
+        record(
+                "afterLoop:"
+                        + currentStep
+                        + ":"
+                        + (stepResult == null ? "null" : stepResult.getState()));
     }
 
     @Override
@@ -89,56 +92,76 @@ public class RecordingMiddleware implements IStreamingIAgentMiddleware {
     }
 
     @Override
-    public void onAiCallRetry(int currentStep, ChatRequest chatRequest, AgentChatContext chatContext,
-                              int retryCount, int maxRetries, long delayMs, Exception lastException) {
+    public void onAiCallRetry(
+            int currentStep,
+            ChatRequest chatRequest,
+            AgentChatContext chatContext,
+            int retryCount,
+            int maxRetries,
+            long delayMs,
+            Exception lastException) {
         record("retry:" + currentStep + ":" + retryCount + "/" + maxRetries);
     }
 
     @Override
-    public void beforeToolExecution(ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
+    public void beforeToolExecution(
+            ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
         record("beforeTool:" + toolRequest.name());
     }
 
     @Override
-    public String afterToolExecution(ToolExecutionRequest toolRequest, String toolResult,
-                                     AgentChatContext chatContext) {
+    public String afterToolExecution(
+            ToolExecutionRequest toolRequest, String toolResult, AgentChatContext chatContext) {
         record("afterTool:" + toolRequest.name());
         return toolResultSuffix.isEmpty() ? toolResult : toolResult + toolResultSuffix;
     }
 
     @Override
-    public void onToolExecutionError(ToolExecutionRequest toolRequest, Throwable error,
-                                     AgentChatContext chatContext) {
+    public void onToolExecutionError(
+            ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {
         record("toolError:" + toolRequest.name());
     }
 
     @Override
-    public ChatRequest beforeModelCall(int currentStep, ChatRequest chatRequest,
-                                       AgentChatContext chatContext) {
+    public ChatRequest beforeModelCall(
+            int currentStep, ChatRequest chatRequest, AgentChatContext chatContext) {
         record("beforeModel:" + currentStep);
         return abortModelCall ? null : chatRequest;
     }
 
     @Override
-    public ChatResponse afterModelCall(int currentStep, ChatRequest chatRequest,
-                                       ChatResponse chatResponse, AgentChatContext chatContext) {
+    public ChatResponse afterModelCall(
+            int currentStep,
+            ChatRequest chatRequest,
+            ChatResponse chatResponse,
+            AgentChatContext chatContext) {
         afterModelSawRequest = chatRequest != null;
-        record("afterModel:" + currentStep + ":"
-                + (chatResponse.aiMessage().toolExecutionRequests() == null ? 0
-                        : chatResponse.aiMessage().toolExecutionRequests().size()));
+        record(
+                "afterModel:"
+                        + currentStep
+                        + ":"
+                        + (chatResponse.aiMessage().toolExecutionRequests() == null
+                                ? 0
+                                : chatResponse.aiMessage().toolExecutionRequests().size()));
         return chatResponse;
     }
 
     @Override
-    public void onModelCallError(int currentStep, ChatRequest chatRequest, Throwable error,
-                                 AgentChatContext chatContext) {
+    public void onModelCallError(
+            int currentStep,
+            ChatRequest chatRequest,
+            Throwable error,
+            AgentChatContext chatContext) {
         record("modelError:" + currentStep);
     }
 
     @Override
     public void onStop(int currentStep, StopResult stopResult, AgentChatContext chatContext) {
-        record("stop:" + currentStep + ":"
-                + (stopResult == null ? "null" : stopResult.getStopResultState()));
+        record(
+                "stop:"
+                        + currentStep
+                        + ":"
+                        + (stopResult == null ? "null" : stopResult.getStopResultState()));
     }
 
     @Override
@@ -147,18 +170,20 @@ public class RecordingMiddleware implements IStreamingIAgentMiddleware {
     }
 
     @Override
-    public void onPartialResponse(int currentStep, String partialResponse, AgentChatContext chatContext) {
+    public void onPartialResponse(
+            int currentStep, String partialResponse, AgentChatContext chatContext) {
         record("partial:" + currentStep + ":" + partialResponse);
     }
 
     @Override
-    public void onPartialThinking(int currentStep, PartialThinking partialThinking, AgentChatContext chatContext) {
+    public void onPartialThinking(
+            int currentStep, PartialThinking partialThinking, AgentChatContext chatContext) {
         record("think:" + currentStep + ":" + partialThinking.text());
     }
 
     @Override
-    public void onIntermediateResponse(int currentStep, ChatResponse intermediateResponse,
-                                       AgentChatContext chatContext) {
+    public void onIntermediateResponse(
+            int currentStep, ChatResponse intermediateResponse, AgentChatContext chatContext) {
         record("intermediate:" + currentStep);
     }
 

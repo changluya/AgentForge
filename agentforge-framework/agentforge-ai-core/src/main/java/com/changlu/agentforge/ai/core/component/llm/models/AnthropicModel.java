@@ -23,10 +23,8 @@ public class AnthropicModel extends BaseModel {
         String apiKey = llmBasicConfig.getApiKey();
         Properties props = llmBasicConfig.getProps();
 
-        AnthropicChatModel.Builder builder = AnthropicChatModel.builder()
-                .baseUrl(url)
-                .modelName(modelName)
-                .apiKey(apiKey);
+        AnthropicChatModel.Builder builder =
+                AnthropicChatModel.builder().baseUrl(url).modelName(modelName).apiKey(apiKey);
 
         // 通用参数配置
         configureCommonParams(builder, props);
@@ -41,10 +39,11 @@ public class AnthropicModel extends BaseModel {
         String apiKey = llmBasicConfig.getApiKey();
         Properties props = llmBasicConfig.getProps();
 
-        AnthropicStreamingChatModel.Builder builder = AnthropicStreamingChatModel.builder()
-                .baseUrl(url)
-                .modelName(modelName)
-                .apiKey(apiKey);
+        AnthropicStreamingChatModel.Builder builder =
+                AnthropicStreamingChatModel.builder()
+                        .baseUrl(url)
+                        .modelName(modelName)
+                        .apiKey(apiKey);
 
         // 通用参数配置
         configureCommonParams(builder, props);
@@ -82,7 +81,8 @@ public class AnthropicModel extends BaseModel {
     }
 
     // 重载方法用于 StreamingChatModel
-    private void configureCommonParams(AnthropicStreamingChatModel.Builder builder, Properties props) {
+    private void configureCommonParams(
+            AnthropicStreamingChatModel.Builder builder, Properties props) {
         if (props == null) {
             return;
         }

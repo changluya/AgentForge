@@ -18,8 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @description 日志打印Agent中间件：打印Agent执行过程中的关键信息，对超长内容做截断，
- * 并统计每轮会话的模型耗时、工具耗时与token使用量
+ * @description 日志打印Agent中间件：打印Agent执行过程中的关键信息，对超长内容做截断， 并统计每轮会话的模型耗时、工具耗时与token使用量
  * @author changlu
  * @date 2026/9/16
  */
@@ -33,82 +32,116 @@ public class LoggingIAgentMiddleware implements IAgentMiddleware {
     private static final int MAX_TOOL_RESULT_LENGTH = 1000;
 
     // 会话统计信息，按memoryId隔离
-    private final Map<Object, SessionStats> sessionStatsMap = new ConcurrentHashMap<Object, SessionStats>();
+    private final Map<Object, SessionStats> sessionStatsMap =
+            new ConcurrentHashMap<Object, SessionStats>();
 
     @Override
     public void onInitComplete(AgentChatContext chatContext) {
         stats(chatContext).sessionStartTime = System.currentTimeMillis();
-        logger.info("[会话开始] memoryId: " + memoryId(chatContext)
-                + ", question: " + truncate(question(chatContext), MAX_CONTENT_LENGTH));
+        logger.info(
+                "[会话开始] memoryId: "
+                        + memoryId(chatContext)
+                        + ", question: "
+                        + truncate(question(chatContext), MAX_CONTENT_LENGTH));
     }
 
     @Override
-    public void onAiCallRetry(int currentStep,
-                              ChatRequest chatRequest,
-                              AgentChatContext chatContext,
-                              int retryCount,
-                              int maxRetries,
-                              long delayMs,
-                              Exception lastException) {
-        logger.warning("[AI调用重试] 步骤: " + currentStep
-                + ", 重试次数: " + retryCount + "/" + maxRetries
-                + ", 等待: " + delayMs + "ms"
-                + ", 异常: " + (lastException != null ? lastException.getClass().getSimpleName() : "null")
-                + ", memoryId: " + memoryId(chatContext)
-                + ", error: " + (lastException != null ? truncate(lastException.getMessage(), 200) : "null"));
+    public void onAiCallRetry(
+            int currentStep,
+            ChatRequest chatRequest,
+            AgentChatContext chatContext,
+            int retryCount,
+            int maxRetries,
+            long delayMs,
+            Exception lastException) {
+        logger.warning(
+                "[AI调用重试] 步骤: "
+                        + currentStep
+                        + ", 重试次数: "
+                        + retryCount
+                        + "/"
+                        + maxRetries
+                        + ", 等待: "
+                        + delayMs
+                        + "ms"
+                        + ", 异常: "
+                        + (lastException != null
+                                ? lastException.getClass().getSimpleName()
+                                : "null")
+                        + ", memoryId: "
+                        + memoryId(chatContext)
+                        + ", error: "
+                        + (lastException != null
+                                ? truncate(lastException.getMessage(), 200)
+                                : "null"));
     }
 
     @Override
-    public void beforeToolExecution(ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
-        logger.info("[工具执行开始] 工具: " + toolRequest.name()
-                + ", 参数: " + truncate(toolRequest.arguments(), MAX_CONTENT_LENGTH)
-                + ", memoryId: " + memoryId(chatContext));
+    public void beforeToolExecution(
+            ToolExecutionRequest toolRequest, AgentChatContext chatContext) {
+        logger.info(
+                "[工具执行开始] 工具: "
+                        + toolRequest.name()
+                        + ", 参数: "
+                        + truncate(toolRequest.arguments(), MAX_CONTENT_LENGTH)
+                        + ", memoryId: "
+                        + memoryId(chatContext));
         stats(chatContext).toolStartMap.put(toolKey(toolRequest), System.currentTimeMillis());
     }
 
     @Override
-    public String afterToolExecution(ToolExecutionRequest toolRequest,
-                                     String toolResult,
-                                     AgentChatContext chatContext) {
+    public String afterToolExecution(
+            ToolExecutionRequest toolRequest, String toolResult, AgentChatContext chatContext) {
         Long start = stats(chatContext).toolStartMap.remove(toolKey(toolRequest));
         long cost = start == null ? 0L : System.currentTimeMillis() - start;
         stats(chatContext).totalToolExecutionTime.addAndGet(cost);
 
-        logger.info("[工具执行完成] 工具: " + toolRequest.name()
-                + ", 耗时: " + cost + "ms"
-                + ", 结果: " + truncate(toolResult, MAX_TOOL_RESULT_LENGTH)
-                + ", memoryId: " + memoryId(chatContext));
+        logger.info(
+                "[工具执行完成] 工具: "
+                        + toolRequest.name()
+                        + ", 耗时: "
+                        + cost
+                        + "ms"
+                        + ", 结果: "
+                        + truncate(toolResult, MAX_TOOL_RESULT_LENGTH)
+                        + ", memoryId: "
+                        + memoryId(chatContext));
         // 只观察不改写
         return toolResult;
     }
 
     @Override
-    public void onToolExecutionError(ToolExecutionRequest toolRequest,
-                                     Throwable error,
-                                     AgentChatContext chatContext) {
+    public void onToolExecutionError(
+            ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {
         stats(chatContext).toolStartMap.remove(toolKey(toolRequest));
-        logger.log(Level.WARNING, "[工具执行异常] 工具: " + toolRequest.name()
-                + ", memoryId: " + memoryId(chatContext), error);
+        logger.log(
+                Level.WARNING,
+                "[工具执行异常] 工具: " + toolRequest.name() + ", memoryId: " + memoryId(chatContext),
+                error);
     }
 
     @Override
-    public ChatRequest beforeModelCall(int currentStep,
-                                       ChatRequest chatRequest,
-                                       AgentChatContext chatContext) {
+    public ChatRequest beforeModelCall(
+            int currentStep, ChatRequest chatRequest, AgentChatContext chatContext) {
         if (chatRequest != null) {
             stats(chatContext).modelStartMap.put(modelKey(currentStep), System.currentTimeMillis());
-            logger.info("[模型调用开始] 步骤: " + currentStep
-                    + ", 消息数: " + chatRequest.messages().size()
-                    + ", memoryId: " + memoryId(chatContext));
+            logger.info(
+                    "[模型调用开始] 步骤: "
+                            + currentStep
+                            + ", 消息数: "
+                            + chatRequest.messages().size()
+                            + ", memoryId: "
+                            + memoryId(chatContext));
         }
         return chatRequest;
     }
 
     @Override
-    public ChatResponse afterModelCall(int currentStep,
-                                       ChatRequest chatRequest,
-                                       ChatResponse chatResponse,
-                                       AgentChatContext chatContext) {
+    public ChatResponse afterModelCall(
+            int currentStep,
+            ChatRequest chatRequest,
+            ChatResponse chatResponse,
+            AgentChatContext chatContext) {
         if (chatResponse == null) {
             return null;
         }
@@ -118,15 +151,22 @@ public class LoggingIAgentMiddleware implements IAgentMiddleware {
         stats.totalModelCallTime.addAndGet(cost);
 
         StringBuilder builder = new StringBuilder();
-        builder.append("[模型调用完成] 步骤: ").append(currentStep).append(", 耗时: ").append(cost).append("ms");
+        builder.append("[模型调用完成] 步骤: ")
+                .append(currentStep)
+                .append(", 耗时: ")
+                .append(cost)
+                .append("ms");
         TokenUsage tokenUsage = chatResponse.tokenUsage();
         if (tokenUsage != null) {
             stats.totalInputTokens.addAndGet((int) tokenUsage.inputTokens());
             stats.totalOutputTokens.addAndGet((int) tokenUsage.outputTokens());
             stats.totalTokens.addAndGet((int) tokenUsage.totalTokens());
-            builder.append(", token: ").append(tokenUsage.inputTokens())
-                    .append("/").append(tokenUsage.outputTokens())
-                    .append("/").append(tokenUsage.totalTokens());
+            builder.append(", token: ")
+                    .append(tokenUsage.inputTokens())
+                    .append("/")
+                    .append(tokenUsage.outputTokens())
+                    .append("/")
+                    .append(tokenUsage.totalTokens());
         }
         FinishReason finishReason = chatResponse.finishReason();
         if (finishReason != null) {
@@ -146,28 +186,48 @@ public class LoggingIAgentMiddleware implements IAgentMiddleware {
     }
 
     @Override
-    public void onModelCallError(int currentStep,
-                                 ChatRequest chatRequest,
-                                 Throwable error,
-                                 AgentChatContext chatContext) {
+    public void onModelCallError(
+            int currentStep,
+            ChatRequest chatRequest,
+            Throwable error,
+            AgentChatContext chatContext) {
         stats(chatContext).modelStartMap.remove(modelKey(currentStep));
-        logger.log(Level.WARNING, "[模型调用异常] 步骤: " + currentStep
-                + ", memoryId: " + memoryId(chatContext), error);
+        logger.log(
+                Level.WARNING,
+                "[模型调用异常] 步骤: " + currentStep + ", memoryId: " + memoryId(chatContext),
+                error);
     }
 
     @Override
     public void onStop(int currentStep, StopResult stopResult, AgentChatContext chatContext) {
         SessionStats stats = stats(chatContext);
         StopResultState state = stopResult == null ? null : stopResult.getStopResultState();
-        logger.info("[会话结束] 步骤: " + currentStep
-                + ", 状态: " + (state == null ? "null" : state.getDescription())
-                + ", 总耗时: " + (System.currentTimeMillis() - stats.sessionStartTime) + "ms"
-                + ", 模型耗时: " + stats.totalModelCallTime.get() + "ms"
-                + ", 工具耗时: " + stats.totalToolExecutionTime.get() + "ms"
-                + ", token(输入/输出/总计): " + stats.totalInputTokens.get()
-                + "/" + stats.totalOutputTokens.get() + "/" + stats.totalTokens.get()
-                + ", runRes: " + truncate(stopResult == null ? null : stopResult.getRunRes(), MAX_CONTENT_LENGTH)
-                + ", memoryId: " + memoryId(chatContext));
+        logger.info(
+                "[会话结束] 步骤: "
+                        + currentStep
+                        + ", 状态: "
+                        + (state == null ? "null" : state.getDescription())
+                        + ", 总耗时: "
+                        + (System.currentTimeMillis() - stats.sessionStartTime)
+                        + "ms"
+                        + ", 模型耗时: "
+                        + stats.totalModelCallTime.get()
+                        + "ms"
+                        + ", 工具耗时: "
+                        + stats.totalToolExecutionTime.get()
+                        + "ms"
+                        + ", token(输入/输出/总计): "
+                        + stats.totalInputTokens.get()
+                        + "/"
+                        + stats.totalOutputTokens.get()
+                        + "/"
+                        + stats.totalTokens.get()
+                        + ", runRes: "
+                        + truncate(
+                                stopResult == null ? null : stopResult.getRunRes(),
+                                MAX_CONTENT_LENGTH)
+                        + ", memoryId: "
+                        + memoryId(chatContext));
         // 会话结束后释放统计，避免长生命周期Agent实例累积
         sessionStatsMap.remove(memoryId(chatContext));
     }
@@ -175,10 +235,19 @@ public class LoggingIAgentMiddleware implements IAgentMiddleware {
     @Override
     public void onStopWithError(int currentStep, Throwable error, AgentChatContext chatContext) {
         SessionStats stats = stats(chatContext);
-        logger.log(Level.WARNING, "[会话异常结束] 步骤: " + currentStep
-                + ", 模型耗时: " + stats.totalModelCallTime.get() + "ms"
-                + ", 工具耗时: " + stats.totalToolExecutionTime.get() + "ms"
-                + ", memoryId: " + memoryId(chatContext), error);
+        logger.log(
+                Level.WARNING,
+                "[会话异常结束] 步骤: "
+                        + currentStep
+                        + ", 模型耗时: "
+                        + stats.totalModelCallTime.get()
+                        + "ms"
+                        + ", 工具耗时: "
+                        + stats.totalToolExecutionTime.get()
+                        + "ms"
+                        + ", memoryId: "
+                        + memoryId(chatContext),
+                error);
         sessionStatsMap.remove(memoryId(chatContext));
     }
 
@@ -222,9 +291,7 @@ public class LoggingIAgentMiddleware implements IAgentMiddleware {
         return text.substring(0, maxLength) + "...(truncated:" + text.length() + ")";
     }
 
-    /**
-     * 单个会话的统计信息
-     */
+    /** 单个会话的统计信息 */
     private static class SessionStats {
         long sessionStartTime;
 

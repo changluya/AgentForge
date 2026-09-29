@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Running Spotless formatting check..."
+
+if ! mvn spotless:check; then
+    echo >&2
+    echo "Code formatting check failed; applying Spotless formatting..." >&2
+    if ! mvn spotless:apply; then
+        echo "Automatic formatting failed. Run 'mvn spotless:apply' for details." >&2
+        exit 1
+    fi
+    echo "Formatting completed. Review and stage the changes, then commit again." >&2
+    exit 1
+fi

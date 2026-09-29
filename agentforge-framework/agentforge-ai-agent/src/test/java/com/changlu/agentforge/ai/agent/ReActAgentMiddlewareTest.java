@@ -14,10 +14,10 @@ import com.changlu.agentforge.ai.agent.support.SideEffectTools;
 import com.changlu.agentforge.ai.agent.support.WeatherTools;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessageType;
-import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.response.ChatResponse;
 import com.changlu.agentforge.llm.tool.execution.ToolService;
+
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -37,28 +37,30 @@ public class ReActAgentMiddlewareTest {
 
     @Test
     public void shouldFireHooksInOrderForToolRound() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueText("Hangzhou今天22度，晴。");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueText("Hangzhou今天22度，晴。");
         RecordingMiddleware middleware = new RecordingMiddleware();
 
-        ChatResult result = agent(chatModel, settings(0), middleware)
-                .run(request("杭州天气怎么样？"));
+        ChatResult result = agent(chatModel, settings(0), middleware).run(request("杭州天气怎么样？"));
 
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
-        assertEquals(Arrays.asList(
-                "init",
-                "beforeLoop:1",
-                "beforeModel:1",
-                "afterModel:1:1",
-                "beforeTool:getWeather",
-                "afterTool:getWeather",
-                "afterLoop:1:FINISHED",
-                "beforeLoop:2",
-                "beforeModel:2",
-                "afterModel:2:0",
-                "afterLoop:2:STOP",
-                "stop:2:NORMAL"), middleware.events());
+        assertEquals(
+                Arrays.asList(
+                        "init",
+                        "beforeLoop:1",
+                        "beforeModel:1",
+                        "afterModel:1:1",
+                        "beforeTool:getWeather",
+                        "afterTool:getWeather",
+                        "afterLoop:1:FINISHED",
+                        "beforeLoop:2",
+                        "beforeModel:2",
+                        "afterModel:2:0",
+                        "afterLoop:2:STOP",
+                        "stop:2:NORMAL"),
+                middleware.events());
         // 模型调用后的中间件能拿到本轮真实请求
         assertTrue(middleware.afterModelSawRequest());
         assertEquals(1, middleware.initCount());
@@ -66,9 +68,10 @@ public class ReActAgentMiddlewareTest {
 
     @Test
     public void shouldRewriteToolResultBeforeWritingMemory() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueText("done");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueText("done");
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
         RecordingMiddleware middleware = new RecordingMiddleware().toolResultSuffix("[masked]");
 
@@ -93,8 +96,14 @@ public class ReActAgentMiddlewareTest {
         assertEquals(0, chatModel.callCount());
         assertEquals("模型调用被中间件中断", result.getRes());
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
-        assertEquals(Arrays.asList("init", "beforeLoop:1", "beforeModel:1",
-                "afterLoop:1:STOP", "stop:1:NORMAL"), middleware.events());
+        assertEquals(
+                Arrays.asList(
+                        "init",
+                        "beforeLoop:1",
+                        "beforeModel:1",
+                        "afterLoop:1:STOP",
+                        "stop:1:NORMAL"),
+                middleware.events());
     }
 
     @Test
@@ -106,15 +115,17 @@ public class ReActAgentMiddlewareTest {
 
         assertEquals(AgentRunState.MODEL_CALL_ERROR, result.getRunState());
         assertTrue(result.getRes().contains("模型调用失败"));
-        assertEquals(Arrays.asList(
-                "init",
-                "beforeLoop:1",
-                "beforeModel:1",
-                "retry:1:1/2",
-                "retry:1:2/2",
-                "modelError:1",
-                "afterLoop:1:STOP",
-                "stop:1:NORMAL"), middleware.events());
+        assertEquals(
+                Arrays.asList(
+                        "init",
+                        "beforeLoop:1",
+                        "beforeModel:1",
+                        "retry:1:1/2",
+                        "retry:1:2/2",
+                        "modelError:1",
+                        "afterLoop:1:STOP",
+                        "stop:1:NORMAL"),
+                middleware.events());
     }
 
     @Test
@@ -122,18 +133,21 @@ public class ReActAgentMiddlewareTest {
         SideEffectTools sideEffectTool = new SideEffectTools();
         ToolService toolService = new ToolService();
         toolService.tools(sideEffectTool);
-        final ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "sideEffect", "{\"reason\":\"user stopped\"}")
-                .enqueueText("never reached");
+        final ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "sideEffect", "{\"reason\":\"user stopped\"}")
+                        .enqueueText("never reached");
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
         RecordingMiddleware middleware = new RecordingMiddleware();
-        final ReActAgent agent = agent(chatModel, memoryProvider, settings(0), toolService, middleware);
-        sideEffectTool.onExecute(new Runnable() {
-            @Override
-            public void run() {
-                agent.cancel(MEMORY_ID);
-            }
-        });
+        final ReActAgent agent =
+                agent(chatModel, memoryProvider, settings(0), toolService, middleware);
+        sideEffectTool.onExecute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        agent.cancel(MEMORY_ID);
+                    }
+                });
 
         ChatResult result = agent.run(request("一直查天气"));
 
@@ -146,10 +160,11 @@ public class ReActAgentMiddlewareTest {
 
     @Test
     public void shouldFireMaxStepsStop() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueToolCall("call_2", "getWeather", "{\"city\":\"Beijing\"}")
-                .enqueueToolCall("call_3", "getWeather", "{\"city\":\"Shanghai\"}");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueToolCall("call_2", "getWeather", "{\"city\":\"Beijing\"}")
+                        .enqueueToolCall("call_3", "getWeather", "{\"city\":\"Shanghai\"}");
         RecordingMiddleware middleware = new RecordingMiddleware();
 
         ChatResult result = agent(chatModel, settings(0, 2), middleware).run(request("一直查天气"));
@@ -162,24 +177,32 @@ public class ReActAgentMiddlewareTest {
 
     @Test
     public void shouldKeepRunningWhenMiddlewareThrows() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueText("Hangzhou今天22度，晴。");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueText("Hangzhou今天22度，晴。");
 
-        ChatResult result = agent(chatModel, settings(0), new IAgentMiddleware() {
-            @Override
-            public void beforeLoop(int currentStep, AgentChatContext chatContext) {
-                throw new IllegalStateException("middleware down");
-            }
+        ChatResult result =
+                agent(
+                                chatModel,
+                                settings(0),
+                                new IAgentMiddleware() {
+                                    @Override
+                                    public void beforeLoop(
+                                            int currentStep, AgentChatContext chatContext) {
+                                        throw new IllegalStateException("middleware down");
+                                    }
 
-            @Override
-            public ChatResponse afterModelCall(int currentStep,
-                                               ChatRequest chatRequest,
-                                               ChatResponse chatResponse,
-                                               AgentChatContext chatContext) {
-                throw new IllegalStateException("middleware down");
-            }
-        }).run(request("杭州天气怎么样？"));
+                                    @Override
+                                    public ChatResponse afterModelCall(
+                                            int currentStep,
+                                            ChatRequest chatRequest,
+                                            ChatResponse chatResponse,
+                                            AgentChatContext chatContext) {
+                                        throw new IllegalStateException("middleware down");
+                                    }
+                                })
+                        .run(request("杭州天气怎么样？"));
 
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
         assertEquals("Hangzhou今天22度，晴。", result.getRes());
@@ -187,12 +210,14 @@ public class ReActAgentMiddlewareTest {
 
     @Test
     public void shouldRunWithLoggingMiddleware() {
-        ScriptedChatModel chatModel = new ScriptedChatModel()
-                .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
-                .enqueueText("Hangzhou今天22度，晴。");
+        ScriptedChatModel chatModel =
+                new ScriptedChatModel()
+                        .enqueueToolCall("call_1", "getWeather", "{\"city\":\"Hangzhou\"}")
+                        .enqueueText("Hangzhou今天22度，晴。");
 
-        ChatResult result = agent(chatModel, settings(0), new LoggingIAgentMiddleware())
-                .run(request("杭州天气怎么样？"));
+        ChatResult result =
+                agent(chatModel, settings(0), new LoggingIAgentMiddleware())
+                        .run(request("杭州天气怎么样？"));
 
         assertEquals(AgentRunState.SUCCESS, result.getRunState());
         assertEquals("Hangzhou今天22度，晴。", result.getRes());
@@ -233,10 +258,14 @@ public class ReActAgentMiddlewareTest {
                 .build();
     }
 
-    private static ReActAgent agent(ScriptedChatModel chatModel, AgentSettings settings,
-                                    IAgentMiddleware... middlewares) {
-        return agent(chatModel, ChatMemoryProvider.windowChatMemoryProvider(100), settings,
-                toolService(), middlewares);
+    private static ReActAgent agent(
+            ScriptedChatModel chatModel, AgentSettings settings, IAgentMiddleware... middlewares) {
+        return agent(
+                chatModel,
+                ChatMemoryProvider.windowChatMemoryProvider(100),
+                settings,
+                toolService(),
+                middlewares);
     }
 
     private static ToolService toolService() {
@@ -245,17 +274,21 @@ public class ReActAgentMiddlewareTest {
         return toolService;
     }
 
-    private static ReActAgent agent(ScriptedChatModel chatModel, ChatMemoryProvider memoryProvider,
-                                    AgentSettings settings, ToolService toolService,
-                                    IAgentMiddleware... middlewares) {
-        ReActAgent.ReActAgentBuilder builder = ReActAgent.builder()
-                .agentName("middleware-agent")
-                .systemPrompt("You are a weather assistant.")
-                .chatModel(chatModel)
-                .chatMemoryProvider(memoryProvider)
-                .toolService(toolService)
-                .agentSettings(settings)
-                .middlewares(Arrays.asList(middlewares));
+    private static ReActAgent agent(
+            ScriptedChatModel chatModel,
+            ChatMemoryProvider memoryProvider,
+            AgentSettings settings,
+            ToolService toolService,
+            IAgentMiddleware... middlewares) {
+        ReActAgent.ReActAgentBuilder builder =
+                ReActAgent.builder()
+                        .agentName("middleware-agent")
+                        .systemPrompt("You are a weather assistant.")
+                        .chatModel(chatModel)
+                        .chatMemoryProvider(memoryProvider)
+                        .toolService(toolService)
+                        .agentSettings(settings)
+                        .middlewares(Arrays.asList(middlewares));
         return builder.build();
     }
 }

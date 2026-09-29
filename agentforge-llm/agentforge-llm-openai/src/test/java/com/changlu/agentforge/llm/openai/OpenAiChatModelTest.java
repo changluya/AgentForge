@@ -12,6 +12,7 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.internal.json.Json;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -36,16 +37,17 @@ public class OpenAiChatModelTest {
     /**
      * Optional real-endpoint verification.
      *
-     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.</p>
+     * <p>Modify the three {@code REAL_ENDPOINT_*} constants above before running this test.
+     *
      * <ul>
-     *     <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.</li>
-     *     <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.</li>
-     *     <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.</li>
+     *   <li>Use {@code REAL_ENDPOINT_BASE_URL} for the OpenAI-compatible endpoint.
+     *   <li>Use {@code REAL_ENDPOINT_API_KEY} for the API key.
+     *   <li>Use {@code REAL_ENDPOINT_MODEL_NAME} for the model name.
      * </ul>
      *
-     * <p>When the API key is blank, the test is skipped so normal unit-test runs
-     * do not make a network request. Once configured, the real request is
-     * executed and any HTTP/transport/response exception fails the test.</p>
+     * <p>When the API key is blank, the test is skipped so normal unit-test runs do not make a
+     * network request. Once configured, the real request is executed and any
+     * HTTP/transport/response exception fails the test.
      */
     @Test
     public void shouldCallRealEndpointWithUserConfiguration() {
@@ -58,20 +60,25 @@ public class OpenAiChatModelTest {
         String modelName = REAL_ENDPOINT_MODEL_NAME;
 
         if (isBlank(baseUrl) || isBlank(apiKey) || isBlank(modelName)) {
-            System.out.println("Skip real OpenAI endpoint test: modify the REAL_ENDPOINT_* constants first.");
+            System.out.println(
+                    "Skip real OpenAI endpoint test: modify the REAL_ENDPOINT_* constants first.");
             return;
         }
 
-        ChatResponse response = OpenAiChatModel.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
-                .modelName(modelName)
-                .temperature(0.0)
-                .maxTokens(64)
-                .build()
-                .chat(ChatRequest.builder()
-                        .message(UserMessage.from("Reply with one short sentence confirming the connection works."))
-                        .build());
+        ChatResponse response =
+                OpenAiChatModel.builder()
+                        .baseUrl(baseUrl)
+                        .apiKey(apiKey)
+                        .modelName(modelName)
+                        .temperature(0.0)
+                        .maxTokens(64)
+                        .build()
+                        .chat(
+                                ChatRequest.builder()
+                                        .message(
+                                                UserMessage.from(
+                                                        "Reply with one short sentence confirming the connection works."))
+                                        .build());
 
         System.out.println("Real OpenAI endpoint test succeeded.");
         System.out.println("model=" + response.metadata().get("model"));
@@ -85,37 +92,44 @@ public class OpenAiChatModelTest {
 
     @Test
     public void shouldMapRequestAndNormalizeResponse() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"created\":123," +
-                        "\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"Hello!\"},\"finish_reason\":\"stop\"}]," +
-                        "\"usage\":{\"prompt_tokens\":4,\"completion_tokens\":2,\"total_tokens\":6}}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"id\":\"chatcmpl-1\",\"model\":\"gpt-test\",\"created\":123,"
+                                        + "\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"Hello!\"},\"finish_reason\":\"stop\"}],"
+                                        + "\"usage\":{\"prompt_tokens\":4,\"completion_tokens\":2,\"total_tokens\":6}}"));
 
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .baseUrl("https://gateway.example/v1/")
-                .apiKey("secret")
-                .modelName("gpt-default")
-                .temperature(0.2)
-                .maxTokens(256)
-                .customHeader("X-Project", "agentforge")
-                .httpTransport(transport)
-                .connectTimeoutMillis(1234)
-                .readTimeoutMillis(5678)
-                .build();
+        OpenAiChatModel model =
+                OpenAiChatModel.builder()
+                        .baseUrl("https://gateway.example/v1/")
+                        .apiKey("secret")
+                        .modelName("gpt-default")
+                        .temperature(0.2)
+                        .maxTokens(256)
+                        .customHeader("X-Project", "agentforge")
+                        .httpTransport(transport)
+                        .connectTimeoutMillis(1234)
+                        .readTimeoutMillis(5678)
+                        .build();
 
-        DefaultChatRequestParameters requestParameters = DefaultChatRequestParameters.builder()
-                .modelName("gpt-request")
-                .temperature(0.7)
-                .topP(0.9)
-                .stopSequences(Arrays.asList("END"))
-                .customParameter("seed", 42)
-                .build();
+        DefaultChatRequestParameters requestParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName("gpt-request")
+                        .temperature(0.7)
+                        .topP(0.9)
+                        .stopSequences(Arrays.asList("END"))
+                        .customParameter("seed", 42)
+                        .build();
 
-        ChatResponse response = model.chat(ChatRequest.builder()
-                .message(SystemMessage.from("Be concise"))
-                .message(UserMessage.from("Hi"))
-                .message(AiMessage.from("Earlier answer"))
-                .parameters(requestParameters)
-                .build());
+        ChatResponse response =
+                model.chat(
+                        ChatRequest.builder()
+                                .message(SystemMessage.from("Be concise"))
+                                .message(UserMessage.from("Hi"))
+                                .message(AiMessage.from("Earlier answer"))
+                                .parameters(requestParameters)
+                                .build());
 
         HttpRequest request = transport.lastRequest;
         assertNotNull(request);
@@ -152,16 +166,21 @@ public class OpenAiChatModelTest {
 
     @Test
     public void shouldWorkWithoutApiKeyForOpenAiCompatibleEndpoint() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"length\"}]}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":\"ok\"},\"finish_reason\":\"length\"}]}"));
 
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .baseUrl("http://localhost:11434/v1")
-                .modelName("local-model")
-                .httpTransport(transport)
-                .build();
+        OpenAiChatModel model =
+                OpenAiChatModel.builder()
+                        .baseUrl("http://localhost:11434/v1")
+                        .modelName("local-model")
+                        .httpTransport(transport)
+                        .build();
 
-        ChatResponse response = model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
+        ChatResponse response =
+                model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
 
         assertFalse(transport.lastRequest.headers().containsKey("Authorization"));
         assertEquals("ok", response.aiMessage().text());
@@ -171,15 +190,17 @@ public class OpenAiChatModelTest {
 
     @Test
     public void shouldMapToolCallFinishReasonAndArrayContent() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"choices\":[{\"message\":{\"content\":[{\"type\":\"text\",\"text\":\"A\"},{\"type\":\"text\",\"text\":\"B\"}]}," +
-                        "\"finish_reason\":\"tool_calls\"}]}"));
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"choices\":[{\"message\":{\"content\":[{\"type\":\"text\",\"text\":\"A\"},{\"type\":\"text\",\"text\":\"B\"}]},"
+                                        + "\"finish_reason\":\"tool_calls\"}]}"));
+        OpenAiChatModel model =
+                OpenAiChatModel.builder().modelName("gpt-test").httpTransport(transport).build();
 
-        ChatResponse response = model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
+        ChatResponse response =
+                model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
 
         assertEquals("AB", response.aiMessage().text());
         assertEquals(FinishReason.TOOL_EXECUTION, response.finishReason());
@@ -187,14 +208,19 @@ public class OpenAiChatModelTest {
 
     @Test
     public void shouldExposeHttpFailureAsLlmException() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(429, "{\"error\":\"rate_limit\"}"));
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(transport)
-                .build();
+        CapturingTransport transport =
+                new CapturingTransport(new HttpResponse(429, "{\"error\":\"rate_limit\"}"));
+        OpenAiChatModel model =
+                OpenAiChatModel.builder().modelName("gpt-test").httpTransport(transport).build();
 
-        LlmException error = assertThrows(LlmException.class,
-                () -> model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build()));
+        LlmException error =
+                assertThrows(
+                        LlmException.class,
+                        () ->
+                                model.chat(
+                                        ChatRequest.builder()
+                                                .message(UserMessage.from("hi"))
+                                                .build()));
 
         assertEquals(Integer.valueOf(429), error.statusCode());
         assertTrue(error.responseBody().contains("rate_limit"));
@@ -202,19 +228,24 @@ public class OpenAiChatModelTest {
 
     @Test
     public void shouldWrapTransportIOException() {
-        HttpTransport failing = new HttpTransport() {
-            @Override
-            public HttpResponse execute(HttpRequest request) throws IOException {
-                throw new IOException("network down");
-            }
-        };
-        OpenAiChatModel model = OpenAiChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(failing)
-                .build();
+        HttpTransport failing =
+                new HttpTransport() {
+                    @Override
+                    public HttpResponse execute(HttpRequest request) throws IOException {
+                        throw new IOException("network down");
+                    }
+                };
+        OpenAiChatModel model =
+                OpenAiChatModel.builder().modelName("gpt-test").httpTransport(failing).build();
 
-        LlmException error = assertThrows(LlmException.class,
-                () -> model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build()));
+        LlmException error =
+                assertThrows(
+                        LlmException.class,
+                        () ->
+                                model.chat(
+                                        ChatRequest.builder()
+                                                .message(UserMessage.from("hi"))
+                                                .build()));
         assertNotNull(error.getCause());
         assertEquals("network down", error.getCause().getMessage());
     }
@@ -222,15 +253,18 @@ public class OpenAiChatModelTest {
     @Test
     public void shouldValidateModelNameAndResponseShape() {
         final ChatRequest request = ChatRequest.builder().message(UserMessage.from("hi")).build();
-        OpenAiChatModel missingModel = OpenAiChatModel.builder()
-                .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
-                .build();
+        OpenAiChatModel missingModel =
+                OpenAiChatModel.builder()
+                        .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
+                        .build();
         assertThrows(IllegalStateException.class, () -> missingModel.chat(request));
 
-        OpenAiChatModel badResponse = OpenAiChatModel.builder()
-                .modelName("gpt-test")
-                .httpTransport(new CapturingTransport(new HttpResponse(200, "{\"choices\":[]}")))
-                .build();
+        OpenAiChatModel badResponse =
+                OpenAiChatModel.builder()
+                        .modelName("gpt-test")
+                        .httpTransport(
+                                new CapturingTransport(new HttpResponse(200, "{\"choices\":[]}")))
+                        .build();
         assertThrows(LlmException.class, () -> badResponse.chat(request));
     }
 

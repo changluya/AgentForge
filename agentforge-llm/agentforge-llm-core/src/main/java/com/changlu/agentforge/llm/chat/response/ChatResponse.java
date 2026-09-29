@@ -7,9 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Normalized response returned by all AgentForge chat model providers.
- */
+/** Normalized response returned by all AgentForge chat model providers. */
 public final class ChatResponse {
 
     private final AiMessage aiMessage;
@@ -21,7 +19,8 @@ public final class ChatResponse {
         this.aiMessage = Objects.requireNonNull(builder.aiMessage, "aiMessage");
         this.tokenUsage = builder.tokenUsage;
         this.finishReason = builder.finishReason;
-        this.metadata = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(builder.metadata));
+        this.metadata =
+                Collections.unmodifiableMap(new LinkedHashMap<String, Object>(builder.metadata));
     }
 
     public static Builder builder() {
@@ -50,8 +49,7 @@ public final class ChatResponse {
         private FinishReason finishReason;
         private final Map<String, Object> metadata = new LinkedHashMap<String, Object>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder aiMessage(AiMessage aiMessage) {
             this.aiMessage = aiMessage;

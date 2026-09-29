@@ -8,9 +8,9 @@ import java.util.Objects;
 /**
  * Represents a provider-specific custom message.
  *
- * <p>A custom message deliberately does not define a text payload. Providers that
- * support custom messages can interpret {@link #attributes()} according to their
- * own protocol. Unsupported providers should reject this message explicitly.</p>
+ * <p>A custom message deliberately does not define a text payload. Providers that support custom
+ * messages can interpret {@link #attributes()} according to their own protocol. Unsupported
+ * providers should reject this message explicitly.
  *
  * @author changlu
  * @since 2026-09-13

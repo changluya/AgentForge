@@ -8,6 +8,7 @@ import com.changlu.agentforge.llm.chat.message.UserMessage;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
 import com.changlu.agentforge.llm.chat.response.ChatResponse;
 import com.changlu.agentforge.llm.chat.response.StreamingChatResponseHandler;
+
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -61,12 +62,11 @@ public class StreamingChatModelTest {
         final RecordingHandler handler = new RecordingHandler();
 
         assertThrows(NullPointerException.class, () -> model.chat((String) null, handler));
-        assertThrows(NullPointerException.class,
+        assertThrows(
+                NullPointerException.class,
                 () -> model.chat((java.util.List<ChatMessage>) null, handler));
-        assertThrows(NullPointerException.class,
-                () -> model.chat(handler, (ChatMessage[]) null));
-        assertThrows(NullPointerException.class,
-                () -> model.chat("hello", null));
+        assertThrows(NullPointerException.class, () -> model.chat(handler, (ChatMessage[]) null));
+        assertThrows(NullPointerException.class, () -> model.chat("hello", null));
     }
 
     private static StreamingChatModel capturingModel(final AtomicReference<ChatRequest> captured) {
@@ -76,9 +76,8 @@ public class StreamingChatModelTest {
                 captured.set(chatRequest);
                 handler.onPartialResponse("po");
                 handler.onPartialResponse("ng");
-                handler.onCompleteResponse(ChatResponse.builder()
-                        .aiMessage(AiMessage.from("pong"))
-                        .build());
+                handler.onCompleteResponse(
+                        ChatResponse.builder().aiMessage(AiMessage.from("pong")).build());
             }
         };
     }
@@ -87,8 +86,7 @@ public class StreamingChatModelTest {
         private ChatResponse completeResponse;
 
         @Override
-        public void onPartialResponse(String partialResponse) {
-        }
+        public void onPartialResponse(String partialResponse) {}
 
         @Override
         public void onCompleteResponse(ChatResponse completeResponse) {

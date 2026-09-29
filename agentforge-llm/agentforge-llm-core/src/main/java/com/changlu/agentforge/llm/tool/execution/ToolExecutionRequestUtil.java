@@ -2,9 +2,9 @@ package com.changlu.agentforge.llm.tool.execution;
 
 import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
 
 import java.util.Map;
-import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
 
 /**
  * Utilities for extracting data from a {@link ToolExecutionRequest}'s JSON arguments.
@@ -14,8 +14,7 @@ import com.changlu.agentforge.llm.tool.error.ToolArgumentsException;
  */
 final class ToolExecutionRequestUtil {
 
-    private ToolExecutionRequestUtil() {
-    }
+    private ToolExecutionRequestUtil() {}
 
     /**
      * Parses the {@code arguments} JSON string into a {@code Map}.
@@ -34,8 +33,11 @@ final class ToolExecutionRequestUtil {
             parsed = Json.parse(arguments);
         } catch (RuntimeException e) {
             throw new ToolArgumentsException(
-                    "Failed to parse tool arguments of tool '" + (request == null ? "" : request.name()) + "': "
-                            + arguments, e);
+                    "Failed to parse tool arguments of tool '"
+                            + (request == null ? "" : request.name())
+                            + "': "
+                            + arguments,
+                    e);
         }
         if (parsed instanceof Map) {
             @SuppressWarnings("unchecked")

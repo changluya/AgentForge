@@ -1,18 +1,18 @@
 package com.changlu.agentforge.ai.agent;
 
+import com.changlu.agentforge.ai.agent.component.middleware.AgentMiddlewareManager;
+import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
 import com.changlu.agentforge.ai.agent.domain.AgentRequest;
 import com.changlu.agentforge.ai.agent.domain.AgentRunState;
 import com.changlu.agentforge.ai.agent.domain.AgentSettings;
-import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
 import com.changlu.agentforge.ai.agent.domain.StopResult;
-import com.changlu.agentforge.ai.agent.component.middleware.AgentMiddlewareManager;
-import com.changlu.agentforge.ai.agent.step.StopResultState;
 import com.changlu.agentforge.ai.agent.exception.AgentException;
 import com.changlu.agentforge.ai.agent.exception.CancelException;
 import com.changlu.agentforge.ai.agent.memory.ChatMemoryProvider;
 import com.changlu.agentforge.ai.agent.step.ChatResult;
 import com.changlu.agentforge.ai.agent.step.StepResult;
 import com.changlu.agentforge.ai.agent.step.StepState;
+import com.changlu.agentforge.ai.agent.step.StopResultState;
 import com.changlu.agentforge.ai.agent.stream.TokenStream;
 import com.changlu.agentforge.llm.tool.execution.ToolService;
 
@@ -27,7 +27,8 @@ public abstract class Agent extends BaseAgent implements IAgent {
 
     protected abstract AgentSettings getAgentSettings();
 
-    protected abstract StepResult step(int currentStep, AgentChatContext chatContext) throws CancelException;
+    protected abstract StepResult step(int currentStep, AgentChatContext chatContext)
+            throws CancelException;
 
     protected abstract TokenStream stepStream(AgentChatContext chatContext);
 
@@ -79,7 +80,10 @@ public abstract class Agent extends BaseAgent implements IAgent {
                 if (curStep.getState().equals(StepState.STOP)) {
                     isFinished = true;
                     runRes = curStep.getRes();
-                    runState = curStep.getRunState() == null ? AgentRunState.SUCCESS : curStep.getRunState();
+                    runState =
+                            curStep.getRunState() == null
+                                    ? AgentRunState.SUCCESS
+                                    : curStep.getRunState();
                     break;
                 }
                 currentStep++;
@@ -116,26 +120,26 @@ public abstract class Agent extends BaseAgent implements IAgent {
             runRes = cancelReason;
             runState = AgentRunState.CANCEL;
             if (middlewareManager != null) {
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.CANCEL, runRes), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep, stopResult(StopResultState.CANCEL, runRes), chatContext);
             }
         } else if (!isFinished && currentStep > maxSteps) {
             runRes = "执行步长达到限制，请重新询问你的问题！";
             runState = AgentRunState.MAX_STEPS;
             if (middlewareManager != null) {
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.MAX_STEPS, runRes), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep, stopResult(StopResultState.MAX_STEPS, runRes), chatContext);
             }
         } else if (isFinished) {
             // 正常结束（模型不再要求调用工具）
             if (middlewareManager != null) {
-                middlewareManager.triggerOnStop(currentStep,
-                        stopResult(StopResultState.NORMAL, runRes), chatContext);
+                middlewareManager.triggerOnStop(
+                        currentStep, stopResult(StopResultState.NORMAL, runRes), chatContext);
             }
         }
 
-        return ChatResult.toFinished(question, runRes,
-                runState == null ? AgentRunState.SUCCESS : runState);
+        return ChatResult.toFinished(
+                question, runRes, runState == null ? AgentRunState.SUCCESS : runState);
     }
 
     /**
@@ -185,9 +189,6 @@ public abstract class Agent extends BaseAgent implements IAgent {
     }
 
     private static StopResult stopResult(StopResultState state, String runRes) {
-        return StopResult.builder()
-                .stopResultState(state)
-                .runRes(runRes)
-                .build();
+        return StopResult.builder().stopResultState(state).runRes(runRes).build();
     }
 }

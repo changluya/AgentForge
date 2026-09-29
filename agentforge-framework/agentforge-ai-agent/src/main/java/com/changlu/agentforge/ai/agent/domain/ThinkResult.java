@@ -64,8 +64,7 @@ public class ThinkResult {
         private String runRes;
         private List<ToolExecutionRequest> curActTools;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder state(AgentRunState state) {
             this.state = state;

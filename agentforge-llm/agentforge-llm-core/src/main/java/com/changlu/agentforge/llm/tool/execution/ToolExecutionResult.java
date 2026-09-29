@@ -6,8 +6,7 @@ import java.util.Objects;
  * Represents the value returned by a tool execution, wrapping both the raw object result and the
  * text payload that will be sent back to the LLM, plus an {@code isError} flag.
  *
- * 
- * text/raw result, since AgentForge core currently exposes text-oriented tool results).</p>
+ * <p>text/raw result, since AgentForge core currently exposes text-oriented tool results).
  *
  * @author changlu
  * @since 2026-09-13
@@ -67,9 +66,13 @@ public final class ToolExecutionResult {
     @Override
     public String toString() {
         return "ToolExecutionResult{"
-                + "isError=" + isError
-                + ", result=" + result
-                + ", text='" + text + '\''
+                + "isError="
+                + isError
+                + ", result="
+                + result
+                + ", text='"
+                + text
+                + '\''
                 + '}';
     }
 
@@ -77,16 +80,12 @@ public final class ToolExecutionResult {
         return new Builder();
     }
 
-    /**
-     * Shortcut for a successful text result.
-     */
+    /** Shortcut for a successful text result. */
     public static ToolExecutionResult success(String text) {
         return builder().text(text).build();
     }
 
-    /**
-     * Shortcut for a failed execution.
-     */
+    /** Shortcut for a failed execution. */
     public static ToolExecutionResult failure(String text, Throwable cause) {
         return builder().isError(true).result(cause).text(text).build();
     }
@@ -97,8 +96,7 @@ public final class ToolExecutionResult {
         private Object result;
         private String text;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder isError(boolean isError) {
             this.isError = isError;

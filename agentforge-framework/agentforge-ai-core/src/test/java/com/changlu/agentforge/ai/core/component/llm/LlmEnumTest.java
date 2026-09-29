@@ -5,6 +5,7 @@ import com.changlu.agentforge.ai.core.component.llm.models.AnthropicModel;
 import com.changlu.agentforge.ai.core.component.llm.models.BaseModel;
 import com.changlu.agentforge.ai.core.component.llm.models.IModel;
 import com.changlu.agentforge.ai.core.component.llm.models.OpenAiModel;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -45,9 +46,11 @@ public class LlmEnumTest {
     @Test
     public void shouldInstantiateEveryModelClass() throws Exception {
         for (LlmEnum llmEnum : LlmEnum.values()) {
-            assertTrue(llmEnum.getModelClazz() + " must implement IModel",
+            assertTrue(
+                    llmEnum.getModelClazz() + " must implement IModel",
                     IModel.class.isAssignableFrom(llmEnum.getModelClazz()));
-            assertTrue(llmEnum.getModelClazz() + " must extend BaseModel",
+            assertTrue(
+                    llmEnum.getModelClazz() + " must extend BaseModel",
                     BaseModel.class.isAssignableFrom(llmEnum.getModelClazz()));
 
             IModel model = llmEnum.getModelClazz().getDeclaredConstructor().newInstance();

@@ -26,7 +26,11 @@ public class ScriptedStreamingChatModel implements StreamingChatModel {
         private final ChatResponse response;
         private final Throwable error;
 
-        private Round(List<String> thinking, List<String> partials, ChatResponse response, Throwable error) {
+        private Round(
+                List<String> thinking,
+                List<String> partials,
+                ChatResponse response,
+                Throwable error) {
             this.thinking = thinking;
             this.partials = partials;
             this.response = response;
@@ -41,30 +45,46 @@ public class ScriptedStreamingChatModel implements StreamingChatModel {
         return enqueueReasonedText(new String[0], partials);
     }
 
-    /**
-     * 先回调思考增量片段、再回调文本增量的整轮结果，模拟带推理阶段的模型
-     */
+    /** 先回调思考增量片段、再回调文本增量的整轮结果，模拟带推理阶段的模型 */
     public ScriptedStreamingChatModel enqueueReasonedText(String[] thinking, String... partials) {
         List<String> fragments = Arrays.asList(partials);
         String text = String.join("", fragments.toArray(new String[0]));
-        rounds.add(new Round(Arrays.asList(thinking), fragments, ChatResponse.builder()
-                .aiMessage(AiMessage.from(text))
-                .finishReason(FinishReason.STOP)
-                .build(), null));
+        rounds.add(
+                new Round(
+                        Arrays.asList(thinking),
+                        fragments,
+                        ChatResponse.builder()
+                                .aiMessage(AiMessage.from(text))
+                                .finishReason(FinishReason.STOP)
+                                .build(),
+                        null));
         return this;
     }
 
     public ScriptedStreamingChatModel enqueueToolCall(String id, String name, String arguments) {
-        rounds.add(new Round(Collections.<String>emptyList(), Collections.<String>emptyList(), ChatResponse.builder()
-                .aiMessage(AiMessage.from(Collections.singletonList(
-                        ToolExecutionRequest.from(id, name, arguments))))
-                .finishReason(FinishReason.TOOL_EXECUTION)
-                .build(), null));
+        rounds.add(
+                new Round(
+                        Collections.<String>emptyList(),
+                        Collections.<String>emptyList(),
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                Collections.singletonList(
+                                                        ToolExecutionRequest.from(
+                                                                id, name, arguments))))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build(),
+                        null));
         return this;
     }
 
     public ScriptedStreamingChatModel enqueueError(Throwable error) {
-        rounds.add(new Round(Collections.<String>emptyList(), Collections.<String>emptyList(), null, error));
+        rounds.add(
+                new Round(
+                        Collections.<String>emptyList(),
+                        Collections.<String>emptyList(),
+                        null,
+                        error));
         return this;
     }
 

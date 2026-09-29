@@ -10,6 +10,7 @@ import com.changlu.agentforge.llm.chat.StreamingChatModel;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.llm.openai.OpenAiChatModel;
 import com.changlu.agentforge.llm.openai.OpenAiStreamingChatModel;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,16 +27,17 @@ public class LlmFactoryTest {
 
     @Test
     public void shouldBuildOpenAiChatModel() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .url("https://api.openai.com/v1")
-                .modelName("gpt-4o-mini")
-                .apiKey("sk-test")
-                .prop(LlmConstant.TEMPERATURE, "0.2")
-                .prop(LlmConstant.MAX_TOKENS, "1024")
-                .prop(LlmConstant.TOP_P, "0.9")
-                .prop(LlmConstant.TIMEOUT, "30")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .url("https://api.openai.com/v1")
+                        .modelName("gpt-4o-mini")
+                        .apiKey("sk-test")
+                        .prop(LlmConstant.TEMPERATURE, "0.2")
+                        .prop(LlmConstant.MAX_TOKENS, "1024")
+                        .prop(LlmConstant.TOP_P, "0.9")
+                        .prop(LlmConstant.TIMEOUT, "30")
+                        .build();
 
         ChatModel chatModel = LlmFactory.buildChatModel(config);
 
@@ -45,27 +47,28 @@ public class LlmFactoryTest {
 
     @Test
     public void shouldBuildAnthropicChatModel() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.ANTHROPIC.getCode())
-                .modelName("claude-sonnet-4-20250514")
-                .apiKey("sk-test")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.ANTHROPIC.getCode())
+                        .modelName("claude-sonnet-4-20250514")
+                        .apiKey("sk-test")
+                        .build();
 
         ChatModel chatModel = LlmFactory.buildChatModel(config);
 
         assertTrue(chatModel instanceof AnthropicChatModel);
-        assertEquals(Integer.valueOf(1024),
-                ModelFields.defaultParameters(chatModel).maxTokens());
+        assertEquals(Integer.valueOf(1024), ModelFields.defaultParameters(chatModel).maxTokens());
     }
 
     @Test
     public void shouldBuildOpenAiCompatibleEndpointFromUrl() {
         // DashScope / Ollama / Xinference 等 OpenAI-compatible 服务复用 OPENAI provider，只需配置 url
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .url("http://127.0.0.1:11434/v1")
-                .modelName("qwen2.5")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .url("http://127.0.0.1:11434/v1")
+                        .modelName("qwen2.5")
+                        .build();
 
         ChatModel chatModel = LlmFactory.buildChatModel(config);
 
@@ -75,21 +78,23 @@ public class LlmFactoryTest {
 
     @Test
     public void shouldBuildOpenAiStreamingChatModel() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .url("https://api.openai.com/v1")
-                .modelName("gpt-4o-mini")
-                .apiKey("sk-test")
-                .prop(LlmConstant.TEMPERATURE, "0.2")
-                .prop(LlmConstant.MAX_TOKENS, "1024")
-                .prop(LlmConstant.TOP_P, "0.9")
-                .prop(LlmConstant.TIMEOUT, "30")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .url("https://api.openai.com/v1")
+                        .modelName("gpt-4o-mini")
+                        .apiKey("sk-test")
+                        .prop(LlmConstant.TEMPERATURE, "0.2")
+                        .prop(LlmConstant.MAX_TOKENS, "1024")
+                        .prop(LlmConstant.TOP_P, "0.9")
+                        .prop(LlmConstant.TIMEOUT, "30")
+                        .build();
 
         StreamingChatModel streamingChatModel = LlmFactory.buildStreamChatModel(config);
 
         assertTrue(streamingChatModel instanceof OpenAiStreamingChatModel);
-        assertEquals("https://api.openai.com/v1", ModelFields.string(streamingChatModel, "baseUrl"));
+        assertEquals(
+                "https://api.openai.com/v1", ModelFields.string(streamingChatModel, "baseUrl"));
         assertEquals("sk-test", ModelFields.string(streamingChatModel, "apiKey"));
         assertEquals(30_000, ModelFields.integer(streamingChatModel, "connectTimeoutMillis"));
         assertEquals(30_000, ModelFields.integer(streamingChatModel, "readTimeoutMillis"));
@@ -103,24 +108,24 @@ public class LlmFactoryTest {
 
     @Test
     public void shouldBuildAnthropicStreamingChatModel() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.ANTHROPIC.getCode())
-                .modelName("claude-sonnet-4-20250514")
-                .apiKey("sk-test")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.ANTHROPIC.getCode())
+                        .modelName("claude-sonnet-4-20250514")
+                        .apiKey("sk-test")
+                        .build();
 
         StreamingChatModel streamingChatModel = LlmFactory.buildStreamChatModel(config);
 
         assertTrue(streamingChatModel instanceof AnthropicStreamingChatModel);
-        assertEquals("https://api.anthropic.com", ModelFields.string(streamingChatModel, "baseUrl"));
+        assertEquals(
+                "https://api.anthropic.com", ModelFields.string(streamingChatModel, "baseUrl"));
     }
 
     @Test
     public void shouldRejectUnsupportedProvider() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(999)
-                .modelName("any-model")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder().provider(999).modelName("any-model").build();
 
         try {
             LlmFactory.buildChatModel(config);
@@ -144,16 +149,18 @@ public class LlmFactoryTest {
 
     @Test
     public void shouldBuildAFreshModelEveryCall() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .modelName("gpt-4o-mini")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .modelName("gpt-4o-mini")
+                        .build();
 
         ChatModel first = LlmFactory.buildChatModel(config);
         ChatModel second = LlmFactory.buildChatModel(config);
 
         assertNotSame(first, second);
-        assertEquals(ModelFields.defaultParameters(first).modelName(),
+        assertEquals(
+                ModelFields.defaultParameters(first).modelName(),
                 ((DefaultChatRequestParameters) ModelFields.defaultParameters(second)).modelName());
     }
 }

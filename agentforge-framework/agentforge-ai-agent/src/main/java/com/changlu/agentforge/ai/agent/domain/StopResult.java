@@ -15,8 +15,7 @@ public class StopResult {
     // 运行结果
     private String runRes;
 
-    public StopResult() {
-    }
+    public StopResult() {}
 
     private StopResult(Builder builder) {
         this.stopResultState = builder.stopResultState;

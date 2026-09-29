@@ -26,8 +26,8 @@ import java.util.Map;
 /**
  * OpenAI Chat Completions implementation of {@link ChatModel}.
  *
- * <p>The base URL is configurable, so OpenAI-compatible providers can reuse the
- * same adapter when they implement the Chat Completions protocol.</p>
+ * <p>The base URL is configurable, so OpenAI-compatible providers can reuse the same adapter when
+ * they implement the Chat Completions protocol.
  */
 public final class OpenAiChatModel implements ChatModel {
 
@@ -44,15 +44,18 @@ public final class OpenAiChatModel implements ChatModel {
     private OpenAiChatModel(Builder builder) {
         this.baseUrl = trimTrailingSlash(builder.baseUrl);
         this.apiKey = builder.apiKey;
-        this.defaultParameters = DefaultChatRequestParameters.builder()
-                .modelName(builder.modelName)
-                .temperature(builder.temperature)
-                .maxTokens(builder.maxTokens)
-                .topP(builder.topP)
-                .stopSequences(builder.stopSequences)
-                .customParameters(builder.customParameters)
-                .build();
-        this.customHeaders = Collections.unmodifiableMap(new LinkedHashMap<String, String>(builder.customHeaders));
+        this.defaultParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName(builder.modelName)
+                        .temperature(builder.temperature)
+                        .maxTokens(builder.maxTokens)
+                        .topP(builder.topP)
+                        .stopSequences(builder.stopSequences)
+                        .customParameters(builder.customParameters)
+                        .build();
+        this.customHeaders =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, String>(builder.customHeaders));
         this.httpTransport = builder.httpTransport;
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
@@ -67,20 +70,21 @@ public final class OpenAiChatModel implements ChatModel {
         if (chatRequest == null) {
             throw new IllegalArgumentException("chatRequest must not be null");
         }
-        DefaultChatRequestParameters parameters = DefaultChatRequestParameters.merge(
-                defaultParameters, chatRequest.parameters());
+        DefaultChatRequestParameters parameters =
+                DefaultChatRequestParameters.merge(defaultParameters, chatRequest.parameters());
         requireModelName(parameters.modelName());
 
         Map<String, Object> payload = buildPayload(chatRequest, parameters);
-        HttpRequest request = HttpRequest.builder()
-                .url(baseUrl + "/chat/completions")
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .headers(customHeaders)
-                .body(Json.stringify(payload))
-                .connectTimeoutMillis(connectTimeoutMillis)
-                .readTimeoutMillis(readTimeoutMillis)
-                .build();
+        HttpRequest request =
+                HttpRequest.builder()
+                        .url(baseUrl + "/chat/completions")
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .headers(customHeaders)
+                        .body(Json.stringify(payload))
+                        .connectTimeoutMillis(connectTimeoutMillis)
+                        .readTimeoutMillis(readTimeoutMillis)
+                        .build();
 
         if (apiKey != null && !apiKey.trim().isEmpty()) {
             request = copyWithHeader(request, "Authorization", "Bearer " + apiKey);
@@ -89,8 +93,10 @@ public final class OpenAiChatModel implements ChatModel {
         try {
             HttpResponse response = httpTransport.execute(request);
             if (!response.isSuccessful()) {
-                throw new LlmException("OpenAI request failed with HTTP " + response.statusCode(),
-                        response.statusCode(), response.body());
+                throw new LlmException(
+                        "OpenAI request failed with HTTP " + response.statusCode(),
+                        response.statusCode(),
+                        response.body());
             }
             return parseResponse(response.body());
         } catch (IOException e) {
@@ -98,7 +104,8 @@ public final class OpenAiChatModel implements ChatModel {
         }
     }
 
-    private static Map<String, Object> buildPayload(ChatRequest request, ChatRequestParameters parameters) {
+    private static Map<String, Object> buildPayload(
+            ChatRequest request, ChatRequestParameters parameters) {
         LinkedHashMap<String, Object> payload = new LinkedHashMap<String, Object>();
         if (parameters.customParameters() != null) {
             payload.putAll(parameters.customParameters());
@@ -133,15 +140,19 @@ public final class OpenAiChatModel implements ChatModel {
         // but keep null when the assistant only produced tool calls.
         List<Object> toolCalls = Json.array(message.get("tool_calls"));
         List<ToolExecutionRequest> toolExecutionRequests = OpenAiMessages.parseToolCalls(toolCalls);
-        AiMessage aiMessage = toolExecutionRequests.isEmpty()
-                ? AiMessage.from(text == null ? "" : text)
-                : AiMessage.from(text == null || text.isEmpty() ? null : text, toolExecutionRequests);
-        ChatResponse.Builder response = ChatResponse.builder()
-                .aiMessage(aiMessage)
-                .finishReason(mapFinishReason(choice.get("finish_reason")))
-                .metadata("id", root.get("id"))
-                .metadata("model", root.get("model"))
-                .metadata("created", root.get("created"));
+        AiMessage aiMessage =
+                toolExecutionRequests.isEmpty()
+                        ? AiMessage.from(text == null ? "" : text)
+                        : AiMessage.from(
+                                text == null || text.isEmpty() ? null : text,
+                                toolExecutionRequests);
+        ChatResponse.Builder response =
+                ChatResponse.builder()
+                        .aiMessage(aiMessage)
+                        .finishReason(mapFinishReason(choice.get("finish_reason")))
+                        .metadata("id", root.get("id"))
+                        .metadata("model", root.get("model"))
+                        .metadata("created", root.get("created"));
 
         Map<String, Object> usage = Json.object(root.get("usage"));
         if (usage != null) {
@@ -158,7 +169,8 @@ public final class OpenAiChatModel implements ChatModel {
         if (reason == null) return null;
         if ("stop".equals(reason)) return FinishReason.STOP;
         if ("length".equals(reason)) return FinishReason.LENGTH;
-        if ("tool_calls".equals(reason) || "function_call".equals(reason)) return FinishReason.TOOL_EXECUTION;
+        if ("tool_calls".equals(reason) || "function_call".equals(reason))
+            return FinishReason.TOOL_EXECUTION;
         if ("content_filter".equals(reason)) return FinishReason.CONTENT_FILTER;
         return FinishReason.OTHER;
     }
@@ -181,7 +193,8 @@ public final class OpenAiChatModel implements ChatModel {
 
     private static void requireModelName(String modelName) {
         if (modelName == null || modelName.trim().isEmpty()) {
-            throw new IllegalStateException("OpenAI modelName must be configured on the model or request");
+            throw new IllegalStateException(
+                    "OpenAI modelName must be configured on the model or request");
         }
     }
 
@@ -205,8 +218,7 @@ public final class OpenAiChatModel implements ChatModel {
         private int connectTimeoutMillis = 10_000;
         private int readTimeoutMillis = 60_000;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -239,7 +251,8 @@ public final class OpenAiChatModel implements ChatModel {
         }
 
         public Builder stopSequences(List<String> stopSequences) {
-            this.stopSequences = stopSequences == null ? null : new ArrayList<String>(stopSequences);
+            this.stopSequences =
+                    stopSequences == null ? null : new ArrayList<String>(stopSequences);
             return this;
         }
 
@@ -254,7 +267,8 @@ public final class OpenAiChatModel implements ChatModel {
         }
 
         public Builder httpTransport(HttpTransport httpTransport) {
-            if (httpTransport == null) throw new IllegalArgumentException("httpTransport must not be null");
+            if (httpTransport == null)
+                throw new IllegalArgumentException("httpTransport must not be null");
             this.httpTransport = httpTransport;
             return this;
         }

@@ -6,7 +6,7 @@ package com.changlu.agentforge.ai.agent.step;
  * @date 2026/9/16
  */
 public enum ChatResultState {
-
-    RUNNING, FINISHED, FAILED;
-
+    RUNNING,
+    FINISHED,
+    FAILED;
 }

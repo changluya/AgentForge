@@ -1,34 +1,33 @@
 package com.changlu.agentforge.llm.tool;
 
-import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
+import com.changlu.agentforge.llm.chat.message.ToolExecutionRequest;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionResultMessage;
 import com.changlu.agentforge.llm.chat.message.UserMessage;
 import com.changlu.agentforge.llm.chat.request.ChatRequest;
-import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.llm.chat.response.ChatResponse;
 import com.changlu.agentforge.llm.chat.response.FinishReason;
+import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
+import com.changlu.agentforge.llm.tool.execution.ToolService;
+import com.changlu.agentforge.llm.tool.spec.ToolParameters;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import com.changlu.agentforge.llm.tool.execution.ToolService;
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
-import com.changlu.agentforge.llm.tool.spec.ToolParameters;
-import com.changlu.agentforge.llm.tool.error.ToolExecutionException;
 
 /**
- * Tests {@link ToolService} registration and the inference-and-tools loop with a fake {@link ChatModel}.
+ * Tests {@link ToolService} registration and the inference-and-tools loop with a fake {@link
+ * ChatModel}.
  *
  * @author changlu
  * @since 2026-09-13
@@ -58,16 +57,21 @@ public class ToolServiceTest {
     @Test
     public void shouldRunMultiRoundLoopAndExecuteTool() {
         // Round 1 returns a tool call; round 2 returns a final text answer.
-        ChatModel model = new ScriptedChatModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from(ToolExecutionRequest.from(
-                                "call_1", "getWeather", "{\"city\":\"Hangzhou\"}")))
-                        .finishReason(FinishReason.TOOL_EXECUTION)
-                        .build(),
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from("It is 22C and sunny in Hangzhou."))
-                        .finishReason(FinishReason.STOP)
-                        .build());
+        ChatModel model =
+                new ScriptedChatModel(
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                ToolExecutionRequest.from(
+                                                        "call_1",
+                                                        "getWeather",
+                                                        "{\"city\":\"Hangzhou\"}")))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build(),
+                        ChatResponse.builder()
+                                .aiMessage(AiMessage.from("It is 22C and sunny in Hangzhou."))
+                                .finishReason(FinishReason.STOP)
+                                .build());
 
         ToolService service = new ToolService();
         service.tools(new WeatherTools());
@@ -87,16 +91,21 @@ public class ToolServiceTest {
     @Test
     public void shouldSendToolResultBackToLlmViaSecondRound() {
         // capture the messages of the second model call
-        CapturingModel model = new CapturingModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from(ToolExecutionRequest.from(
-                                "call_1", "getWeather", "{\"city\":\"Hangzhou\"}")))
-                        .finishReason(FinishReason.TOOL_EXECUTION)
-                        .build(),
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from("done"))
-                        .finishReason(FinishReason.STOP)
-                        .build());
+        CapturingModel model =
+                new CapturingModel(
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                ToolExecutionRequest.from(
+                                                        "call_1",
+                                                        "getWeather",
+                                                        "{\"city\":\"Hangzhou\"}")))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build(),
+                        ChatResponse.builder()
+                                .aiMessage(AiMessage.from("done"))
+                                .finishReason(FinishReason.STOP)
+                                .build());
 
         ToolService service = new ToolService();
         service.tools(new WeatherTools());
@@ -116,20 +125,24 @@ public class ToolServiceTest {
 
     @Test
     public void shouldForceReprocessOnToolErrorAndLetLlmRetry() {
-        ChatModel model = new ScriptedChatModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from(ToolExecutionRequest.from(
-                                "call_1", "getWeather", "{\"city\":\"\"}")))
-                        .finishReason(FinishReason.TOOL_EXECUTION)
-                        .build(),
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from("I need a valid city."))
-                        .finishReason(FinishReason.STOP)
-                        .build());
+        ChatModel model =
+                new ScriptedChatModel(
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                ToolExecutionRequest.from(
+                                                        "call_1", "getWeather", "{\"city\":\"\"}")))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build(),
+                        ChatResponse.builder()
+                                .aiMessage(AiMessage.from("I need a valid city."))
+                                .finishReason(FinishReason.STOP)
+                                .build());
 
         ToolService service = new ToolService();
         // Tool returns an error object -> execution error handler sends message back to LLM
-        service.tool(ToolSpecification.builder().name("getWeather").build(),
+        service.tool(
+                ToolSpecification.builder().name("getWeather").build(),
                 (request, memoryId) -> {
                     throw new ToolExecutionException("city cannot be empty");
                 });
@@ -146,20 +159,28 @@ public class ToolServiceTest {
 
     @Test
     public void shouldApplyImmediateReturnBehaviorShortCircuit() {
-        ChatModel model = new ScriptedChatModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from(ToolExecutionRequest.from(
-                                "call_1", "getWeather", "{\"city\":\"Hangzhou\"}")))
-                        .finishReason(FinishReason.TOOL_EXECUTION)
-                        .build());
+        ChatModel model =
+                new ScriptedChatModel(
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                ToolExecutionRequest.from(
+                                                        "call_1",
+                                                        "getWeather",
+                                                        "{\"city\":\"Hangzhou\"}")))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build());
 
         // IMMEDIATE: loop should stop after the single tool round, no second model call
         ToolService service = new ToolService();
-        service.tool(ToolSpecification.builder().name("getWeather")
+        service.tool(
+                ToolSpecification.builder()
+                        .name("getWeather")
                         .description("Returns the weather for the given city")
-                        .parameters(ToolParameters.builder()
-                                .addProperty("city", "string", "city name", true)
-                                .build())
+                        .parameters(
+                                ToolParameters.builder()
+                                        .addProperty("city", "string", "city name", true)
+                                        .build())
                         .build(),
                 (request, memoryId) -> "Weather in Hangzhou: 22C sunny",
                 ReturnBehavior.IMMEDIATE);
@@ -174,12 +195,15 @@ public class ToolServiceTest {
 
     @Test
     public void shouldThrowWhenModelReturnsUnknownTool() {
-        ChatModel model = new ScriptedChatModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from(ToolExecutionRequest.from(
-                                "call_1", "unknownTool", "{}")))
-                        .finishReason(FinishReason.TOOL_EXECUTION)
-                        .build());
+        ChatModel model =
+                new ScriptedChatModel(
+                        ChatResponse.builder()
+                                .aiMessage(
+                                        AiMessage.from(
+                                                ToolExecutionRequest.from(
+                                                        "call_1", "unknownTool", "{}")))
+                                .finishReason(FinishReason.TOOL_EXECUTION)
+                                .build());
 
         ToolService service = new ToolService();
         service.tools(new WeatherTools());
@@ -192,11 +216,12 @@ public class ToolServiceTest {
 
     @Test
     public void shouldSupportNonToolChatRequests() {
-        ChatModel model = new ScriptedChatModel(
-                ChatResponse.builder()
-                        .aiMessage(AiMessage.from("plain answer"))
-                        .finishReason(FinishReason.STOP)
-                        .build());
+        ChatModel model =
+                new ScriptedChatModel(
+                        ChatResponse.builder()
+                                .aiMessage(AiMessage.from("plain answer"))
+                                .finishReason(FinishReason.STOP)
+                                .build());
 
         ToolService service = new ToolService();
         service.tools(new WeatherTools());

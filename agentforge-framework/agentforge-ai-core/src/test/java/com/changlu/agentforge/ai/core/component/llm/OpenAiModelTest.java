@@ -6,6 +6,7 @@ import com.changlu.agentforge.ai.core.component.llm.enums.LlmEnum;
 import com.changlu.agentforge.ai.core.component.llm.models.OpenAiModel;
 import com.changlu.agentforge.llm.chat.ChatModel;
 import com.changlu.agentforge.llm.chat.request.DefaultChatRequestParameters;
+
 import org.junit.Test;
 
 import java.util.Properties;
@@ -24,16 +25,17 @@ public class OpenAiModelTest {
 
     @Test
     public void shouldMapConnectionAndCommonProps() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .url("https://tokenrhythm.studio/v1")
-                .modelName("deepseek-v4-flash-0731")
-                .apiKey("sk-test")
-                .prop(LlmConstant.TEMPERATURE, "0.25")
-                .prop(LlmConstant.TOP_P, "0.75")
-                .prop(LlmConstant.MAX_TOKENS, "64")
-                .prop(LlmConstant.TIMEOUT, "30")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .url("https://tokenrhythm.studio/v1")
+                        .modelName("deepseek-v4-flash-0731")
+                        .apiKey("sk-test")
+                        .prop(LlmConstant.TEMPERATURE, "0.25")
+                        .prop(LlmConstant.TOP_P, "0.75")
+                        .prop(LlmConstant.MAX_TOKENS, "64")
+                        .prop(LlmConstant.TIMEOUT, "30")
+                        .build();
 
         ChatModel chatModel = new OpenAiModel().buildChatModel(config);
 
@@ -51,10 +53,11 @@ public class OpenAiModelTest {
 
     @Test
     public void shouldFallBackToAdapterDefaultsWithoutProps() {
-        LlmBasicConfig config = LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .modelName("gpt-4o-mini")
-                .build();
+        LlmBasicConfig config =
+                LlmBasicConfig.builder()
+                        .provider(LlmEnum.OPENAI.getCode())
+                        .modelName("gpt-4o-mini")
+                        .build();
 
         ChatModel chatModel = new OpenAiModel().buildChatModel(config);
 
@@ -78,11 +81,14 @@ public class OpenAiModelTest {
         props.setProperty(LlmConstant.TOP_P, "");
         props.setProperty(LlmConstant.MAX_TOKENS, "  ");
 
-        ChatModel chatModel = new OpenAiModel().buildChatModel(LlmBasicConfig.builder()
-                .provider(LlmEnum.OPENAI.getCode())
-                .modelName("gpt-4o-mini")
-                .props(props)
-                .build());
+        ChatModel chatModel =
+                new OpenAiModel()
+                        .buildChatModel(
+                                LlmBasicConfig.builder()
+                                        .provider(LlmEnum.OPENAI.getCode())
+                                        .modelName("gpt-4o-mini")
+                                        .props(props)
+                                        .build());
 
         DefaultChatRequestParameters parameters = ModelFields.defaultParameters(chatModel);
         assertNull(parameters.temperature());
@@ -93,11 +99,13 @@ public class OpenAiModelTest {
     @Test
     public void shouldFailFastOnMalformedCommonProp() {
         try {
-            new OpenAiModel().buildChatModel(LlmBasicConfig.builder()
-                    .provider(LlmEnum.OPENAI.getCode())
-                    .modelName("gpt-4o-mini")
-                    .prop(LlmConstant.MAX_TOKENS, "not-a-number")
-                    .build());
+            new OpenAiModel()
+                    .buildChatModel(
+                            LlmBasicConfig.builder()
+                                    .provider(LlmEnum.OPENAI.getCode())
+                                    .modelName("gpt-4o-mini")
+                                    .prop(LlmConstant.MAX_TOKENS, "not-a-number")
+                                    .build());
             fail("Expected a NumberFormatException for a malformed maxTokens");
         } catch (NumberFormatException e) {
             assertTrue(true);

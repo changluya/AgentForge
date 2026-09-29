@@ -12,6 +12,7 @@ import com.changlu.agentforge.llm.http.HttpRequest;
 import com.changlu.agentforge.llm.http.HttpResponse;
 import com.changlu.agentforge.llm.http.HttpTransport;
 import com.changlu.agentforge.llm.internal.json.Json;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,39 +29,46 @@ public class AnthropicChatModelTest {
 
     @Test
     public void shouldMapMessagesSystemPromptAndNormalizeResponse() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"id\":\"msg_1\",\"type\":\"message\",\"model\":\"claude-test\"," +
-                        "\"content\":[{\"type\":\"text\",\"text\":\"Hello\"},{\"type\":\"text\",\"text\":\" world\"}]," +
-                        "\"stop_reason\":\"end_turn\",\"usage\":{\"input_tokens\":5,\"output_tokens\":3}}"));
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"id\":\"msg_1\",\"type\":\"message\",\"model\":\"claude-test\","
+                                        + "\"content\":[{\"type\":\"text\",\"text\":\"Hello\"},{\"type\":\"text\",\"text\":\" world\"}],"
+                                        + "\"stop_reason\":\"end_turn\",\"usage\":{\"input_tokens\":5,\"output_tokens\":3}}"));
 
-        AnthropicChatModel model = AnthropicChatModel.builder()
-                .baseUrl("https://anthropic.example/")
-                .apiKey("secret")
-                .anthropicVersion("2023-06-01")
-                .modelName("claude-default")
-                .temperature(0.1)
-                .maxTokens(512)
-                .customHeader("X-Project", "agentforge")
-                .httpTransport(transport)
-                .connectTimeoutMillis(111)
-                .readTimeoutMillis(222)
-                .build();
+        AnthropicChatModel model =
+                AnthropicChatModel.builder()
+                        .baseUrl("https://anthropic.example/")
+                        .apiKey("secret")
+                        .anthropicVersion("2023-06-01")
+                        .modelName("claude-default")
+                        .temperature(0.1)
+                        .maxTokens(512)
+                        .customHeader("X-Project", "agentforge")
+                        .httpTransport(transport)
+                        .connectTimeoutMillis(111)
+                        .readTimeoutMillis(222)
+                        .build();
 
-        DefaultChatRequestParameters requestParameters = DefaultChatRequestParameters.builder()
-                .modelName("claude-request")
-                .temperature(0.5)
-                .topP(0.8)
-                .stopSequences(Arrays.asList("DONE"))
-                .customParameter("metadata", "test")
-                .build();
+        DefaultChatRequestParameters requestParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName("claude-request")
+                        .temperature(0.5)
+                        .topP(0.8)
+                        .stopSequences(Arrays.asList("DONE"))
+                        .customParameter("metadata", "test")
+                        .build();
 
-        ChatResponse response = model.chat(ChatRequest.builder()
-                .message(SystemMessage.from("First system"))
-                .message(SystemMessage.from("Second system"))
-                .message(UserMessage.from("Hi"))
-                .message(AiMessage.from("Earlier answer"))
-                .parameters(requestParameters)
-                .build());
+        ChatResponse response =
+                model.chat(
+                        ChatRequest.builder()
+                                .message(SystemMessage.from("First system"))
+                                .message(SystemMessage.from("Second system"))
+                                .message(UserMessage.from("Hi"))
+                                .message(AiMessage.from("Earlier answer"))
+                                .parameters(requestParameters)
+                                .build());
 
         HttpRequest request = transport.lastRequest;
         assertNotNull(request);
@@ -96,15 +104,20 @@ public class AnthropicChatModelTest {
 
     @Test
     public void shouldDefaultMaxTokensAndMapToolUseFinishReason() {
-        CapturingTransport transport = new CapturingTransport(new HttpResponse(200,
-                "{\"content\":[{\"type\":\"text\",\"text\":\"Use tool\"}],\"stop_reason\":\"tool_use\"}"));
-        AnthropicChatModel model = AnthropicChatModel.builder()
-                .apiKey("secret")
-                .modelName("claude-test")
-                .httpTransport(transport)
-                .build();
+        CapturingTransport transport =
+                new CapturingTransport(
+                        new HttpResponse(
+                                200,
+                                "{\"content\":[{\"type\":\"text\",\"text\":\"Use tool\"}],\"stop_reason\":\"tool_use\"}"));
+        AnthropicChatModel model =
+                AnthropicChatModel.builder()
+                        .apiKey("secret")
+                        .modelName("claude-test")
+                        .httpTransport(transport)
+                        .build();
 
-        ChatResponse response = model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
+        ChatResponse response =
+                model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build());
         Map<String, Object> payload = Json.parseObject(transport.lastRequest.body());
 
         assertEquals(1024L, ((Number) payload.get("max_tokens")).longValue());
@@ -114,13 +127,15 @@ public class AnthropicChatModelTest {
 
     @Test
     public void shouldRejectSystemOnlyRequest() {
-        AnthropicChatModel model = AnthropicChatModel.builder()
-                .apiKey("secret")
-                .modelName("claude-test")
-                .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
-                .build();
+        AnthropicChatModel model =
+                AnthropicChatModel.builder()
+                        .apiKey("secret")
+                        .modelName("claude-test")
+                        .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
+                        .build();
 
-        final ChatRequest request = ChatRequest.builder().message(SystemMessage.from("system only")).build();
+        final ChatRequest request =
+                ChatRequest.builder().message(SystemMessage.from("system only")).build();
         assertThrows(IllegalArgumentException.class, () -> model.chat(request));
     }
 
@@ -128,29 +143,40 @@ public class AnthropicChatModelTest {
     public void shouldValidateApiKeyAndModelName() {
         final ChatRequest request = ChatRequest.builder().message(UserMessage.from("hi")).build();
 
-        AnthropicChatModel missingKey = AnthropicChatModel.builder()
-                .modelName("claude-test")
-                .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
-                .build();
+        AnthropicChatModel missingKey =
+                AnthropicChatModel.builder()
+                        .modelName("claude-test")
+                        .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
+                        .build();
         assertThrows(IllegalStateException.class, () -> missingKey.chat(request));
 
-        AnthropicChatModel missingModel = AnthropicChatModel.builder()
-                .apiKey("secret")
-                .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
-                .build();
+        AnthropicChatModel missingModel =
+                AnthropicChatModel.builder()
+                        .apiKey("secret")
+                        .httpTransport(new CapturingTransport(new HttpResponse(200, "{}")))
+                        .build();
         assertThrows(IllegalStateException.class, () -> missingModel.chat(request));
     }
 
     @Test
     public void shouldExposeHttpFailureAsLlmException() {
-        AnthropicChatModel model = AnthropicChatModel.builder()
-                .apiKey("secret")
-                .modelName("claude-test")
-                .httpTransport(new CapturingTransport(new HttpResponse(401, "{\"error\":\"unauthorized\"}")))
-                .build();
+        AnthropicChatModel model =
+                AnthropicChatModel.builder()
+                        .apiKey("secret")
+                        .modelName("claude-test")
+                        .httpTransport(
+                                new CapturingTransport(
+                                        new HttpResponse(401, "{\"error\":\"unauthorized\"}")))
+                        .build();
 
-        LlmException error = assertThrows(LlmException.class,
-                () -> model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build()));
+        LlmException error =
+                assertThrows(
+                        LlmException.class,
+                        () ->
+                                model.chat(
+                                        ChatRequest.builder()
+                                                .message(UserMessage.from("hi"))
+                                                .build()));
 
         assertEquals(Integer.valueOf(401), error.statusCode());
         assertTrue(error.responseBody().contains("unauthorized"));
@@ -158,20 +184,28 @@ public class AnthropicChatModelTest {
 
     @Test
     public void shouldWrapTransportIOException() {
-        HttpTransport failing = new HttpTransport() {
-            @Override
-            public HttpResponse execute(HttpRequest request) throws IOException {
-                throw new IOException("network down");
-            }
-        };
-        AnthropicChatModel model = AnthropicChatModel.builder()
-                .apiKey("secret")
-                .modelName("claude-test")
-                .httpTransport(failing)
-                .build();
+        HttpTransport failing =
+                new HttpTransport() {
+                    @Override
+                    public HttpResponse execute(HttpRequest request) throws IOException {
+                        throw new IOException("network down");
+                    }
+                };
+        AnthropicChatModel model =
+                AnthropicChatModel.builder()
+                        .apiKey("secret")
+                        .modelName("claude-test")
+                        .httpTransport(failing)
+                        .build();
 
-        LlmException error = assertThrows(LlmException.class,
-                () -> model.chat(ChatRequest.builder().message(UserMessage.from("hi")).build()));
+        LlmException error =
+                assertThrows(
+                        LlmException.class,
+                        () ->
+                                model.chat(
+                                        ChatRequest.builder()
+                                                .message(UserMessage.from("hi"))
+                                                .build()));
         assertNotNull(error.getCause());
         assertEquals("network down", error.getCause().getMessage());
     }

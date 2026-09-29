@@ -14,8 +14,7 @@ public class ChatResult {
     private ChatResultState chatResultState;
     private AgentRunState runState;
 
-    public ChatResult() {
-    }
+    public ChatResult() {}
 
     private ChatResult(Builder builder) {
         this.question = builder.question;
@@ -37,7 +36,8 @@ public class ChatResult {
                 .question(question)
                 .res(res)
                 .runState(runState)
-                .chatResultState(ChatResultState.FINISHED).build();
+                .chatResultState(ChatResultState.FINISHED)
+                .build();
     }
 
     public String getQuestion() {
@@ -82,8 +82,15 @@ public class ChatResult {
 
     @Override
     public String toString() {
-        return "ChatResult{question='" + question + "', res='" + res + "', chatResultState=" + chatResultState
-                + ", runState=" + runState + '}';
+        return "ChatResult{question='"
+                + question
+                + "', res='"
+                + res
+                + "', chatResultState="
+                + chatResultState
+                + ", runState="
+                + runState
+                + '}';
     }
 
     public static class Builder {

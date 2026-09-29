@@ -13,8 +13,7 @@ public class StepResult {
     private String res;
     private AgentRunState runState;
 
-    public StepResult() {
-    }
+    public StepResult() {}
 
     private StepResult(Builder builder) {
         this.state = builder.state;
@@ -26,32 +25,22 @@ public class StepResult {
         return new Builder();
     }
 
-    /**
-     * 本轮行动完成，继续下一步think
-     */
+    /** 本轮行动完成，继续下一步think */
     public static StepResult toFinished(String message) {
-        return builder()
-                .res(message)
-                .state(StepState.FINISHED).build();
+        return builder().res(message).state(StepState.FINISHED).build();
     }
 
     public static StepResult toStop(String res) {
         return toStop(res, AgentRunState.SUCCESS);
     }
 
-    /**
-     * 整个Agent运行结束，直接拿到最终结果
-     */
+    /** 整个Agent运行结束，直接拿到最终结果 */
     public static StepResult toStop(String res, AgentRunState runState) {
-        return builder()
-                .res(res)
-                .runState(runState)
-                .state(StepState.STOP).build();
+        return builder().res(res).runState(runState).state(StepState.STOP).build();
     }
 
     public static StepResult toRunning() {
-        return builder()
-                .state(StepState.RUNNING).build();
+        return builder().state(StepState.RUNNING).build();
     }
 
     public StepState getState() {

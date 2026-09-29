@@ -3,6 +3,7 @@ package com.changlu.agentforge.llm.chat.response;
 import com.changlu.agentforge.llm.chat.message.ChatMessageType;
 import com.changlu.agentforge.llm.chat.message.CustomMessage;
 import com.changlu.agentforge.llm.chat.message.ToolExecutionResultMessage;
+
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
@@ -18,8 +19,8 @@ public class ExtendedChatMessageTest {
 
     @Test
     public void shouldCreateToolExecutionResultMessageWithFactory() {
-        ToolExecutionResultMessage message = ToolExecutionResultMessage.from(
-                "call-1", "getWeather", "sunny");
+        ToolExecutionResultMessage message =
+                ToolExecutionResultMessage.from("call-1", "getWeather", "sunny");
 
         assertEquals("call-1", message.id());
         assertEquals("getWeather", message.toolName());
@@ -34,17 +35,19 @@ public class ExtendedChatMessageTest {
         Map<String, Object> attributes = new LinkedHashMap<String, Object>();
         attributes.put("traceId", "trace-1");
 
-        ToolExecutionResultMessage message = ToolExecutionResultMessage.builder()
-                .id("call-2")
-                .toolName("search")
-                .text("failed")
-                .isError(Boolean.TRUE)
-                .attributes(attributes)
-                .build();
+        ToolExecutionResultMessage message =
+                ToolExecutionResultMessage.builder()
+                        .id("call-2")
+                        .toolName("search")
+                        .text("failed")
+                        .isError(Boolean.TRUE)
+                        .attributes(attributes)
+                        .build();
 
         assertEquals(Boolean.TRUE, message.isError());
         assertEquals("trace-1", message.attributes().get("traceId"));
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(
+                UnsupportedOperationException.class,
                 () -> message.attributes().put("newKey", "newValue"));
 
         attributes.put("traceId", "changed-after-build");
@@ -53,16 +56,15 @@ public class ExtendedChatMessageTest {
 
     @Test
     public void shouldCreateModifiedCopyWithToBuilder() {
-        ToolExecutionResultMessage original = ToolExecutionResultMessage.builder()
-                .id("call-3")
-                .toolName("calculator")
-                .text("4")
-                .isError(Boolean.FALSE)
-                .build();
+        ToolExecutionResultMessage original =
+                ToolExecutionResultMessage.builder()
+                        .id("call-3")
+                        .toolName("calculator")
+                        .text("4")
+                        .isError(Boolean.FALSE)
+                        .build();
 
-        ToolExecutionResultMessage modified = original.toBuilder()
-                .text("5")
-                .build();
+        ToolExecutionResultMessage modified = original.toBuilder().text("5").build();
 
         assertEquals("4", original.text());
         assertEquals("5", modified.text());
@@ -73,10 +75,9 @@ public class ExtendedChatMessageTest {
 
     @Test
     public void shouldRequireToolResultText() {
-        assertThrows(NullPointerException.class, () -> ToolExecutionResultMessage.builder()
-                .id("call-4")
-                .toolName("search")
-                .build());
+        assertThrows(
+                NullPointerException.class,
+                () -> ToolExecutionResultMessage.builder().id("call-4").toolName("search").build());
     }
 
     @Test
@@ -89,7 +90,8 @@ public class ExtendedChatMessageTest {
 
         assertEquals(ChatMessageType.CUSTOM, message.type());
         assertEquals("demo", message.attributes().get("provider"));
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(
+                UnsupportedOperationException.class,
                 () -> message.attributes().put("newKey", "newValue"));
         assertThrows(UnsupportedOperationException.class, message::text);
 
@@ -110,7 +112,8 @@ public class ExtendedChatMessageTest {
 
     @Test
     public void shouldExposeMessageClassFromType() {
-        assertEquals(ToolExecutionResultMessage.class,
+        assertEquals(
+                ToolExecutionResultMessage.class,
                 ChatMessageType.TOOL_EXECUTION_RESULT.messageClass());
         assertEquals(CustomMessage.class, ChatMessageType.CUSTOM.messageClass());
     }

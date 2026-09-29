@@ -1,11 +1,11 @@
 package com.changlu.agentforge.ai.agent;
 
-import com.changlu.agentforge.ai.agent.domain.AgentRunState;
-import com.changlu.agentforge.ai.agent.domain.AgentSettings;
-import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
-import com.changlu.agentforge.ai.agent.domain.ThinkResult;
 import com.changlu.agentforge.ai.agent.component.middleware.AgentMiddlewareManager;
 import com.changlu.agentforge.ai.agent.component.middleware.IAgentMiddleware;
+import com.changlu.agentforge.ai.agent.domain.AgentChatContext;
+import com.changlu.agentforge.ai.agent.domain.AgentRunState;
+import com.changlu.agentforge.ai.agent.domain.AgentSettings;
+import com.changlu.agentforge.ai.agent.domain.ThinkResult;
 import com.changlu.agentforge.ai.agent.memory.ChatMemory;
 import com.changlu.agentforge.ai.agent.memory.ChatMemoryProvider;
 import com.changlu.agentforge.ai.agent.retry.AiCallRetrySupport;
@@ -59,7 +59,10 @@ public class ReActAgent extends BaseReActAgent {
         this.streamingChatModel = builder.streamingChatModel;
         this.chatMemoryProvider = builder.chatMemoryProvider;
         this.toolService = builder.toolService;
-        this.agentSettings = builder.agentSettings == null ? AgentSettings.defaultSettings() : builder.agentSettings;
+        this.agentSettings =
+                builder.agentSettings == null
+                        ? AgentSettings.defaultSettings()
+                        : builder.agentSettings;
         this.toolExecutor = new AgentToolExecutor(builder.toolService);
         this.middlewareManager = new AgentMiddlewareManager();
         this.middlewareManager.registerAll(builder.middlewares);
@@ -119,16 +122,20 @@ public class ReActAgent extends BaseReActAgent {
         long aiCallRetryDelay = getAgentSettings().getAiCallRetryDelay();
 
         // 构建请求request对象：当前记忆消息 + 全部工具声明
-        ChatRequest chatRequest = ChatRequest.builder()
-                .messages(curCallMessages)
-                .parameters(DefaultChatRequestParameters.builder()
-                        .tools(new ArrayList<ToolSpecification>(getToolSpecifications()))
-                        .build())
-                .build();
+        ChatRequest chatRequest =
+                ChatRequest.builder()
+                        .messages(curCallMessages)
+                        .parameters(
+                                DefaultChatRequestParameters.builder()
+                                        .tools(
+                                                new ArrayList<ToolSpecification>(
+                                                        getToolSpecifications()))
+                                        .build())
+                        .build();
 
         // 触发模型调用前的中间件
-        ChatRequest processedRequest = middlewareManager.triggerBeforeModelCall(
-                currentStep, chatRequest, chatContext);
+        ChatRequest processedRequest =
+                middlewareManager.triggerBeforeModelCall(currentStep, chatRequest, chatContext);
         if (processedRequest == null) {
             // 中间件中断本轮模型调用，直接以中断原因结束任务，不再继续消耗步长
             return ThinkResult.builder()
@@ -142,16 +149,24 @@ public class ReActAgent extends BaseReActAgent {
         // real model call
         ChatResponse chatResponse;
         try {
-            chatResponse = AiCallRetrySupport.execute(
-                    () -> getChatModel().chat(processedRequest),
-                    retryCount,
-                    aiCallRetryDelay,
-                    (attempt, maxRetries, lastException, delayMs) -> middlewareManager.triggerOnAiCallRetry(
-                            currentStep, processedRequest, chatContext,
-                            attempt, maxRetries, delayMs, lastException));
+            chatResponse =
+                    AiCallRetrySupport.execute(
+                            () -> getChatModel().chat(processedRequest),
+                            retryCount,
+                            aiCallRetryDelay,
+                            (attempt, maxRetries, lastException, delayMs) ->
+                                    middlewareManager.triggerOnAiCallRetry(
+                                            currentStep,
+                                            processedRequest,
+                                            chatContext,
+                                            attempt,
+                                            maxRetries,
+                                            delayMs,
+                                            lastException));
         } catch (Exception e) {
             // 触发模型调用错误的中间件
-            middlewareManager.triggerOnModelCallError(currentStep, processedRequest, e, chatContext);
+            middlewareManager.triggerOnModelCallError(
+                    currentStep, processedRequest, e, chatContext);
             // 模型调用失败，直接结束任务，避免继续进行工具调用
             return ThinkResult.builder()
                     .state(AgentRunState.MODEL_CALL_ERROR)
@@ -163,8 +178,9 @@ public class ReActAgent extends BaseReActAgent {
         }
 
         // 触发模型调用后的中间件
-        chatResponse = middlewareManager.triggerAfterModelCall(
-                currentStep, processedRequest, chatResponse, chatContext);
+        chatResponse =
+                middlewareManager.triggerAfterModelCall(
+                        currentStep, processedRequest, chatResponse, chatContext);
 
         AiMessage aiMessage = chatResponse.aiMessage();
 
@@ -189,9 +205,7 @@ public class ReActAgent extends BaseReActAgent {
                 .build();
     }
 
-    /**
-     * 模型调用异常时尽量带上服务端响应体，便于快速定位400/401这类协议级错误
-     */
+    /** 模型调用异常时尽量带上服务端响应体，便于快速定位400/401这类协议级错误 */
     private static String describeError(Exception e) {
         if (e instanceof LlmException) {
             String body = ((LlmException) e).responseBody();
@@ -203,9 +217,16 @@ public class ReActAgent extends BaseReActAgent {
     }
 
     @Override
-    protected StepResult act(int currentStep, List<ToolExecutionRequest> curActTools, AgentChatContext chatContext) {
+    protected StepResult act(
+            int currentStep, List<ToolExecutionRequest> curActTools, AgentChatContext chatContext) {
         List<ToolExecutionResultMessage> toolMessages =
-                getToolExecutor().execute(currentStep, curActTools, chatContext, null, getMiddlewareManager());
+                getToolExecutor()
+                        .execute(
+                                currentStep,
+                                curActTools,
+                                chatContext,
+                                null,
+                                getMiddlewareManager());
         return StepResult.toFinished(toolMessages.toString());
     }
 
@@ -309,9 +330,7 @@ public class ReActAgent extends BaseReActAgent {
             return this;
         }
 
-        /**
-         * 注册单个中间件，按注册顺序执行
-         */
+        /** 注册单个中间件，按注册顺序执行 */
         public ReActAgentBuilder middleware(IAgentMiddleware middleware) {
             if (middleware != null) {
                 this.middlewares.add(middleware);
@@ -319,9 +338,7 @@ public class ReActAgent extends BaseReActAgent {
             return this;
         }
 
-        /**
-         * 批量注册中间件，按加入顺序执行
-         */
+        /** 批量注册中间件，按加入顺序执行 */
         public ReActAgentBuilder middlewares(List<IAgentMiddleware> middlewares) {
             if (middlewares != null) {
                 for (IAgentMiddleware middleware : middlewares) {

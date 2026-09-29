@@ -1,6 +1,5 @@
 package com.changlu.agentforge.llm.openai;
 
-import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 import com.changlu.agentforge.llm.chat.message.AiMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessage;
 import com.changlu.agentforge.llm.chat.message.ChatMessageType;
@@ -12,6 +11,7 @@ import com.changlu.agentforge.llm.chat.message.UserMessage;
 import com.changlu.agentforge.llm.chat.request.ChatRequestParameters;
 import com.changlu.agentforge.llm.chat.request.ToolChoice;
 import com.changlu.agentforge.llm.internal.json.Json;
+import com.changlu.agentforge.llm.tool.spec.ToolSpecification;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,19 +19,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Shared OpenAI Chat Completions wire-protocol helpers used by both
- * {@link OpenAiChatModel} and {@link OpenAiStreamingChatModel}.
+ * Shared OpenAI Chat Completions wire-protocol helpers used by both {@link OpenAiChatModel} and
+ * {@link OpenAiStreamingChatModel}.
  *
- * <p>Package-private on purpose: it is an implementation detail of the OpenAI adapter,
- * not part of the public AgentForge API.</p>
+ * <p>Package-private on purpose: it is an implementation detail of the OpenAI adapter, not part of
+ * the public AgentForge API.
  *
- * <p>Responsibilities:</p>
+ * <p>Responsibilities:
+ *
  * <ul>
- *   <li>{@link ChatMessage} -> OpenAI {@code messages[]} (assistant {@code tool_calls},
- *       {@code role=tool} results, multi-{@link Content} user messages)</li>
- *   <li>{@link ToolSpecification} -> OpenAI {@code tools[]}</li>
- *   <li>{@link ToolChoice} -> OpenAI {@code tool_choice}</li>
- *   <li>OpenAI {@code tool_calls[]} -> {@link ToolExecutionRequest}</li>
+ *   <li>{@link ChatMessage} -> OpenAI {@code messages[]} (assistant {@code tool_calls}, {@code
+ *       role=tool} results, multi-{@link Content} user messages)
+ *   <li>{@link ToolSpecification} -> OpenAI {@code tools[]}
+ *   <li>{@link ToolChoice} -> OpenAI {@code tool_choice}
+ *   <li>OpenAI {@code tool_calls[]} -> {@link ToolExecutionRequest}
  * </ul>
  *
  * @author changlu
@@ -39,15 +40,15 @@ import java.util.Map;
  */
 final class OpenAiMessages {
 
-    private OpenAiMessages() {
-    }
+    private OpenAiMessages() {}
 
     static List<Map<String, Object>> serialize(List<ChatMessage> messages) {
         ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>(messages.size());
         for (ChatMessage message : messages) {
             if (message instanceof ToolExecutionResultMessage) {
                 result.add(toolResultMessage((ToolExecutionResultMessage) message));
-            } else if (message instanceof AiMessage && ((AiMessage) message).hasToolExecutionRequests()) {
+            } else if (message instanceof AiMessage
+                    && ((AiMessage) message).hasToolExecutionRequests()) {
                 result.add(assistantMessageWithToolCalls((AiMessage) message));
             } else if (message instanceof UserMessage && !((UserMessage) message).hasSingleText()) {
                 result.add(multimodalUserMessage((UserMessage) message));
@@ -162,8 +163,8 @@ final class OpenAiMessages {
     }
 
     /**
-     * Parses a {@code tool_calls} array (blocking message or streaming delta) into
-     * normalized {@link ToolExecutionRequest}s.
+     * Parses a {@code tool_calls} array (blocking message or streaming delta) into normalized
+     * {@link ToolExecutionRequest}s.
      *
      * @param toolCalls raw JSON array, may be {@code null}
      * @return parsed requests, never {@code null}
@@ -182,11 +183,12 @@ final class OpenAiMessages {
             if (function == null) {
                 continue;
             }
-            result.add(ToolExecutionRequest.builder()
-                    .id(Json.string(toolCall.get("id")))
-                    .name(Json.string(function.get("name")))
-                    .arguments(Json.string(function.get("arguments")))
-                    .build());
+            result.add(
+                    ToolExecutionRequest.builder()
+                            .id(Json.string(toolCall.get("id")))
+                            .name(Json.string(function.get("name")))
+                            .arguments(Json.string(function.get("arguments")))
+                            .build());
         }
         return result;
     }
@@ -211,5 +213,4 @@ final class OpenAiMessages {
         }
         return result.toString();
     }
-
 }

@@ -23,9 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Anthropic Messages API implementation of {@link ChatModel}.
- */
+/** Anthropic Messages API implementation of {@link ChatModel}. */
 public final class AnthropicChatModel implements ChatModel {
 
     private static final String DEFAULT_BASE_URL = "https://api.anthropic.com";
@@ -45,15 +43,18 @@ public final class AnthropicChatModel implements ChatModel {
         this.baseUrl = trimTrailingSlash(builder.baseUrl);
         this.apiKey = builder.apiKey;
         this.anthropicVersion = builder.anthropicVersion;
-        this.defaultParameters = DefaultChatRequestParameters.builder()
-                .modelName(builder.modelName)
-                .temperature(builder.temperature)
-                .maxTokens(builder.maxTokens)
-                .topP(builder.topP)
-                .stopSequences(builder.stopSequences)
-                .customParameters(builder.customParameters)
-                .build();
-        this.customHeaders = Collections.unmodifiableMap(new LinkedHashMap<String, String>(builder.customHeaders));
+        this.defaultParameters =
+                DefaultChatRequestParameters.builder()
+                        .modelName(builder.modelName)
+                        .temperature(builder.temperature)
+                        .maxTokens(builder.maxTokens)
+                        .topP(builder.topP)
+                        .stopSequences(builder.stopSequences)
+                        .customParameters(builder.customParameters)
+                        .build();
+        this.customHeaders =
+                Collections.unmodifiableMap(
+                        new LinkedHashMap<String, String>(builder.customHeaders));
         this.httpTransport = builder.httpTransport;
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
@@ -68,29 +69,32 @@ public final class AnthropicChatModel implements ChatModel {
         if (chatRequest == null) {
             throw new IllegalArgumentException("chatRequest must not be null");
         }
-        DefaultChatRequestParameters parameters = DefaultChatRequestParameters.merge(
-                defaultParameters, chatRequest.parameters());
+        DefaultChatRequestParameters parameters =
+                DefaultChatRequestParameters.merge(defaultParameters, chatRequest.parameters());
         requireModelName(parameters.modelName());
         requireApiKey(apiKey);
 
         Map<String, Object> payload = buildPayload(chatRequest, parameters);
-        HttpRequest request = HttpRequest.builder()
-                .url(baseUrl + "/v1/messages")
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("x-api-key", apiKey)
-                .header("anthropic-version", anthropicVersion)
-                .headers(customHeaders)
-                .body(Json.stringify(payload))
-                .connectTimeoutMillis(connectTimeoutMillis)
-                .readTimeoutMillis(readTimeoutMillis)
-                .build();
+        HttpRequest request =
+                HttpRequest.builder()
+                        .url(baseUrl + "/v1/messages")
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .header("x-api-key", apiKey)
+                        .header("anthropic-version", anthropicVersion)
+                        .headers(customHeaders)
+                        .body(Json.stringify(payload))
+                        .connectTimeoutMillis(connectTimeoutMillis)
+                        .readTimeoutMillis(readTimeoutMillis)
+                        .build();
 
         try {
             HttpResponse response = httpTransport.execute(request);
             if (!response.isSuccessful()) {
-                throw new LlmException("Anthropic request failed with HTTP " + response.statusCode(),
-                        response.statusCode(), response.body());
+                throw new LlmException(
+                        "Anthropic request failed with HTTP " + response.statusCode(),
+                        response.statusCode(),
+                        response.body());
             }
             return parseResponse(response.body());
         } catch (IOException e) {
@@ -98,13 +102,16 @@ public final class AnthropicChatModel implements ChatModel {
         }
     }
 
-    private static Map<String, Object> buildPayload(ChatRequest request, ChatRequestParameters parameters) {
+    private static Map<String, Object> buildPayload(
+            ChatRequest request, ChatRequestParameters parameters) {
         LinkedHashMap<String, Object> payload = new LinkedHashMap<String, Object>();
         if (parameters.customParameters() != null) {
             payload.putAll(parameters.customParameters());
         }
         payload.put("model", parameters.modelName());
-        payload.put("max_tokens", parameters.maxTokens() == null ? DEFAULT_MAX_TOKENS : parameters.maxTokens());
+        payload.put(
+                "max_tokens",
+                parameters.maxTokens() == null ? DEFAULT_MAX_TOKENS : parameters.maxTokens());
         putIfNotNull(payload, "temperature", parameters.temperature());
         putIfNotNull(payload, "top_p", parameters.topP());
         putIfNotNull(payload, "stop_sequences", parameters.stopSequences());
@@ -125,16 +132,19 @@ public final class AnthropicChatModel implements ChatModel {
         Map<String, Object> root = Json.parseObject(body);
         List<Object> contentBlocks = Json.array(root.get("content"));
         String text = AnthropicProtocol.extractText(contentBlocks);
-        List<ToolExecutionRequest> toolExecutionRequests = AnthropicProtocol.extractToolUses(contentBlocks);
-        AiMessage aiMessage = toolExecutionRequests.isEmpty()
-                ? AiMessage.from(text)
-                : AiMessage.from(text.isEmpty() ? null : text, toolExecutionRequests);
-        ChatResponse.Builder response = ChatResponse.builder()
-                .aiMessage(aiMessage)
-                .finishReason(mapFinishReason(root.get("stop_reason")))
-                .metadata("id", root.get("id"))
-                .metadata("model", root.get("model"))
-                .metadata("type", root.get("type"));
+        List<ToolExecutionRequest> toolExecutionRequests =
+                AnthropicProtocol.extractToolUses(contentBlocks);
+        AiMessage aiMessage =
+                toolExecutionRequests.isEmpty()
+                        ? AiMessage.from(text)
+                        : AiMessage.from(text.isEmpty() ? null : text, toolExecutionRequests);
+        ChatResponse.Builder response =
+                ChatResponse.builder()
+                        .aiMessage(aiMessage)
+                        .finishReason(mapFinishReason(root.get("stop_reason")))
+                        .metadata("id", root.get("id"))
+                        .metadata("model", root.get("model"))
+                        .metadata("type", root.get("type"));
 
         Map<String, Object> usage = Json.object(root.get("usage"));
         if (usage != null) {
@@ -160,7 +170,8 @@ public final class AnthropicChatModel implements ChatModel {
 
     private static void requireModelName(String modelName) {
         if (modelName == null || modelName.trim().isEmpty()) {
-            throw new IllegalStateException("Anthropic modelName must be configured on the model or request");
+            throw new IllegalStateException(
+                    "Anthropic modelName must be configured on the model or request");
         }
     }
 
@@ -191,8 +202,7 @@ public final class AnthropicChatModel implements ChatModel {
         private int connectTimeoutMillis = 10_000;
         private int readTimeoutMillis = 60_000;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -232,7 +242,8 @@ public final class AnthropicChatModel implements ChatModel {
         }
 
         public Builder stopSequences(List<String> stopSequences) {
-            this.stopSequences = stopSequences == null ? null : new ArrayList<String>(stopSequences);
+            this.stopSequences =
+                    stopSequences == null ? null : new ArrayList<String>(stopSequences);
             return this;
         }
 
@@ -247,7 +258,8 @@ public final class AnthropicChatModel implements ChatModel {
         }
 
         public Builder httpTransport(HttpTransport httpTransport) {
-            if (httpTransport == null) throw new IllegalArgumentException("httpTransport must not be null");
+            if (httpTransport == null)
+                throw new IllegalArgumentException("httpTransport must not be null");
             this.httpTransport = httpTransport;
             return this;
         }

@@ -17,7 +17,8 @@ public class AgentSettings {
     private AgentSettings(Builder builder) {
         this.maxSteps = builder.maxSteps == null ? 10 : builder.maxSteps;
         this.aiCallRetry = builder.aiCallRetry == null ? 3 : builder.aiCallRetry;
-        this.aiCallRetryDelay = builder.aiCallRetryDelay == null ? 2 * 1000L : builder.aiCallRetryDelay;
+        this.aiCallRetryDelay =
+                builder.aiCallRetryDelay == null ? 2 * 1000L : builder.aiCallRetryDelay;
     }
 
     public int getMaxSteps() {
@@ -45,8 +46,7 @@ public class AgentSettings {
         private Integer aiCallRetry;
         private Long aiCallRetryDelay;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder maxSteps(int maxSteps) {
             this.maxSteps = maxSteps;
