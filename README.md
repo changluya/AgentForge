@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/agentforge-banner.png" alt="AgentForge — Open Source AI Agent Framework" width="100%" />
+</p>
+
 # AgentForge
 
 > **Forge Intelligence into Action.**  
