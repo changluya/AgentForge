@@ -1,0 +1,100 @@
+website/src/pages/index.module.css
+  s_7282ce6a7a0b4f::t_cc992afe5c7701 1-17
+website/src/pages/index.js
+  s_7282ce6a7a0b4f::t_cc992afe5c7701 1-7,12-18,20,22,24-52,57-62,64-73
+  s_7282ce6a7a0b4f::t_c4373163fd3515 8-11,19,21,23,53-56,63
+website/versioned_sidebars/version-1.0-sidebars.json
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1
+website/.gitignore
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1-20
+website/i18n/en/docusaurus-plugin-content-docs/current/about/introduction.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-11
+website/package.json
+  s_7282ce6a7a0b4f::t_d1b5d62e10f1ae 1-2,4-6
+  s_7282ce6a7a0b4f::t_3fd95ac504d17a 3
+website/docusaurus.config.js
+  s_7282ce6a7a0b4f::t_487d25632d86a2 12
+  s_7282ce6a7a0b4f::t_d1b5d62e10f1ae 1-11,13-21
+website/static/img/favicon.svg
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1,3-4
+  s_7282ce6a7a0b4f::t_dff46b968e95d9 2
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0.json
+  s_7282ce6a7a0b4f::t_c6e6268d93ff87 1-4
+website/versioned_docs/version-1.0/quickstart/getting-started.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-10
+website/versions.json
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 2
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1,3
+website/static/img/logo.svg
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1,3-4
+  s_7282ce6a7a0b4f::t_dff46b968e95d9 2
+website/docs/quickstart/getting-started.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-35
+website/versioned_docs/version-1.0/about/introduction.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-6
+website/sidebars.js
+  s_7282ce6a7a0b4f::t_d1b5d62e10f1ae 1-6
+website/i18n/en/docusaurus-theme-classic/navbar.json
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1-2,4-6,8-18
+  s_7282ce6a7a0b4f::t_80e77790fdd53a 3,7
+website/i18n/en/docusaurus-theme-classic/footer.json
+  s_7282ce6a7a0b4f::t_1064cfb45068fa 28,36
+  s_7282ce6a7a0b4f::t_80e77790fdd53a 43
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1-27,29-35,37-42,44-46
+README.md
+  s_7282ce6a7a0b4f::t_487d25632d86a2 1-4
+website/src/pages/community.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-14
+website/docs/about/introduction.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-31
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/quickstart/contributing.md
+  s_7282ce6a7a0b4f::t_c6e6268d93ff87 1-6
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/about/introduction.md
+  s_7282ce6a7a0b4f::t_c6e6268d93ff87 1-6
+website/i18n/en/docusaurus-plugin-content-docs/current/quickstart/getting-started.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-13
+.github/workflows/docs-pages.yml
+  s_7282ce6a7a0b4f::t_6100f3eb04c63e 1-53
+website/i18n/en/docusaurus-plugin-content-docs/current.json
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1-30
+website/i18n/en/code.json
+  s_7282ce6a7a0b4f::t_22f7c856683d99 422-433
+  s_7282ce6a7a0b4f::t_6100f3eb04c63e 409-410,412,434
+  s_7282ce6a7a0b4f::t_ff8fa8609995f8 1-408
+  s_7282ce6a7a0b4f::t_cb2ef7779673f7 411,413-421
+website/docs/quickstart/contributing.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-15
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/quickstart/getting-started.md
+  s_7282ce6a7a0b4f::t_c6e6268d93ff87 1-10
+website/i18n/en/docusaurus-plugin-content-docs/current/quickstart/contributing.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-7
+website/i18n/en/docusaurus-plugin-content-pages/community.md
+  s_7282ce6a7a0b4f::t_882f1c696ea24c 1-14
+website/versioned_docs/version-1.0/quickstart/contributing.md
+  s_7282ce6a7a0b4f::t_d877bb4b9d0523 1-6
+website/README.md
+  s_7282ce6a7a0b4f::t_c248b1449804b1 1-21,30-44
+  s_7282ce6a7a0b4f::t_3fd95ac504d17a 22-29
+website/src/css/custom.css
+  s_7282ce6a7a0b4f::t_4c5d7bb850aac3 2-5
+  s_7282ce6a7a0b4f::t_487d25632d86a2 6
+  s_7282ce6a7a0b4f::t_d1b5d62e10f1ae 1
+website/package-lock.json
+  s_7282ce6a7a0b4f::t_7bb62abfc7d42a 1-19512
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02b50ce663ccf2211eef08f180ec86dc45097238",
+  "prompts": {},
+  "sessions": {
+    "s_7282ce6a7a0b4f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ee44-a2bf-7c52-aa81-e1582bda584b",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
