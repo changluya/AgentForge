@@ -1,0 +1,286 @@
+agentforge-llm/agentforge-llm-anthropic/src/test/java/com/changlu/agentforge/llm/anthropic/AnthropicStreamingToolUseTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14,29-30,39-62,65-66,87-124,144-174
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/BaseModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9,28-30,51-54,73-81,86-91
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/ReActAgentMiddlewareTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 20,40-43,46,49-63,71-74,99-106,118-128,136-139,142-150,163-167,180-205,213-216,218-220,261-268,277-291
+agentforge-llm/agentforge-llm-anthropic/src/main/java/com/changlu/agentforge/llm/anthropic/AnthropicStreamingChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 30-31,33-38,41-42,66-77,96-97,101-112,122-123,129-131,166-167,204,244-245,260-261,354-358,405-409,497-504,524-534,536,539-543,557-562,582
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolArgumentsException.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 23
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/tool/AgentToolExecutor.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 4,36,38-39,42-46,53-56,60-65,79-80,92-98,103-114,120-124
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/execution/ToolService.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6,23-31,33-35,38-41,54-60,65-72,75-78,82-83,86,88,98,103-105,110-111,124,126-127,130-133,145,150-152,172-173,203-205,208-209,219-221,224-229,252-253,264-267,272-282,294-300,305-306,310-316,326-332,345-346,350-351,361-364,373-374,389-390,444-445,450-451,475,481-484,503,510-513,515-516,518-519,522-525,541
+.githooks/pre-commit
+  s_7983b02bed375e::t_e4160fb78d30aa 1-6,13-14
+  s_7983b02bed375e::t_9f11925941b7f7 7-12
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/support/RecordingMiddleware.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 82-86,95-102,107-108,113-114,120-121,126-127,133-137,139-145,150-154,160-164,173-174,179-180,185-186
+agentforge-ai-bom/pom.xml
+  s_7983b02bed375e::t_06c7081684cb5b 2
+agentforge-framework/agentforge-ai-agent/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/step/StepState.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9-12
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/OpenAiModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9,28-38,56-60,84-91,102-108
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/spec/ToolSpecifications.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 3-5,23,34-35,58-59,88-90,103-106,109-114,124-135,138-139,200
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/http/HttpRequest.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 20-21,63
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/step/ChatResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 17,39-40,85-93
+agentforge-framework/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/memory/ChatMemoryProvider.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 13
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/domain/AgentSettings.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 20-21,49
+agentforge-examples/agentforge-studio/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/ReturnBehavior.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 7-8,10,12,15-16,37,40,42
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/LlmFactoryTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 13,30-40,50-55,60,66-71,81-91,96-97,111-116,121-122,127-128,152-156,162-163
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/stream/PartialThinking.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 18
+agentforge-llm/agentforge-llm-openai/src/test/java/com/changlu/agentforge/llm/openai/OpenAiChatModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 15,40-41,43-45,48-50,63-64,68-81,95-132,169-183,193-203,211-223,231-248,256-259,262-267
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolExecutionErrorHandler.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6,9-11,21
+agentforge-llm/agentforge-llm-openai/src/main/java/com/changlu/agentforge/llm/openai/OpenAiMessages.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14,22-26,28,31-35,43,50-51,166-167,186-191
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/Tool.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 3-4,13,16-20,23-25,56
+agentforge-llm/agentforge-llm-anthropic/src/test/java/com/changlu/agentforge/llm/anthropic/AnthropicChatModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 15,32-71,107-120,130-138,146-150,153-157,163-179,187-208
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/http/HttpTransport.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 5,13-14,23-25
+agentforge-examples/agentforge-studio/agentforge-studio-ui/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/http/JdkHttpTransport.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 21-22,30-43,59-60,67-73,87-88,141-142,152-153
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/ReActAgentStreamTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 17,42-45,55-82,107-108,111-114,125-127,133-142,153-154,156-159,169-171,177-183,196-214,230-237,270-273
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/ReActAgentTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 15,36-39,41-46,72-73,75-80,92-96,99-105,118-124,134,137-143,154-156,159-165,179-190,200-205,225-230,276-280
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/support/ScriptedStreamingChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 29-33,48,52-60,65-77,82-87
+agentforge-llm/agentforge-llm-anthropic/src/main/java/com/changlu/agentforge/llm/anthropic/AnthropicChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 26,46-57,72-73,78-89,94-97,105-106,112-114,135-147,173-174,205,245-246,261-262
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolErrorHandlerResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6-8,47-48,56
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/ReActAgent.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 3-5,62-65,125-134,137-138,152-165,168-169,181-183,208,220-221,223-229,333,341
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/extend/middlewares/LoggingIAgentMiddleware.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 21,35-36,41-45,49-76,80-88,93-94,99-108,114-115,117-120,124-125,128-134,140-144,154-158,164-169,189-193,195-198,205-230,238-250,294
+agentforge-llm/agentforge-llm-openai/src/test/java/com/changlu/agentforge/llm/openai/OpenAiStreamingChatModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 16,36-37,52-53,55-57,60-61,70-71,75-82,85-91,93-94,99-100,115-131,134-139,151-152,174-195,197-199,213-231,245-255,267-276,291-295,307-314,327-328,334-338
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/ReActAgentDiyLiveTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 21,41,67-72,74-75,100-145,160-174,184-186,191-196,216-222,231-233,238-241
+agentforge-llm/agentforge-llm-openai/src/test/java/com/changlu/agentforge/llm/openai/OpenAiStreamingFunctionCallTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14,29-30,39-46,49-50,68-77,83-84,94-100,117-122,128-129,199
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/spec/ToolSpecification.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 11-13,58-59,96-107,124-125,144,185
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/package-info.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 1
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/component/middleware/AgentMiddlewareManager.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 85,111,119-120,151,167-169,174-178,188,209,211,213-214,232,234,236-237,255,257,259-260,269-272,280-282,297-299,317-319,328-331,343-344,354-355,370-375,385-387,401-406,421-429,434,437-444,457,465-469,479-481
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/step/ChatResultState.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9-11
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/exception/LlmException.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 3
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/execution/ToolExecutionRequestUtil.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 5,17,36-40,50
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/LlmEnumTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 8,49-50,52-53
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/component/middleware/IStreamingIAgentMiddleware.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 8,17,19,21-22,27-29,31-32,35,37-39,41-42
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/memory/WindowChatMemoryTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 8
+agentforge-examples/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-core/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-anthropic/src/test/java/com/changlu/agentforge/llm/anthropic/AnthropicToolUseTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 18-20,33-34,43-59,76-90,103-128,154-178,198-214,226-230,232-234,263
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/component/llm/models/OpenAiModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 26-27,42-43
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/domain/StopResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 18
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/component/middleware/IAgentMiddleware.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 18,38,47,57-62,65-72,82-83,89,93-94,102,105-106,118-119,126-129,132-136,145,148-152,160,169
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/stream/TokenStream.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 15,18,21,24,27,30,33,36
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/ToolExecutor.java
+  s_7282ce6a7a0b4f::t_bd751d027c6975 6-7,20,31,33,42
+agentforge-llm/pom.xml
+  s_7983b02bed375e::t_06c7081684cb5b 2,16-20
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolErrorContext.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6-7,12,50-55,69,90
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/execution/ToolExecutionResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9,69-75,83,88,99,120
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/component/llm/LlmFactory.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 20,25,30,34-35,42-43
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/memory/ChatMemory.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14,17,20,23
+agentforge-llm/agentforge-llm-openai/src/test/java/com/changlu/agentforge/llm/openai/OpenAiFunctionCallTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 18-20,34-35,44-61,77-93,99-100,102-103,108-135,159-178,188-213,236-240,242-244,253-270,303
+agentforge-framework/agentforge-ai-core/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/LlmBasicConfigTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6,24-32,65-66,78
+agentforge-examples/agentforge-studio/agentforge-studio-web/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/execution/ToolExecution.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 4,10-11,93-100,116,147
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/component/middleware/AgentMiddlewareManagerTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 13,144-145,147-152,159-175,183-190,203-220,225-226,248-249,252-255,291-292,300-301,307-311,333-334,344-345,350-351,357-358,363-367,372-379,389-390,395-396,401-402,407-408,431-432,442-443,448-449,455-456,461-465,470-477,487-488,493-494,499-500,505-506
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/domain/AgentRequest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/AnthropicModelTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 9,24-34,38-40,54-60
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/BaseAgent.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 4,24-25,32,47-48,51,64-65,94
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/ReActAgentStreamMiddlewareTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 13,38-41,46-63,70-72,77-89,94-97,101-118,124-125,130-131,140-143,148-149,155-163,168-169,173-184,186-206,212-213,217-220,222-223,225-238,255-256
+agentforge-llm/agentforge-llm-anthropic/src/main/java/com/changlu/agentforge/llm/anthropic/AnthropicProtocol.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 14,23-24,26-27,34,57-58,71-72,120-123,185-195,215
+agentforge-ai-parent/pom.xml
+  s_7983b02bed375e::t_9f11925941b7f7 37-38
+  s_7983b02bed375e::t_e4160fb78d30aa 83-92,94-112,114-116
+  s_7983b02bed375e::t_06c7081684cb5b 2,113,134,141
+  s_7983b02bed375e::t_4777891cbb2cc9 93
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolExecutionException.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 22
+agentforge-framework/agentforge-ai-agent/src/test/java/com/changlu/agentforge/ai/agent/support/ScriptedChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 27-31,36-43
+agentforge-llm/agentforge-llm-openai/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/execution/DefaultToolExecutor.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 5-8,18-21,23-25,48,63-64,70-71,103-105,111-112,115-119,169-175,180-181,186-194,197
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/domain/ThinkResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 67
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/Agent.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 3-4,15,30-31,83-86,123-124,130-131,136-137,141-142,192
+agentforge-llm/agentforge-llm-anthropic/pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2
+agentforge-llm/agentforge-llm-openai/src/main/java/com/changlu/agentforge/llm/openai/OpenAiChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 29-30,47-58,73-74,78-87,96-99,107-108,143-155,172-173,196-197,221,254-255,270-271
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/component/llm/enums/LlmEnum.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 15-16,42
+agentforge-llm/agentforge-llm-openai/src/main/java/com/changlu/agentforge/llm/openai/OpenAiStreamingChatModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 29-32,34-35,55-66,85-86,89-98,112-113,167-168,198,231-232,247-248,335-339,407-408,428-431,471-481,483,486-490,504-509,528
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/component/llm/config/LlmBasicConfig.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 25
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/retry/AiCallRetrySupport.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 16,37-38
+pom.xml
+  s_7983b02bed375e::t_5ae05cbd24df9e 2,50,70
+  s_7983b02bed375e::t_9f11925941b7f7 34-35
+  s_7983b02bed375e::t_e4160fb78d30aa 38-49,51-69,71-75
+  s_7983b02bed375e::t_a02d2fb48203ba 76
+agentforge-llm/agentforge-llm-openai/src/test/java/com/changlu/agentforge/llm/openai/OpenAiLiveFunctionCallTest.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 6-9,28-29,33,55-57,61-67,73-74,76-77,81-82,85-86,96-99,108
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/spec/ToolParameters.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 13-16,18-19,34-37,58-59,133,136-137,141,153-155,160-161,185-186,188-192,209
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/P.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 11-12,49
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/stream/ReActTokenStream.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 5,29,60-74,77-84,91-94,161-163,176-180,185-186,189-192,201-236,242-244,251,258-263,270-275,308-311,313-316,325-326,358
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/tool/error/ToolArgumentsErrorHandler.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 7,10-12,22
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/BaseReActAgent.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 4,20-21,36-37,52-53,62,67-74,80-83
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/domain/AgentChatContext.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 24,30-31,46,51,83,91,102
+agentforge-framework/agentforge-ai-agent/src/main/java/com/changlu/agentforge/ai/agent/step/StepResult.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 16,28,30,37,39,43
+agentforge-framework/agentforge-ai-core/src/main/java/com/changlu/agentforge/ai/core/component/llm/models/AnthropicModel.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 26-27,42-46,84-85
+agentforge-framework/agentforge-ai-core/src/test/java/com/changlu/agentforge/ai/core/component/llm/ModelFields.java
+  s_7983b02bed375e::t_5ae05cbd24df9e 8-9,15,35-36
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/ChatModel.java
+  s_7983b02bed375e::t_475ef9af000df0 15-16,29,32-33,37,43
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/StreamingChatModel.java
+  s_7983b02bed375e::t_90405b4ef36b73 15-17,32,36,39,45
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/AiMessage.java
+  s_7983b02bed375e::t_2e263e10f67c54 13-14,16-19,22-24,56-57,130-139,155,160,170,175,192-193,218,231-234,239-242,250
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/ChatMessage.java
+  s_7983b02bed375e::t_76937daff2c1c2 6-9,11-12
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/Content.java
+  s_7983b02bed375e::t_0d3d4dfc013283 6-8,21
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/ContentType.java
+  s_7983b02bed375e::t_b247167aa22617 6,13,30
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/CustomMessage.java
+  s_7983b02bed375e::t_5550c430f21a39 11-13
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/TextContent.java
+  s_7983b02bed375e::t_c81daa975f5e8e 64
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/ToolExecutionRequest.java
+  s_7983b02bed375e::t_c1b7726d060d08 8-11,14-17,84-92,97,114,135
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/ToolExecutionResultMessage.java
+  s_7983b02bed375e::t_f5e266cc05fd41 11-14,93-105,122-123,147
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/message/UserMessage.java
+  s_7983b02bed375e::t_dcdd94fce39e85 11-15,18-21,77-78,102-103,138,141,146,151,156,161,166,192
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/request/ChatRequest.java
+  s_7983b02bed375e::t_1d67fdd2ab86e7 11,41
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/request/ChatRequestParameters.java
+  s_7983b02bed375e::t_403d4f5fad0e59 11-12,14-15,57
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/request/DefaultChatRequestParameters.java
+  s_7983b02bed375e::t_1ffa1195afc0a7 11,30-32,42-44,154,177-178
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/request/ToolChoice.java
+  s_7983b02bed375e::t_fc1eb1c93a0a6d 6-7,14,17,20,23,25
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/response/ChatResponse.java
+  s_7983b02bed375e::t_6126bb73b76384 10,22-23,52
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/chat/response/StreamingChatResponseHandler.java
+  s_7983b02bed375e::t_0a04cd50861c18 6-7,14,20-23,27,29,32
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/http/StreamingHttpResponseHandler.java
+  s_7282ce6a7a0b4f::t_dba17ee270c49b 9-10,17,20,23,26
+agentforge-llm/agentforge-llm-core/src/main/java/com/changlu/agentforge/llm/internal/json/Json.java
+  s_7282ce6a7a0b4f::t_84145379a28ebe 11-12,16,114-134,245-273
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/ChatModelTest.java
+  s_7983b02bed375e::t_98698a5208f738 10,25-32,46-53,66-72,76-77
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/StreamingChatModelTest.java
+  s_7983b02bed375e::t_86412ac5538af6 11,65-66,68-69,79-80,89
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/message/AiMessageToolCallTest.java
+  s_7983b02bed375e::t_37ae1bb6f70a6e 17-18,35,47-48,65-71,86-87,104-105,115-116,128-134,137
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/request/ChatRequestTest.java
+  s_7983b02bed375e::t_c9e575c1e3f3d0 5,32-33,39-49,56
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/request/DefaultChatRequestParametersTest.java
+  s_7983b02bed375e::t_252532a3c7b825 16-25,27-33,35-36,55-59,66-69
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/response/ExtendedChatMessageTest.java
+  s_7983b02bed375e::t_86dfa6bc7dcb71 6,22-23,38-45,49-50,59-65,67,78-80,93-94,115-116
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/chat/response/MessageAndResponseTest.java
+  s_7983b02bed375e::t_0d5ee11cfe2a07 9,24-25,27-32,38-44,52-53
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/http/HttpTypesTest.java
+  s_7983b02bed375e::t_07be1e17aab9ff 14-19,27-28
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/tool/DefaultToolExecutorTest.java
+  s_7983b02bed375e::t_6d10e93f150b77 4-9,21-22,54-57,68-69,80-81,91-92,101-102,104,122-125,133-134,155
+agentforge-llm/agentforge-llm-core/src/test/java/com/changlu/agentforge/llm/tool/ToolServiceTest.java
+  s_7983b02bed375e::t_c18950b0659f1d 6,12-16,29-30,60-74,94-108,128-140,144-145,162-172,176-178,180-183,198-206,219-224,271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9c22ec3c593a7f72ec6e16cf2783037718f40a07",
+  "prompts": {},
+  "sessions": {
+    "s_7282ce6a7a0b4f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ee44-a2bf-7c52-aa81-e1582bda584b",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_7983b02bed375e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ee42-4cc0-7d62-b716-b12cf880521a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
