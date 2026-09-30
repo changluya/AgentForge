@@ -1,0 +1,74 @@
+agentforge-model/agentforge-model-anthropic/src/main/java/com/changlu/agentforge/model/anthropic/AnthropicStreamingChatModel.java
+  s_80166e25471c95::t_6c4c3b056f6db4 13,355,367,370,386,406
+agentforge-model/agentforge-model-openai/src/test/java/com/changlu/agentforge/model/openai/OpenAiChatModelTest.java
+  s_80166e25471c95::t_6c4c3b056f6db4 10,210,216,218,241,243,268
+agentforge-model/agentforge-model-api/src/main/java/com/changlu/agentforge/model/exception/ModelException.java
+  s_80166e25471c95::t_6c4c3b056f6db4 4,9,13,17
+  s_80166e25471c95::t_8bb469b1f06dea 21-22
+  s_80166e25471c95::t_d2d15282e9aedd 3
+agentforge-model/agentforge-model-anthropic/src/test/java/com/changlu/agentforge/model/anthropic/AnthropicChatModelTest.java
+  s_80166e25471c95::t_6c4c3b056f6db4 10,162,172,174,201,203
+docs/dev/backend/llm/anthropic/chatmodel-protocol.md
+  s_80166e25471c95::t_6c4c3b056f6db4 444,592,602
+agentforge-model/pom.xml
+  s_80166e25471c95::t_c9a3069cb66813 18
+agentforge-model/agentforge-model-core/pom.xml
+  s_80166e25471c95::t_5b3eb8a2f8a62b 1-23
+agentforge-model/agentforge-model-openai/src/test/java/com/changlu/agentforge/model/openai/OpenAiStreamingChatModelTest.java
+  s_80166e25471c95::t_6c4c3b056f6db4 10,266,282-283,301,319
+agentforge-ai-bom/pom.xml
+  s_80166e25471c95::t_0db37c3cba15d6 26-28
+  s_80166e25471c95::t_a388f1a45e800f 24-25
+agentforge-framework/agentforge-agent-core/pom.xml
+  s_80166e25471c95::t_840911abd1f812 24-26
+  s_80166e25471c95::t_b1f34e32504243 22-23
+agentforge-model/agentforge-model-anthropic/src/main/java/com/changlu/agentforge/model/anthropic/AnthropicChatModel.java
+  s_80166e25471c95::t_6c4c3b056f6db4 12,94,101
+docs/dev/backend/llm/openai/chatmodel-protocol.md
+  s_80166e25471c95::t_6c4c3b056f6db4 334,469,479
+agentforge-model/agentforge-model-openai/src/main/java/com/changlu/agentforge/model/openai/OpenAiChatModel.java
+  s_80166e25471c95::t_6c4c3b056f6db4 12,96,103,130,135
+README.md
+  s_80166e25471c95::t_5f47577303eebe 127-137
+  s_80166e25471c95::t_847f0399869e4a 413,416-417
+  s_80166e25471c95::t_d373140f2a4b5e 73-74,81
+  s_80166e25471c95::t_b58434bd0a3385 100-101,105,107,109-112
+  s_80166e25471c95::t_99f6570db1df54 397-398
+agentforge-model/agentforge-model-anthropic/pom.xml
+  s_80166e25471c95::t_0dbf6a39933d60 22-26
+docs/dev/backend/标准维护规范文档/AgentForge-BOM与Parent维护规范.md
+  s_80166e25471c95::t_3a02d59d76cc70 72
+agentforge-model/agentforge-model-openai/pom.xml
+  s_80166e25471c95::t_acbf49767aa4cf 22-26
+agentforge-model/agentforge-model-openai/src/main/java/com/changlu/agentforge/model/openai/OpenAiStreamingChatModel.java
+  s_80166e25471c95::t_6c4c3b056f6db4 13,327,336,347,350
+agentforge-framework/agentforge-agent-core/src/main/java/com/changlu/agentforge/agent/ReActAgent.java
+  s_80166e25471c95::t_6c4c3b056f6db4 25,210-211
+website/docs/about/introduction.md
+  s_80166e25471c95::t_1a12c6efc8cb62 25-26
+docs/dev/backend/标准维护规范文档/AgentForge-模块划分与依赖规范.md
+  s_80166e25471c95::t_e4d4058c92a99a 11-17,27-28,48-49,53-56,61,65-82,85,92,94-95,112,114-115,124-141,146-151,155,168,174-176,183,190-193,198,211,218-221
+docs/dev/backend/llm/README.md
+  s_80166e25471c95::t_7df3f827d9f6f6 51-54
+  s_80166e25471c95::t_6c4c3b056f6db4 135,542,544,547,601
+  s_80166e25471c95::t_5e9c58ce17a885 23,30-37,41-46
+agentforge-model/agentforge-model-registry/pom.xml
+  s_80166e25471c95::t_68c3e3ac922fbe 24-26
+  s_80166e25471c95::t_b732f21780d436 22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4465c1db3ef35c82a544eb4e0e275f9529151e5c",
+  "prompts": {},
+  "sessions": {
+    "s_80166e25471c95": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0fdec7d7ffe7n8pxmRUYxFACx",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
