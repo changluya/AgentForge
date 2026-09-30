@@ -9,7 +9,7 @@ import com.changlu.agentforge.model.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
 import com.changlu.agentforge.model.chat.response.TokenUsage;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpResponse;
 import com.changlu.agentforge.model.http.HttpTransport;
@@ -91,14 +91,14 @@ public final class AnthropicChatModel implements ChatModel {
         try {
             HttpResponse response = httpTransport.execute(request);
             if (!response.isSuccessful()) {
-                throw new LlmException(
+                throw new ModelException(
                         "Anthropic request failed with HTTP " + response.statusCode(),
                         response.statusCode(),
                         response.body());
             }
             return parseResponse(response.body());
         } catch (IOException e) {
-            throw new LlmException("Anthropic request failed", e);
+            throw new ModelException("Anthropic request failed", e);
         }
     }
 

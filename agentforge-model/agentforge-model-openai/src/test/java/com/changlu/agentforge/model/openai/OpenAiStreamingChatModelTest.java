@@ -7,7 +7,7 @@ import com.changlu.agentforge.model.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
 import com.changlu.agentforge.model.chat.response.StreamingChatResponseHandler;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpResponse;
 import com.changlu.agentforge.model.http.HttpTransport;
@@ -263,7 +263,7 @@ public class OpenAiStreamingChatModelTest {
     }
 
     @Test
-    public void shouldExposeHttpFailureAsLlmException() {
+    public void shouldExposeHttpFailureAsModelException() {
         StreamingTransport transport =
                 new StreamingTransport(
                         429,
@@ -279,8 +279,8 @@ public class OpenAiStreamingChatModelTest {
         model.chat("hello", handler);
 
         assertNull(handler.completeResponse);
-        assertTrue(handler.error instanceof LlmException);
-        LlmException error = (LlmException) handler.error;
+        assertTrue(handler.error instanceof ModelException);
+        ModelException error = (ModelException) handler.error;
         assertEquals(Integer.valueOf(429), error.statusCode());
         assertTrue(error.responseBody().contains("rate limit"));
     }
@@ -298,7 +298,7 @@ public class OpenAiStreamingChatModelTest {
         model.chat("hello", handler);
 
         assertNull(handler.completeResponse);
-        assertTrue(handler.error instanceof LlmException);
+        assertTrue(handler.error instanceof ModelException);
         assertTrue(handler.error.getMessage().contains("parse"));
     }
 
@@ -316,7 +316,7 @@ public class OpenAiStreamingChatModelTest {
 
         model.chat("hello", handler);
 
-        assertTrue(handler.error instanceof LlmException);
+        assertTrue(handler.error instanceof ModelException);
         assertNotNull(handler.error.getCause());
         assertEquals("network down", handler.error.getCause().getMessage());
     }

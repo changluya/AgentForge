@@ -10,7 +10,7 @@ import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
 import com.changlu.agentforge.model.chat.response.StreamingChatResponseHandler;
 import com.changlu.agentforge.model.chat.response.TokenUsage;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpTransport;
 import com.changlu.agentforge.model.http.JdkHttpTransport;
@@ -324,7 +324,7 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             try {
                 applyChunk(Json.parseObject(data));
             } catch (Throwable error) {
-                fail(new LlmException("Failed to parse OpenAI streaming response", error));
+                fail(new ModelException("Failed to parse OpenAI streaming response", error));
             }
         }
 
@@ -333,7 +333,7 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
             if (terminated) return;
             if (!isSuccessfulStatus(statusCode)) {
                 fail(
-                        new LlmException(
+                        new ModelException(
                                 "OpenAI streaming request failed with HTTP " + statusCode,
                                 statusCode,
                                 errorBody.toString()));
@@ -344,10 +344,10 @@ public class OpenAiStreamingChatModel implements StreamingChatModel {
 
         @Override
         public synchronized void onError(Throwable error) {
-            if (error instanceof LlmException) {
+            if (error instanceof ModelException) {
                 fail(error);
             } else {
-                fail(new LlmException("OpenAI streaming request failed", error));
+                fail(new ModelException("OpenAI streaming request failed", error));
             }
         }
 

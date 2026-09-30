@@ -15,6 +15,7 @@
 
     <modules>
         <module>agentforge-model-api</module>
+        <module>agentforge-model-core</module>
         <module>agentforge-model-openai</module>
         <module>agentforge-model-anthropic</module>
         <module>agentforge-model-registry</module>

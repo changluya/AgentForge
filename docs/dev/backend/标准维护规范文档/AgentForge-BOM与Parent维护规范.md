@@ -69,6 +69,7 @@ Parent 统一管理：
 BOM 继承 `agentforge-ai-parent`，通过 `<dependencyManagement>` 公布一组经过测试的 AgentForge 模块版本。当前管理：
 
 - `agentforge-model-api`
+- `agentforge-model-core`
 - `agentforge-model-openai`
 - `agentforge-model-anthropic`
 - `agentforge-model-registry`

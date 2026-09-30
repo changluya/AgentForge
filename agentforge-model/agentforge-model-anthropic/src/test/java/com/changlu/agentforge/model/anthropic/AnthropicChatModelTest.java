@@ -7,7 +7,7 @@ import com.changlu.agentforge.model.chat.request.ChatRequest;
 import com.changlu.agentforge.model.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpResponse;
 import com.changlu.agentforge.model.http.HttpTransport;
@@ -159,7 +159,7 @@ public class AnthropicChatModelTest {
     }
 
     @Test
-    public void shouldExposeHttpFailureAsLlmException() {
+    public void shouldExposeHttpFailureAsModelException() {
         AnthropicChatModel model =
                 AnthropicChatModel.builder()
                         .apiKey("secret")
@@ -169,9 +169,9 @@ public class AnthropicChatModelTest {
                                         new HttpResponse(401, "{\"error\":\"unauthorized\"}")))
                         .build();
 
-        LlmException error =
+        ModelException error =
                 assertThrows(
-                        LlmException.class,
+                        ModelException.class,
                         () ->
                                 model.chat(
                                         ChatRequest.builder()
@@ -198,9 +198,9 @@ public class AnthropicChatModelTest {
                         .httpTransport(failing)
                         .build();
 
-        LlmException error =
+        ModelException error =
                 assertThrows(
-                        LlmException.class,
+                        ModelException.class,
                         () ->
                                 model.chat(
                                         ChatRequest.builder()

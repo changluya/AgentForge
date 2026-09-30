@@ -7,7 +7,7 @@ import com.changlu.agentforge.model.chat.request.ChatRequest;
 import com.changlu.agentforge.model.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpResponse;
 import com.changlu.agentforge.model.http.HttpTransport;
@@ -207,15 +207,15 @@ public class OpenAiChatModelTest {
     }
 
     @Test
-    public void shouldExposeHttpFailureAsLlmException() {
+    public void shouldExposeHttpFailureAsModelException() {
         CapturingTransport transport =
                 new CapturingTransport(new HttpResponse(429, "{\"error\":\"rate_limit\"}"));
         OpenAiChatModel model =
                 OpenAiChatModel.builder().modelName("gpt-test").httpTransport(transport).build();
 
-        LlmException error =
+        ModelException error =
                 assertThrows(
-                        LlmException.class,
+                        ModelException.class,
                         () ->
                                 model.chat(
                                         ChatRequest.builder()
@@ -238,9 +238,9 @@ public class OpenAiChatModelTest {
         OpenAiChatModel model =
                 OpenAiChatModel.builder().modelName("gpt-test").httpTransport(failing).build();
 
-        LlmException error =
+        ModelException error =
                 assertThrows(
-                        LlmException.class,
+                        ModelException.class,
                         () ->
                                 model.chat(
                                         ChatRequest.builder()
@@ -265,7 +265,7 @@ public class OpenAiChatModelTest {
                         .httpTransport(
                                 new CapturingTransport(new HttpResponse(200, "{\"choices\":[]}")))
                         .build();
-        assertThrows(LlmException.class, () -> badResponse.chat(request));
+        assertThrows(ModelException.class, () -> badResponse.chat(request));
     }
 
     @SuppressWarnings("unchecked")

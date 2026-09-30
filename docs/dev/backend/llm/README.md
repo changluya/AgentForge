@@ -20,25 +20,37 @@
 
 ```text
 agentforge-model
-├── agentforge-model-api
+├── agentforge-model-api              # 契约层：接口 + req/vo
 │   ├── ChatModel / StreamingChatModel
 │   ├── ChatMessage（AiMessage / UserMessage + Content / ToolExecutionRequest / ToolExecutionResultMessage ...）
 │   ├── ChatRequest / ChatRequestParameters（tools / toolChoice / toolChoiceName）
 │   ├── tool（Tool / ToolExecutor，spec / execution / error 子包）
 │   ├── ToolChoice
 │   ├── ChatResponse / TokenUsage / FinishReason
-│   ├── HttpTransport / JdkHttpTransport
-│   └── LlmException / Json
+│   ├── HttpTransport / HttpRequest / HttpResponse
+│   └── ModelException
+├── agentforge-model-core             # 默认实现与执行引擎
+│   ├── JdkHttpTransport
+│   ├── Json
+│   ├── DefaultChatRequestParameters
+│   ├── ToolSpecifications
+│   └── DefaultToolExecutor / ToolService
 ├── agentforge-model-openai
 │   ├── OpenAiChatModel
 │   └── OpenAiStreamingChatModel
-└── agentforge-model-anthropic
-    ├── AnthropicChatModel
-    ├── AnthropicStreamingChatModel
-    └── AnthropicProtocol（Blocking / Streaming 共享 wire mapping）
+├── agentforge-model-anthropic
+│   ├── AnthropicChatModel
+│   ├── AnthropicStreamingChatModel
+│   └── AnthropicProtocol（Blocking / Streaming 共享 wire mapping）
+└── agentforge-model-registry
+    └── LlmFactory / LlmEnum / LlmBasicConfig
 ```
 
 设计原则是：**Core 只定义稳定、Provider-neutral 的 LLM 边界；OpenAI、Anthropic 等模块只负责协议转换，不把供应商 SDK 类型泄露到上层。**
+
+> 说明：`agentforge-model-api` 只放接口与统一 req/vo，`agentforge-model-core` 放无厂商依赖的默认实现与
+> 执行引擎（`JdkHttpTransport`、`Json`、`DefaultChatRequestParameters`、`ToolSpecifications`、
+> `DefaultToolExecutor`、`ToolService`）。下文的包结构按领域展示，未区分 api / core 模块。
 
 ---
 
@@ -120,7 +132,7 @@ com.changlu.agentforge.model
 │   │   └── ToolChoice.java            // AUTO / NONE / REQUIRED / SPECIFIC
 │   └── response
 ├── exception
-│   └── LlmException.java
+│   └── ModelException.java
 ├── http
 │   ├── HttpRequest.java
 │   ├── HttpResponse.java
@@ -527,12 +539,12 @@ partial text / ChatResponse
 
 因此未来 Anthropic SSE 即使事件格式与 OpenAI 完全不同，也不需要修改 Core。
 
-### 4.4 LlmException
+### 4.4 ModelException
 
-Provider/Transport 统一使用 `LlmException` 向上抛出模型调用错误：
+Provider/Transport 统一使用 `ModelException` 向上抛出模型调用错误：
 
 ```java
-public class LlmException extends RuntimeException {
+public class ModelException extends RuntimeException {
     private final Integer statusCode;
     private final String responseBody;
 }
@@ -586,7 +598,7 @@ agentforge-model-xxx
 2. ChatRequest -> Provider Request JSON
 3. HttpTransport 执行请求
 4. Provider Response JSON -> ChatResponse
-5. Provider Error -> LlmException
+5. Provider Error -> ModelException
 ```
 
 不要在 Provider 模块重新定义一套 `ChatRequest` 或 `ChatResponse`。

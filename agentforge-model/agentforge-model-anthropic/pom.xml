@@ -19,5 +19,10 @@
             <artifactId>agentforge-model-api</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.changlu.agentforge</groupId>
+            <artifactId>agentforge-model-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>

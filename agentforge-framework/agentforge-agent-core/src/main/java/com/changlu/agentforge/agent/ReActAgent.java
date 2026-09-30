@@ -22,7 +22,7 @@ import com.changlu.agentforge.model.chat.message.ToolExecutionResultMessage;
 import com.changlu.agentforge.model.chat.request.ChatRequest;
 import com.changlu.agentforge.model.chat.request.DefaultChatRequestParameters;
 import com.changlu.agentforge.model.chat.response.ChatResponse;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.tool.ToolExecutor;
 import com.changlu.agentforge.model.tool.execution.ToolService;
 import com.changlu.agentforge.model.tool.spec.ToolSpecification;
@@ -207,8 +207,8 @@ public class ReActAgent extends BaseReActAgent {
 
     /** 模型调用异常时尽量带上服务端响应体，便于快速定位400/401这类协议级错误 */
     private static String describeError(Exception e) {
-        if (e instanceof LlmException) {
-            String body = ((LlmException) e).responseBody();
+        if (e instanceof ModelException) {
+            String body = ((ModelException) e).responseBody();
             if (body != null && !body.trim().isEmpty()) {
                 return e.getMessage() + " | response: " + body.trim();
             }

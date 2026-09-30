@@ -441,7 +441,7 @@ data: {"type":"message_stop"}
 | `content_block_stop` | 不处理，等待整块结束 |
 | `message_delta` | 读取 `delta.stop_reason` 与 `usage.output_tokens` |
 | `message_stop` | 不处理，由 EOF / 完成回调触发最终响应 |
-| `error` | 包装为 `LlmException` 并 `onError(...)` |
+| `error` | 包装为 `ModelException` 并 `onError(...)` |
 
 ### 4.4 流式工具调用聚合
 
@@ -589,7 +589,7 @@ Anthropic request requires at least one user/assistant message
 非 2xx 响应转换为：
 
 ```java
-new LlmException(
+new ModelException(
     "Anthropic request failed with HTTP " + statusCode,
     statusCode,
     responseBody
@@ -599,7 +599,7 @@ new LlmException(
 IOException 转换为：
 
 ```text
-LlmException("Anthropic request failed", cause)
+ModelException("Anthropic request failed", cause)
 ```
 
 这样上层可以统一读取：

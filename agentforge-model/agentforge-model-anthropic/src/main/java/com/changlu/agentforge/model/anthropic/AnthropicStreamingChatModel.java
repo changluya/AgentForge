@@ -10,7 +10,7 @@ import com.changlu.agentforge.model.chat.response.ChatResponse;
 import com.changlu.agentforge.model.chat.response.FinishReason;
 import com.changlu.agentforge.model.chat.response.StreamingChatResponseHandler;
 import com.changlu.agentforge.model.chat.response.TokenUsage;
-import com.changlu.agentforge.model.exception.LlmException;
+import com.changlu.agentforge.model.exception.ModelException;
 import com.changlu.agentforge.model.http.HttpRequest;
 import com.changlu.agentforge.model.http.HttpTransport;
 import com.changlu.agentforge.model.http.JdkHttpTransport;
@@ -352,7 +352,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             if (terminated) return;
             if (!isSuccessfulStatus(statusCode)) {
                 fail(
-                        new LlmException(
+                        new ModelException(
                                 "Anthropic streaming request failed with HTTP " + statusCode,
                                 statusCode,
                                 errorBody.toString()));
@@ -364,10 +364,10 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
 
         @Override
         public synchronized void onError(Throwable error) {
-            if (error instanceof LlmException) {
+            if (error instanceof ModelException) {
                 fail(error);
             } else {
-                fail(new LlmException("Anthropic streaming request failed", error));
+                fail(new ModelException("Anthropic streaming request failed", error));
             }
         }
 
@@ -383,7 +383,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             try {
                 applyEvent(eventName, Json.parseObject(data));
             } catch (Throwable error) {
-                fail(new LlmException("Failed to parse Anthropic streaming response", error));
+                fail(new ModelException("Failed to parse Anthropic streaming response", error));
             }
         }
 
@@ -403,7 +403,7 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
             } else if ("error".equals(eventName)) {
                 Map<String, Object> error = Json.object(root.get("error"));
                 fail(
-                        new LlmException(
+                        new ModelException(
                                 "Anthropic streaming error",
                                 null,
                                 error == null ? Json.stringify(root) : Json.stringify(error)));

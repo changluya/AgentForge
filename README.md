@@ -70,12 +70,15 @@ Agent 的上层能力最终都会落到模型调用上。如果最底层模型�
 `agentforge-model` 已完成第一阶段模型抽象与 Provider Adapter；`agentforge-framework` 开始落地 Agent 基础层：
 `agentforge-model-registry` 提供 ChatModel 工厂，`agentforge-agent-core` 提供 ReAct Agent 运行时。
 
+`agentforge-model-api` 只定义接口与统一 req/vo，`agentforge-model-core` 提供无厂商依赖的默认实现与执行引擎。
+
 ```text
 AgentForge
 ├── agentforge-ai-parent
 ├── agentforge-ai-bom
 ├── agentforge-model
 │   ├── agentforge-model-api
+│   ├── agentforge-model-core
 │   ├── agentforge-model-openai
 │   ├── agentforge-model-anthropic
 │   └── agentforge-model-registry
@@ -94,20 +97,19 @@ AgentForge
 
 ### `agentforge-model-api`
 
-第一阶段最重要的底层模块，不依赖 OpenAI / Anthropic SDK，也不依赖第三方 JSON/HTTP 库。
+只定义 Provider 无关的模型契约与统一 req/vo，不含任何具体实现，也不依赖 OpenAI / Anthropic SDK 或第三方
+JSON / HTTP 库。
 
 当前提供：
 
-- `ChatModel`：统一同步模型调用入口；
-- `StreamingChatModel`：统一流式模型调用入口；
+- `ChatModel` / `StreamingChatModel`：统一同步 / 流式模型调用入口；
 - `StreamingChatResponseHandler`：统一流式增量 / 完成 / 异常回调；
-- `ChatRequest`：统一请求对象；
-- `ChatRequestParameters`：统一模型参数抽象；
+- `ChatRequest` / `ChatRequestParameters`：统一请求对象与参数抽象；
 - `ChatMessage`：System / User / AI / ToolExecutionResult / Custom Message；
-- `ChatResponse`：统一响应；
-- `TokenUsage` / `FinishReason`：统一结果元信息；
-- `HttpTransport`：可替换 HTTP Transport SPI，同时支持同步与流式扩展；
-- `JdkHttpTransport`：基于 JDK `HttpURLConnection` 的零依赖默认实现，流式请求通过后台守护线程持续消费响应。
+- `ChatResponse` / `TokenUsage` / `FinishReason`：统一响应与结果元信息；
+- `ToolSpecification` / `ToolExecutor`：工具契约；
+- `HttpTransport` / `HttpRequest` / `HttpResponse`：可替换 HTTP Transport SPI 与 req/vo；
+- `ModelException`：统一异常。
 
 核心 API：
 
@@ -122,7 +124,17 @@ public interface ChatModel {
 }
 ```
 
-上层 Agent Framework 未来只面向 `ChatModel`，而不关心底层实际使用 OpenAI、Anthropic 或其它模型服务。
+上层 Agent Framework 只面向 `ChatModel`，而不关心底层实际使用 OpenAI、Anthropic 或其它模型服务。
+
+### `agentforge-model-core`
+
+无厂商依赖的默认实现与执行引擎，实现 `agentforge-model-api` 的契约：
+
+- `JdkHttpTransport`：基于 JDK `HttpURLConnection` 的零依赖默认实现，流式请求通过后台守护线程持续消费响应；
+- `Json`：内置 JSON 实现，避免引入第三方 JSON 库；
+- `DefaultChatRequestParameters`：默认请求参数对象；
+- `DefaultToolExecutor` / `ToolService`：`@Tool` 反射执行与推理-工具循环引擎；
+- `ToolSpecifications`：从 `@Tool` 方法生成 `ToolSpecification`。
 
 ### `agentforge-model-openai`
 
@@ -382,6 +394,8 @@ com.changlu.agentforge.xxx
 
 ```text
 com.changlu.agentforge.model.chat
+com.changlu.agentforge.model.tool
+com.changlu.agentforge.model.http
 com.changlu.agentforge.model.openai
 com.changlu.agentforge.model.anthropic
 com.changlu.agentforge.model.registry
@@ -396,10 +410,11 @@ com.changlu.agentforge
 
 ### 单元测试
 
-当前五个实现模块均已补充单元测试：
+当前各实现模块均已补充单元测试：
 
 ```text
-agentforge-model-api        -> Core API / Request / Parameters / JSON / HTTP
+agentforge-model-api        -> ChatModel / Message / Request / Response / HTTP SPI
+agentforge-model-core       -> Json / JdkHttpTransport / ToolService / 默认参数
 agentforge-model-openai     -> 请求映射 / 响应归一化 / 异常 / OpenAI-compatible
 agentforge-model-anthropic  -> System Message / Messages API / 响应归一化 / 异常
 agentforge-model-registry   -> LlmFactory / LlmEnum / 参数映射 / 配置对象

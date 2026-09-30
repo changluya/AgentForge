@@ -9,19 +9,14 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>agentforge-model-openai</artifactId>
-    <name>AgentForge :: Model :: OpenAI</name>
-    <description>OpenAI Chat Completions implementation for AgentForge ChatModel.</description>
+    <artifactId>agentforge-model-core</artifactId>
+    <name>AgentForge :: Model :: Core</name>
+    <description>Provider-neutral default implementations and runtime engine over the model-api contracts.</description>
 
     <dependencies>
         <dependency>
             <groupId>com.changlu.agentforge</groupId>
             <artifactId>agentforge-model-api</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.changlu.agentforge</groupId>
-            <artifactId>agentforge-model-core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

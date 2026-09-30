@@ -22,7 +22,8 @@ LLM → Message / Request / Response → Context / Memory
 
 ## 当前模块
 
-- `agentforge-model-api`：统一消息、请求、响应、模型与工具抽象；
+- `agentforge-model-api`：统一消息、请求、响应、模型与工具契约；
+- `agentforge-model-core`：无厂商依赖的默认实现与执行引擎；
 - `agentforge-model-openai` / `agentforge-model-anthropic`：Provider Adapter；
 - `agentforge-model-registry`：模型工厂与核心配置；
 - `agentforge-agent-core`：ReAct Agent、上下文、记忆、中间件与重试；
