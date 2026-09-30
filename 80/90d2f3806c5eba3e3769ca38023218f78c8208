@@ -1,0 +1,14 @@
+README.md
+  h_415c008e101ba5 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8090d2f3806c5eba3e3769ca38023218f78c8208",
+  "prompts": {},
+  "humans": {
+    "h_415c008e101ba5": {
+      "author": "changlu <939974883@qq.com>"
+    }
+  }
+}
