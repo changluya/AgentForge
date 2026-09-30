@@ -1,7 +1,7 @@
 # Anthropic ChatModel 标准入参、出参协议
 
 > 更新日期：2026-09-13  
-> 适用模块：`agentforge-llm-anthropic`  
+> 适用模块：`agentforge-model-anthropic`  
 > 当前实现：`AnthropicChatModel`（Blocking）、`AnthropicStreamingChatModel`（SSE）、`AnthropicProtocol`（共享 wire mapping）  
 > Wire API：Anthropic Messages API  
 > 维护者：changlu

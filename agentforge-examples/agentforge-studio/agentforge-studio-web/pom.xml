@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.changlu.agentforge</groupId>
-            <artifactId>agentforge-ai-agent</artifactId>
+            <artifactId>agentforge-agent-core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

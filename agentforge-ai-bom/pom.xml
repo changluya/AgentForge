@@ -18,27 +18,27 @@
         <dependencies>
             <dependency>
                 <groupId>com.changlu.agentforge</groupId>
-                <artifactId>agentforge-llm-core</artifactId>
+                <artifactId>agentforge-model-api</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.changlu.agentforge</groupId>
-                <artifactId>agentforge-llm-openai</artifactId>
+                <artifactId>agentforge-model-openai</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.changlu.agentforge</groupId>
-                <artifactId>agentforge-llm-anthropic</artifactId>
+                <artifactId>agentforge-model-anthropic</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.changlu.agentforge</groupId>
-                <artifactId>agentforge-ai-core</artifactId>
+                <artifactId>agentforge-model-registry</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.changlu.agentforge</groupId>
-                <artifactId>agentforge-ai-agent</artifactId>
+                <artifactId>agentforge-agent-core</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

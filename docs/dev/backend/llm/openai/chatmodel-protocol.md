@@ -1,7 +1,7 @@
 # OpenAI ChatModel 标准入参、出参协议
 
 > 更新日期：2026-09-13  
-> 适用模块：`agentforge-llm-openai`  
+> 适用模块：`agentforge-model-openai`  
 > 当前实现：`OpenAiChatModel`、`OpenAiStreamingChatModel`  
 > 当前 Wire API：OpenAI Chat Completions  
 > 维护者：changlu

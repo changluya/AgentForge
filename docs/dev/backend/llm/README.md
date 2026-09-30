@@ -1,26 +1,26 @@
-# AgentForge LLM Core 设计与开发文档
+# AgentForge Model API 设计与开发文档
 
 > 更新日期：2026-09-13  
 > 适用版本：release_1.x  
-> 适用模块：`agentforge-llm-core`  
-> 包前缀：`com.changlu.agentforge.llm`  
+> 适用模块：`agentforge-model-api`  
+> 包前缀：`com.changlu.agentforge.model`  
 > 维护者：changlu
 
-本文件统一沉淀 AgentForge `agentforge-llm-core` 的核心接口、请求响应模型、消息体系、HTTP SPI、异常边界与 release_1.x 演进约束。Provider 相关的 Wire Protocol 单独放在 `openai/` 与 `anthropic/` 目录中，避免 Core 设计与厂商协议混杂。
+本文件统一沉淀 AgentForge `agentforge-model-api` 的核心接口、请求响应模型、消息体系、HTTP SPI、异常边界与 release_1.x 演进约束。Provider 相关的 Wire Protocol 单独放在 `openai/` 与 `anthropic/` 目录中，避免 Core 设计与厂商协议混杂。
 
 ## 文档导航
 
 | 文档 | 说明 |
 |---|---|
-| 当前 `README.md` | `agentforge-llm-core` 核心接口、对象模型、`ChatMessage`、HTTP SPI、异常与扩展设计 |
+| 当前 `README.md` | `agentforge-model-api` 核心接口、对象模型、`ChatMessage`、HTTP SPI、异常与扩展设计 |
 | [openai/chatmodel-protocol.md](./openai/chatmodel-protocol.md) | OpenAI ChatModel 标准入参、出参、字段映射与流式协议 |
 | [anthropic/chatmodel-protocol.md](./anthropic/chatmodel-protocol.md) | Anthropic Messages ChatModel 标准入参、出参与字段映射协议 |
 
 ## 当前模块关系
 
 ```text
-agentforge-llm
-├── agentforge-llm-core
+agentforge-model
+├── agentforge-model-api
 │   ├── ChatModel / StreamingChatModel
 │   ├── ChatMessage（AiMessage / UserMessage + Content / ToolExecutionRequest / ToolExecutionResultMessage ...）
 │   ├── ChatRequest / ChatRequestParameters（tools / toolChoice / toolChoiceName）
@@ -29,10 +29,10 @@ agentforge-llm
 │   ├── ChatResponse / TokenUsage / FinishReason
 │   ├── HttpTransport / JdkHttpTransport
 │   └── LlmException / Json
-├── agentforge-llm-openai
+├── agentforge-model-openai
 │   ├── OpenAiChatModel
 │   └── OpenAiStreamingChatModel
-└── agentforge-llm-anthropic
+└── agentforge-model-anthropic
     ├── AnthropicChatModel
     ├── AnthropicStreamingChatModel
     └── AnthropicProtocol（Blocking / Streaming 共享 wire mapping）
@@ -44,7 +44,7 @@ agentforge-llm
 
 ## 1. 模块定位与设计目标
 
-`agentforge-llm-core` 是 AgentForge 最底层、最稳定的模型访问抽象层。它不直接绑定 OpenAI、Anthropic 或任何第三方 Java SDK，而是定义统一的请求、响应、消息、流式回调、HTTP 传输和异常边界。
+`agentforge-model-api` 是 AgentForge 最底层、最稳定的模型访问抽象层。它不直接绑定 OpenAI、Anthropic 或任何第三方 Java SDK，而是定义统一的请求、响应、消息、流式回调、HTTP 传输和异常边界。
 
 核心目标有四个：
 
@@ -83,7 +83,7 @@ ChatResponse + TokenUsage + FinishReason
 ### 1.1 包结构
 
 ```text
-com.changlu.agentforge.llm
+com.changlu.agentforge.model
 ├── tool
 │   ├── Tool.java / P.java / ReturnBehavior.java / ToolExecutor.java   // 核心契约
 │   ├── spec
@@ -566,7 +566,7 @@ Java Map/List -> JSON String
 JSON String    -> Map/List
 ```
 
-这让 `agentforge-llm-core` 保持依赖轻量。未来即使内部替换 JSON 实现，也不应影响 `ChatModel`、`ChatRequest`、`ChatResponse` 等公共契约。
+这让 `agentforge-model-api` 保持依赖轻量。未来即使内部替换 JSON 实现，也不应影响 `ChatModel`、`ChatRequest`、`ChatResponse` 等公共契约。
 
 ## 5. 扩展规范与 release_1.x 边界
 
@@ -575,7 +575,7 @@ JSON String    -> Map/List
 新增供应商时建议只创建新的 Provider 模块：
 
 ```text
-agentforge-llm-xxx
+agentforge-model-xxx
 └── XxxChatModel implements ChatModel
 ```
 
@@ -654,7 +654,7 @@ release_1.x 后续扩展遵循：
 
 ### 6.1 本次补齐范围
 
-AgentForge LLM Core 已具备 `SystemMessage`、`UserMessage`、`AiMessage`、`ToolExecutionResultMessage`、
+AgentForge Model API 已具备 `SystemMessage`、`UserMessage`、`AiMessage`、`ToolExecutionResultMessage`、
 `CustomMessage`，本次继续补齐 Function Calling 与多模态内容建模的 Core 侧结构：
 
 - `ToolExecutionRequest`（模型发起的工具调用）
@@ -895,11 +895,11 @@ Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需�
 
 | 模块 | 测试类 | 覆盖点 |
 |---|---|---|
-| `agentforge-llm-core` | `AiMessageToolCallTest` | 单/多工具调用、文本+工具调用、thinking/attributes、值相等与不可变、`UserMessage` name + 多 `Content`、`ToolExecutionRequest` 字段往返 |
-| `agentforge-llm-openai` | `OpenAiFunctionCallTest` | 单 `tool_calls`、多 `tool_calls` 与混合文本、`tools`/`tool_choice`（含 SPECIFIC）序列化、assistant tool_calls 与 tool result 回流、纯文本行为不变 |
-| `agentforge-llm-openai` | `OpenAiStreamingFunctionCallTest` | 单工具调用 delta 合并、多工具交错合并、文本与工具调用同流、无 `index` 端点兜底 |
-| `agentforge-llm-anthropic` | `AnthropicToolUseTest` | `tool_use` 解析、多 `tool_use`、assistant `tool_use` 与 `tool_result` 回流、`tools`/`tool_choice` 序列化、多 `Content` 用户消息、纯文本行为不变 |
-| `agentforge-llm-anthropic` | `AnthropicStreamingToolUseTest` | `input_json_delta` 聚合、`text_delta` 与多 `tool_use` 混合流式、metadata / token usage |
+| `agentforge-model-api` | `AiMessageToolCallTest` | 单/多工具调用、文本+工具调用、thinking/attributes、值相等与不可变、`UserMessage` name + 多 `Content`、`ToolExecutionRequest` 字段往返 |
+| `agentforge-model-openai` | `OpenAiFunctionCallTest` | 单 `tool_calls`、多 `tool_calls` 与混合文本、`tools`/`tool_choice`（含 SPECIFIC）序列化、assistant tool_calls 与 tool result 回流、纯文本行为不变 |
+| `agentforge-model-openai` | `OpenAiStreamingFunctionCallTest` | 单工具调用 delta 合并、多工具交错合并、文本与工具调用同流、无 `index` 端点兜底 |
+| `agentforge-model-anthropic` | `AnthropicToolUseTest` | `tool_use` 解析、多 `tool_use`、assistant `tool_use` 与 `tool_result` 回流、`tools`/`tool_choice` 序列化、多 `Content` 用户消息、纯文本行为不变 |
+| `agentforge-model-anthropic` | `AnthropicStreamingToolUseTest` | `input_json_delta` 聚合、`text_delta` 与多 `tool_use` 混合流式、metadata / token usage |
 
 ### 7.7 兼容性约束
 
@@ -917,11 +917,11 @@ Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需�
 
 ### 8.1 定位
 
-除 Provider 层的 Function Calling 之外，LLM Core 额外沉淀了一套 **Tool 执行层**（对应包
-`com.changlu.agentforge.llm.tool`，拆分为顶层 + 三个子包）：
+除 Provider 层的 Function Calling 之外，Model API 额外沉淀了一套 **Tool 执行层**（对应包
+`com.changlu.agentforge.model.tool`，拆分为顶层 + 三个子包）：
 
 ```text
-com.changlu.agentforge.llm.tool            // 核心契约：注解 + 工具执行接口
+com.changlu.agentforge.model.tool            // 核心契约：注解 + 工具执行接口
 ├── Tool                        // @Tool 方法注解
 ├── P                           // @P 参数注解
 ├── ReturnBehavior              // TO_LLM / IMMEDIATE / IMMEDIATE_IF_LAST

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.changlu.agentforge</groupId>
+        <artifactId>agentforge-model</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>agentforge-model-openai</artifactId>
+    <name>AgentForge :: Model :: OpenAI</name>
+    <description>OpenAI Chat Completions implementation for AgentForge ChatModel.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.changlu.agentforge</groupId>
+            <artifactId>agentforge-model-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+</project>
