@@ -33,3 +33,5 @@ logs/
 
 # Live-endpoint credentials (do not commit)
 **/live-endpoint.properties
+
+codes/

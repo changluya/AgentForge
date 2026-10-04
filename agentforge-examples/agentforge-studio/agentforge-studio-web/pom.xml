@@ -13,11 +13,42 @@
     <name>AgentForge :: Examples :: Studio :: Web</name>
     <description>Backend web module for AgentForge Studio.</description>
 
+    <properties>
+        <spring-boot.version>2.7.18</spring-boot.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.changlu.agentforge</groupId>
             <artifactId>agentforge-agent-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.changlu.agentforge</groupId>
+            <artifactId>agentforge-model-openai</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
