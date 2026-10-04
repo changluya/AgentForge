@@ -1,0 +1,196 @@
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/stream/StudioStreamingMiddleware.java
+  s_b249c421936a3d::t_8fabf2dd182427 3-5,7,19-20,27-29,32-37,41-45,49-55,58-61,64,67-74,77-81,84-87,90-119,121,124-128,130-134,138-140,142-206
+  s_b249c421936a3d::t_957cdd659df670 1-2,6,8-18,21-23,26,38-40,46-48,56-57,65-66,75-76,82-83,120,122-123,129,135-137,141,207-208
+  s_b249c421936a3d::t_7aee859aed9138 24-25,30-31,62-63,88-89
+agentforge-examples/agentforge-studio/agentforge-studio-web/pom.xml
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 16-19,26-35,37-43,51-53
+  s_ac57f7c7b37cfc::t_eb5cbd159a101b 44-50
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/components/DebugDrawer.vue
+  s_b249c421936a3d::t_db92d67ea40b32 1-125
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/main.js
+  s_b249c421936a3d::t_ca7bde837b55ce 4
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-3,5-10
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/web/ChatStreamRequest.java
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-6,22
+  s_ac57f7c7b37cfc::t_bc356ba425d7dc 7-21
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/styles.css
+  s_b249c421936a3d::t_5b2f73ec9aa68c 103,105,122-133
+  s_b249c421936a3d::t_1d2a63e28eea3c 106,109
+  s_b249c421936a3d::t_899172c7476f5e 170
+  s_b249c421936a3d::t_c3782e69a9f348 113
+  s_b249c421936a3d::t_c4f1f37a579c5d 93
+  s_b249c421936a3d::t_4dc1f7639caaae 89
+  s_b249c421936a3d::t_c5aa496ac79dba 81
+  s_b249c421936a3d::t_8de0dca874f5ce 120
+  s_b249c421936a3d::t_22ee5c5b97b552 80
+  s_b249c421936a3d::t_63decd114c03f7 33,35
+  s_b249c421936a3d::t_727b698585bffc 121
+  s_b249c421936a3d::t_72eb3656e40d1c 137
+  s_b249c421936a3d::t_894787cd496642 136
+  s_b249c421936a3d::t_a16371296fa916 140-141,150-151,153,156-157,160
+  s_b249c421936a3d::t_be65de1556031e 67
+  s_b249c421936a3d::t_a0ee799bdd1e5b 148
+  s_b249c421936a3d::t_164ef2404ba75c 84-88,90-92
+  s_b249c421936a3d::t_be7486ccd37578 152,154,158
+  s_b249c421936a3d::t_9ef1e26761cbe6 38-50
+  s_b249c421936a3d::t_8d66a72bb1e2b2 155,159
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 7,9
+  s_b249c421936a3d::t_35a74469c72bd7 1-6,8,10-32,34,36-37,51-66,68-79,82-83,94-102,104,107-108,110-112,114-116,118,134-135,138-139,142-147,149,166-169,171
+  s_b249c421936a3d::t_f5e40e3a74568f 161-165
+  s_b249c421936a3d::t_a2015812a47163 117,119
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/resources/application.yml
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-6,8-14
+  s_7bf1344857a731::t_a5cd9eb5cace89 7
+agentforge-examples/agentforge-studio/README.md
+  s_ac57f7c7b37cfc::t_4bcc6073fcce06 7-8
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-6,9-21
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/AiResponseProcessor.java
+  s_b249c421936a3d::t_3420979e5279b8 1-5,7-27
+  s_b249c421936a3d::t_95d1dbab97f2e3 6
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/index.js
+  s_b249c421936a3d::t_635550694f0095 1-2,9,12,15
+  s_b249c421936a3d::t_92a458abb1c4c9 3-8,10-11,16-23
+  s_b249c421936a3d::t_e85d4e23a7dc7b 13-14
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/AiErrorProcessor.java
+  s_b249c421936a3d::t_95d1dbab97f2e3 6
+  s_b249c421936a3d::t_6f5a64cd614f20 1-5,7-21
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/ToolCallResult.java
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-10,58
+  s_ac57f7c7b37cfc::t_bc356ba425d7dc 11-57
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/tool/AiToolCallProcessor.java
+  s_b249c421936a3d::t_0dd3e94b6d66cb 1-7,9-16,19-24
+  s_b249c421936a3d::t_95d1dbab97f2e3 8,17-18
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/web/ChatController.java
+  s_b249c421936a3d::t_10eb185281f98f 26,29,31,44-46,49-52,56-62
+  s_b249c421936a3d::t_8fcaeb8eee8776 5,53-55
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-4,6-25,27-28,30,32-43,47-48,63-70
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/utils/sse.js
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-27
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/AiSessionProcessor.java
+  s_b249c421936a3d::t_e009a1f2a65e6b 1-5,7-21
+  s_b249c421936a3d::t_95d1dbab97f2e3 6
+agentforge-examples/agentforge-studio/agentforge-studio-ui/vite.config.js
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-10
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/components/MarkdownView.vue
+  s_b249c421936a3d::t_d6dc95e2138b5f 1-78
+agentforge-examples/agentforge-studio/agentforge-studio-ui/index.html
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-4,6-13
+  s_b249c421936a3d::t_1fd3e60ddde2e3 5
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/enums/StreamEventEnums.java
+  s_b249c421936a3d::t_6e062db97fe982 1-2,4-76
+  s_b249c421936a3d::t_95d1dbab97f2e3 3
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/IStreamSceneProcessor.java
+  s_b249c421936a3d::t_dd218b05eaaede 1-2,4-7
+  s_b249c421936a3d::t_95d1dbab97f2e3 3
+agentforge-examples/agentforge-studio/agentforge-studio-ui/package.json
+  s_b249c421936a3d::t_e6c3838e3a6182 12-13
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-11,14-20
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/App.vue
+  s_b249c421936a3d::t_89b90546105567 105,108-109,116,119,122-129
+  s_b249c421936a3d::t_8fed4fc6809ca5 152-157,162
+  s_b249c421936a3d::t_c382ded87dbdb3 50-57,61,63-69
+  s_b249c421936a3d::t_e694ce0fd6621a 62
+  s_b249c421936a3d::t_1ec37ba50a1873 110-114,120
+  s_b249c421936a3d::t_26c49995f2ecaa 31-32,36-37
+  s_b249c421936a3d::t_5d4cf282abf811 78
+  s_b249c421936a3d::t_d6747fcc080c88 45
+  s_b249c421936a3d::t_ab409f13a33b04 98-99
+  s_b249c421936a3d::t_265ce781c2253a 130-133
+  s_b249c421936a3d::t_4b2c9cfdc75569 191-192
+  s_b249c421936a3d::t_2af42150d5c09c 93
+  s_b249c421936a3d::t_bb3f589ad9a678 4-5,7-8,10-11,13-22,26-29,38-39,41-44,47-49,58-59,70-72,74-77,95
+  s_b249c421936a3d::t_9d93f6e562b0c6 146-151,164,175-179,181-184,193-217,219-279
+  s_b249c421936a3d::t_b6bbe6aedd620c 104
+  s_b249c421936a3d::t_fc06819dcf0140 135-136
+  s_b249c421936a3d::t_6cfdcb47c77e84 137-145
+  s_b249c421936a3d::t_9bdd8a39cec7bd 40
+  s_b249c421936a3d::t_9c38e9c8078934 9
+  s_b249c421936a3d::t_32727849321477 6,60
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-3,23-24,30,46,73,92,94,97,100-103,106-107,115,117-118,121,134,158-161,163,165-174,180,185-190,218,280-290
+  s_b249c421936a3d::t_8428d8f45cee23 25
+  s_b249c421936a3d::t_7cd450f5403ae1 33-35
+  s_b249c421936a3d::t_36ccb57f44e7d7 12
+  s_b249c421936a3d::t_fa88f2280b5e6c 96
+  s_b249c421936a3d::t_59ec03ec4b5115 79-91
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/config/AgentConfiguration.java
+  s_b249c421936a3d::t_a567f9574ea2ef 60
+  s_b249c421936a3d::t_ccc3d978bae92e 9,19-23,28-29
+  s_ac57f7c7b37cfc::t_bc356ba425d7dc 48-49
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-8,10-18,24-27,30-47,50-59,61-63
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/elegant/ElegantMessage.vue
+  s_b249c421936a3d::t_6e7387a6921b14 2-114
+  s_b249c421936a3d::t_ae760aa69a8177 1
+  s_b249c421936a3d::t_f68eba2d676209 115-117
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/elegant/ElegantThinkItem.vue
+  s_b249c421936a3d::t_37a780cd190feb 2-78
+  s_b249c421936a3d::t_dc7dc15cab60bf 1
+  s_b249c421936a3d::t_01299747122bf0 79-81
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/elegant/ElegantToolItem.vue
+  s_b249c421936a3d::t_cb65d01e7b1195 2-104
+  s_b249c421936a3d::t_62c7c8ac5a7b14 1
+  s_b249c421936a3d::t_71ccf342cf347d 105
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/processor/think/AiThinkProcessor.java
+  s_b249c421936a3d::t_95d1dbab97f2e3 7
+  s_b249c421936a3d::t_e7f5eeaed5979f 1-6,8-22
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/protocol/StreamEventResponse.java
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-4,8-46,86
+  s_ac57f7c7b37cfc::t_bc356ba425d7dc 5-7,47-85
+agentforge-examples/agentforge-studio/agentforge-studio-ui/.gitignore
+  s_ac57f7c7b37cfc::t_32b4fc0091f029 1-3
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/debug/DebugMessage.vue
+  s_b249c421936a3d::t_304fbf4bee5b52 47
+  s_b249c421936a3d::t_90c8e047cc548e 42
+  s_b249c421936a3d::t_cf84bf88b8ea6f 39-41
+  s_b249c421936a3d::t_e96e0e76993024 43-46
+  s_b249c421936a3d::t_a244e1796f9d8d 48-50
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/com/changlu/agentforge/studio/AgentForgeStudioApplication.java
+  s_ac57f7c7b37cfc::t_c7365e3dd642c2 1-12
+.gitignore
+  s_5e26747fc175a7::t_13faf8ae295495 36-37
+agentforge-examples/agentforge-studio/agentforge-studio-ui/package-lock.json
+  s_b249c421936a3d::t_37e098f9df4ab5 1-1302
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/debug/ThinkBlock.vue
+  s_b249c421936a3d::t_7be71a71f6e15d 1-112
+agentforge-examples/agentforge-studio/agentforge-studio-ui/src/modes/debug/ToolCard.vue
+  s_b249c421936a3d::t_9a0b14131d8c26 1-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc8ba441158bf9f934eb059d849acd687d48fcb8",
+  "prompts": {},
+  "sessions": {
+    "s_5e26747fc175a7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f00b73b9effezYUv9u8Ygji0hS",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_7bf1344857a731": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_efa01b38bffed011pTkry19IVK",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_ac57f7c7b37cfc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0f330-e5bd-70b1-afeb-486c33e50379",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_b249c421936a3d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eff025a2dffeHNUyRNojLbBgNG",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
