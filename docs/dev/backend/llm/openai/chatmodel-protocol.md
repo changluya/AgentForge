@@ -1,7 +1,7 @@
 # OpenAI ChatModel 标准入参、出参协议
 
 > 更新日期：2026-09-13  
-> 适用模块：`agentforge-llm-openai`  
+> 适用模块：`agentforge-model-openai`  
 > 当前实现：`OpenAiChatModel`、`OpenAiStreamingChatModel`  
 > 当前 Wire API：OpenAI Chat Completions  
 > 维护者：changlu
@@ -331,7 +331,7 @@ OpenAI 官方当前响应中仍定义 `stop / length / tool_calls / content_filt
 
 ### 3.4 响应结构异常
 
-当前以下情况会直接抛 `LlmException`：
+当前以下情况会直接抛 `ModelException`：
 
 ```text
 choices 不存在
@@ -466,7 +466,7 @@ OpenAiChatModel model = OpenAiChatModel.builder()
 非 2xx 响应统一转换为：
 
 ```java
-new LlmException(
+new ModelException(
     "OpenAI request failed with HTTP " + statusCode,
     statusCode,
     responseBody
@@ -476,7 +476,7 @@ new LlmException(
 网络层 IOException 转换为：
 
 ```text
-LlmException("OpenAI request failed", cause)
+ModelException("OpenAI request failed", cause)
 ```
 
 流式 HTTP 非 2xx 会累积响应 body 并通过 `handler.onError(...)` 返回。

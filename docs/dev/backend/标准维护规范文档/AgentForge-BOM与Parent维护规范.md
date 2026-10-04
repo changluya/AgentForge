@@ -8,7 +8,7 @@ AgentForge 将 Maven 工程拆分为 Aggregator、Parent 和 BOM 三种职责，
 agentforge-aggregator (repository root pom.xml)
 ├── agentforge-ai-parent   统一第三方依赖与构建配置
 ├── agentforge-ai-bom      统一 AgentForge 可发布模块版本
-├── agentforge-llm
+├── agentforge-model
 ├── agentforge-framework
 └── agentforge-examples
 ```
@@ -68,11 +68,12 @@ Parent 统一管理：
 
 BOM 继承 `agentforge-ai-parent`，通过 `<dependencyManagement>` 公布一组经过测试的 AgentForge 模块版本。当前管理：
 
-- `agentforge-llm-core`
-- `agentforge-llm-openai`
-- `agentforge-llm-anthropic`
-- `agentforge-ai-core`
-- `agentforge-ai-agent`
+- `agentforge-model-api`
+- `agentforge-model-core`
+- `agentforge-model-openai`
+- `agentforge-model-anthropic`
+- `agentforge-model-registry`
+- `agentforge-agent-core`
 
 聚合 POM 和示例应用默认不加入 BOM，因为它们不是面向使用者的可复用依赖。
 
@@ -128,11 +129,11 @@ Parent 启用 `flatten-maven-plugin` 的 `resolveCiFriendliesOnly` 模式，发�
 <dependencies>
     <dependency>
         <groupId>com.changlu.agentforge</groupId>
-        <artifactId>agentforge-ai-agent</artifactId>
+        <artifactId>agentforge-agent-core</artifactId>
     </dependency>
     <dependency>
         <groupId>com.changlu.agentforge</groupId>
-        <artifactId>agentforge-llm-openai</artifactId>
+        <artifactId>agentforge-model-openai</artifactId>
     </dependency>
 </dependencies>
 ```
@@ -202,10 +203,10 @@ mvn validate
 mvn clean verify
 
 # 检查关键模块的最终依赖版本
-mvn -pl agentforge-framework/agentforge-ai-agent dependency:tree
+mvn -pl agentforge-framework/agentforge-agent-core dependency:tree
 
 # 检查有效 POM 中的继承、版本与插件配置
-mvn -pl agentforge-framework/agentforge-ai-agent help:effective-pom
+mvn -pl agentforge-framework/agentforge-agent-core help:effective-pom
 ```
 
 验收标准：
