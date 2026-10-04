@@ -1,0 +1,347 @@
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/web/ChatStreamRequest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/config/AgentConfiguration.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-9
+agentforge-model/agentforge-model-core/src/test/java/io/github/agentforge/model/chat/request/DefaultChatRequestParametersTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/AnthropicModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-model/agentforge-model-openai/src/test/java/io/github/agentforge/model/openai/OpenAiFunctionCallTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-19
+agentforge-framework/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolExecutionException.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/chat/message/AiMessageToolCallTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/component/middleware/AgentMiddlewareManagerTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-12
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/LlmBasicConfigTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/LlmEnumTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-7
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/ReActAgentDiyLiveTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-20,119
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/Tool.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/ReActAgentStreamMiddlewareTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1-12,104,107,180
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/ToolExecutor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/AiErrorProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/models/AnthropicModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-framework/agentforge-agent-core/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,18,23,28
+agentforge-model/agentforge-model-openai/src/main/java/io/github/agentforge/model/openai/OpenAiMessages.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolExecutionErrorHandler.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/ToolCallResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/ThinkResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/stream/TokenStream.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/memory/WindowChatMemoryTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-7
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/component/middleware/IStreamingIAgentMiddleware.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-core/src/test/java/io/github/agentforge/model/tool/DefaultToolExecutorTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/AiMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/http/HttpResponse.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-openai/src/test/java/io/github/agentforge/model/openai/OpenAiStreamingFunctionCallTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-13
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolArgumentsErrorHandler.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/OpenAiModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/exception/AgentException.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/execution/ToolExecution.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/AiSessionProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/extend/middlewares/LoggingIAgentMiddleware.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-11
+docs/dev/backend/标准维护规范文档/AgentForge-模块划分与依赖规范.md
+  s_7bf1344857a731::t_8937b3035c359d 52-56,70-74,88-89,105-109,118,162,167-172
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/enums/LlmEnum.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-openai/src/test/java/io/github/agentforge/model/openai/OpenAiLiveFunctionCallTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/ModelFields.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/spec/ToolSpecification.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/ReActAgentStreamTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-16
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/constant/LlmConstant.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/support/ScriptedStreamingChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-9
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/TextContent.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-registry/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,18,23,28,33
+agentforge-model/agentforge-model-core/src/test/java/io/github/agentforge/model/tool/ToolServiceTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-15
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/chat/StreamingChatModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-10
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/http/HttpTransport.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/support/SideEffectTools.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-model/agentforge-model-anthropic/src/main/java/io/github/agentforge/model/anthropic/AnthropicStreamingChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-18
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/AgentForgeStudioApplication.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 5,52
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/P.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/step/ChatResultState.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/package-info.java
+  s_7bf1344857a731::t_8937b3035c359d 4
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/IStreamSceneProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-openai/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,18,23
+agentforge-model/agentforge-model-anthropic/src/test/java/io/github/agentforge/model/anthropic/AnthropicChatModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/ToolExecutionRequest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/request/ChatRequestParameters.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/response/StreamingChatResponseHandler.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/component/middleware/AgentMiddlewareManager.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-9
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/chat/request/DefaultChatRequestParameters.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/step/StepResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolArgumentsException.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/tool/AiToolCallProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-6
+agentforge-examples/agentforge-studio/agentforge-studio-web/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,22,27
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/AgentRequest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+README.md
+  s_7bf1344857a731::t_defbe527490cb4 7,12,15,17-18,20-22,24,26,28,32-37,41,45-52,54,64,73,75-79,81,83-84,90,92,94,96,109-110,112,114,159-161,164,178,180,188,190,192,194,197-199,205,207-209,211,222
+  s_7bf1344857a731::t_19af77e9002431 13,63,85,103-106,117,170,182,184-186,196
+  s_7bf1344857a731::t_8937b3035c359d 99,111
+  s_7bf1344857a731::t_f4d3431a8645bc 56,61,65-71,86-88,98,101,113,128-129,131,135,152-153,155,158,163,165,168,176,201
+  s_7bf1344857a731::t_c134881e679b81 121-122
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/config/LlmBasicConfig.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/step/StopResultState.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/exception/ModelException.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/ReActAgentMiddlewareTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-19
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/support/ScriptedChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/response/ChatResponse.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/LlmFactory.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-7
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/Content.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-anthropic/src/test/java/io/github/agentforge/model/anthropic/AnthropicStreamingToolUseTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-13
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/BaseAgent.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-10
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/memory/ChatMemory.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/ChatMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/UserMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/step/StepState.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/StopResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/tool/AgentToolExecutor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-10
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/support/WeatherTools.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-model/agentforge-model-core/src/test/java/io/github/agentforge/model/chat/request/ChatRequestTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/IAgent.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/ChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-6
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/AgentSettings.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/models/IModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/CustomMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/response/TokenUsage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/exception/CancelException.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/chat/response/MessageAndResponseTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1-8
+docs/dev/backend/标准维护规范文档/AgentForge-BOM与Parent维护规范.md
+  s_7bf1344857a731::t_8937b3035c359d 116,131,135
+agentforge-ai-bom/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,20,25,30,35,40,45
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/Agent.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-17
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/response/FinishReason.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/execution/ToolExecutionResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-core/src/test/java/io/github/agentforge/model/internal/json/JsonTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/stream/StudioStreamingMiddleware.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+docs/dev/backend/llm/README.md
+  s_7bf1344857a731::t_8937b3035c359d 6,98,933,936
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/BaseModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8,29
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/ContentType.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/tool/execution/DefaultToolExecutor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-examples/agentforge-studio/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/SystemMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/spec/ToolParameters.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/stream/ReActTokenStream.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-19
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/http/HttpTypesTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/enums/StreamEventEnums.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/request/ToolChoice.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-openai/src/test/java/io/github/agentforge/model/openai/OpenAiChatModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/chat/ChatModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-9
+agentforge-model/agentforge-model-openai/src/main/java/io/github/agentforge/model/openai/OpenAiStreamingChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-18
+agentforge-ai-parent/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 5,95
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/models/OpenAiModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/web/ChatController.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/AgentChatContext.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/memory/ChatMemoryProvider.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/ReActAgentTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/ChatMessageType.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/ReturnBehavior.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/internal/json/Json.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/memory/WindowChatMemory.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-model/agentforge-model-openai/src/main/java/io/github/agentforge/model/openai/OpenAiChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-17
+agentforge-model/agentforge-model-registry/src/test/java/io/github/agentforge/model/registry/LlmFactoryTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-12
+agentforge-model/agentforge-model-anthropic/src/test/java/io/github/agentforge/model/anthropic/AnthropicToolUseTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-19
+agentforge-examples/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-model/agentforge-model-anthropic/src/main/java/io/github/agentforge/model/anthropic/AnthropicProtocol.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/component/middleware/IAgentMiddleware.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-8
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/ReActAgent.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-28
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/AbstractTextMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/message/ToolExecutionResultMessage.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/test/java/io/github/agentforge/model/chat/response/ExtendedChatMessageTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/step/ChatResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/StreamEventResponse.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/think/AiThinkProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/request/ChatRequest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolErrorContext.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/test/java/io/github/agentforge/agent/support/RecordingMiddleware.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-10
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/chat/StreamingChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-6
+agentforge-model/agentforge-model-core/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,18
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/tool/execution/ToolExecutionRequestUtil.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-5
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/tool/execution/ToolService.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-21
+agentforge-model/agentforge-model-openai/src/test/java/io/github/agentforge/model/openai/OpenAiStreamingChatModelTest.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-15
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/BaseReActAgent.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-14
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/retry/AiCallRetrySupport.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-anthropic/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6,18,23
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/tool/spec/ToolSpecifications.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/domain/AgentRunState.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/http/StreamingHttpResponseHandler.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-core/src/main/java/io/github/agentforge/model/http/JdkHttpTransport.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-registry/src/main/java/io/github/agentforge/model/registry/models/BaseModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-anthropic/src/main/java/io/github/agentforge/model/anthropic/AnthropicChatModel.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-17
+agentforge-framework/agentforge-agent-core/src/main/java/io/github/agentforge/agent/stream/PartialThinking.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/tool/error/ToolErrorHandlerResult.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+agentforge-examples/agentforge-studio/agentforge-studio-ui/pom.xml
+  s_7bf1344857a731::t_8937b3035c359d 6
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/io/github/agentforge/studio/protocol/processor/AiResponseProcessor.java
+  s_7bf1344857a731::t_8937b3035c359d 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/io/github/agentforge/model/http/HttpRequest.java
+  s_7bf1344857a731::t_8937b3035c359d 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "988dfac6b4dd23b18452027451b4fb4e58e89da5",
+  "prompts": {},
+  "sessions": {
+    "s_7bf1344857a731": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_efa01b38bffed011pTkry19IVK",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
