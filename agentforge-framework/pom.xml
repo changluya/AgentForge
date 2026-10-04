@@ -14,8 +14,7 @@
     <name>AgentForge :: Framework</name>
 
     <modules>
-        <module>agentforge-ai-core</module>
-        <module>agentforge-ai-agent</module>
+        <module>agentforge-agent-core</module>
     </modules>
 
     <dependencies>
