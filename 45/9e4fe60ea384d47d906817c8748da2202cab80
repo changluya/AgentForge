@@ -1,0 +1,343 @@
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/chat/response/ExtendedChatMessageTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/execution/ToolExecution.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-core/src/test/java/cloud/changlu/agentforge/model/chat/request/ChatRequestTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolArgumentsException.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/test/java/cloud/changlu/agentforge/model/tool/DefaultToolExecutorTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-model/agentforge-model-openai/src/main/java/cloud/changlu/agentforge/model/openai/OpenAiStreamingChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-18
+agentforge-model/agentforge-model-openai/src/test/java/cloud/changlu/agentforge/model/openai/OpenAiFunctionCallTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-19
+agentforge-model/agentforge-model-core/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,18
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/component/middleware/AgentMiddlewareManagerTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-12
+agentforge-ai-parent/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 5,95
+agentforge-model/agentforge-model-openai/src/main/java/cloud/changlu/agentforge/model/openai/OpenAiChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-17
+agentforge-model/agentforge-model-openai/src/test/java/cloud/changlu/agentforge/model/openai/OpenAiStreamingChatModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-15
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/BaseReActAgent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/ThinkResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/SystemMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/response/StreamingChatResponseHandler.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/models/BaseModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/AgentRunState.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/http/HttpRequest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/StreamingChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-6
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/UserMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/P.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolExecutionException.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/tool/execution/DefaultToolExecutor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 5,52
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/execution/ToolExecutionResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-openai/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,18,23
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/ModelFields.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-openai/src/test/java/cloud/changlu/agentforge/model/openai/OpenAiLiveFunctionCallTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/config/AgentConfiguration.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-9
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/AgentRequest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/test/java/cloud/changlu/agentforge/model/tool/ToolServiceTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-15
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolErrorHandlerResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/internal/json/Json.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/memory/WindowChatMemoryTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-7
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentStreamMiddlewareTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1-12,104,107,180
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/step/ChatResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/LlmFactory.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-7
+agentforge-model/agentforge-model-anthropic/src/main/java/cloud/changlu/agentforge/model/anthropic/AnthropicChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-17
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/step/StepState.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/chat/ChatModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-9
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/chat/StreamingChatModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-10
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/spec/ToolSpecification.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/memory/ChatMemoryProvider.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/AnthropicModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/LlmFactoryTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-12
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/step/StopResultState.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-anthropic/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,18,23
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/http/HttpTypesTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-ai-bom/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,20,25,30,35,40,45
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/models/OpenAiModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/response/ChatResponse.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/package-info.java
+  s_7bf1344857a731::t_de1687b03b73bb 4
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/LlmEnumTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-7
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/retry/AiCallRetrySupport.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/AgentSettings.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-examples/agentforge-studio/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/memory/WindowChatMemory.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/AiMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/spec/ToolParameters.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/ToolExecutionResultMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/ReActAgent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-28
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/http/HttpTransport.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-examples/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/tool/AgentToolExecutor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-10
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/LlmBasicConfigTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/exception/CancelException.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/step/StepResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/IAgent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/support/RecordingMiddleware.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-10
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/think/AiThinkProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/response/TokenUsage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentStreamTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-16
+agentforge-model/agentforge-model-core/src/test/java/cloud/changlu/agentforge/model/internal/json/JsonTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/IStreamSceneProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/constant/LlmConstant.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/CustomMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/tool/AiToolCallProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-6
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/Agent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-17
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/stream/TokenStream.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-framework/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/AgentForgeStudioApplication.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/AgentChatContext.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/AiResponseProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/web/ChatStreamRequest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/StopResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolArgumentsErrorHandler.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-openai/src/test/java/cloud/changlu/agentforge/model/openai/OpenAiChatModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/AiSessionProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/OpenAiModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/TextContent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-openai/src/test/java/cloud/changlu/agentforge/model/openai/OpenAiStreamingFunctionCallTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-13
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/Content.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolExecutionErrorHandler.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/ToolExecutionRequest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/request/ToolChoice.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/test/java/cloud/changlu/agentforge/model/chat/request/DefaultChatRequestParametersTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/tool/execution/ToolService.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-21
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/processor/AiErrorProcessor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-framework/agentforge-agent-core/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,18,23,28
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/memory/ChatMemory.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/exception/ModelException.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,18,23,28,33
+agentforge-model/agentforge-model-anthropic/src/test/java/cloud/changlu/agentforge/model/anthropic/AnthropicToolUseTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-19
+agentforge-model/agentforge-model-api/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-model/agentforge-model-openai/src/main/java/cloud/changlu/agentforge/model/openai/OpenAiMessages.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/ToolCallResult.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+docs/dev/backend/llm/README.md
+  s_7bf1344857a731::t_de1687b03b73bb 6,98,933,936
+agentforge-examples/agentforge-studio/agentforge-studio-ui/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/ChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-6
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/tool/execution/ToolExecutionRequestUtil.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/component/middleware/AgentMiddlewareManager.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-9
+docs/dev/backend/标准维护规范文档/AgentForge-BOM与Parent维护规范.md
+  s_7bf1344857a731::t_de1687b03b73bb 116,131,135
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/support/ScriptedStreamingChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-9
+agentforge-model/agentforge-model-anthropic/src/main/java/cloud/changlu/agentforge/model/anthropic/AnthropicProtocol.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+docs/dev/backend/标准维护规范文档/AgentForge-模块划分与依赖规范.md
+  s_7bf1344857a731::t_de1687b03b73bb 52-56,70-74,88-89,105-109,118,162,167-172
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/ChatMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/stream/PartialThinking.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentDiyLiveTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-20,119
+agentforge-model/agentforge-model-anthropic/src/main/java/cloud/changlu/agentforge/model/anthropic/AnthropicStreamingChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-18
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/StreamEventResponse.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+README.md
+  s_7bf1344857a731::t_de1687b03b73bb 99,111
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/support/WeatherTools.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/error/ToolErrorContext.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/AbstractTextMessage.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/web/ChatController.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/Tool.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/http/HttpResponse.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/step/ChatResultState.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/config/LlmBasicConfig.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/component/middleware/IAgentMiddleware.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-model/agentforge-model-registry/src/test/java/cloud/changlu/agentforge/model/registry/BaseModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8,29
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/BaseAgent.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-10
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/exception/AgentException.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/models/IModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/ReturnBehavior.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/tool/ToolExecutor.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/request/ChatRequest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-examples/agentforge-studio/agentforge-studio-web/pom.xml
+  s_7bf1344857a731::t_de1687b03b73bb 6,22,27
+agentforge-model/agentforge-model-anthropic/src/test/java/cloud/changlu/agentforge/model/anthropic/AnthropicChatModelTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/chat/message/AiMessageToolCallTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/response/FinishReason.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/http/StreamingHttpResponseHandler.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/models/AnthropicModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/protocol/enums/StreamEventEnums.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/component/middleware/IStreamingIAgentMiddleware.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/support/SideEffectTools.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/ChatMessageType.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/chat/request/DefaultChatRequestParameters.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/tool/spec/ToolSpecifications.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-4
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/request/ChatRequestParameters.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3
+agentforge-model/agentforge-model-api/src/test/java/cloud/changlu/agentforge/model/chat/response/MessageAndResponseTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1-8
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/stream/ReActTokenStream.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-19
+agentforge-model/agentforge-model-core/src/main/java/cloud/changlu/agentforge/model/http/JdkHttpTransport.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-model/agentforge-model-registry/src/main/java/cloud/changlu/agentforge/model/registry/enums/LlmEnum.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-5
+agentforge-model/agentforge-model-api/src/main/java/cloud/changlu/agentforge/model/chat/message/ContentType.java
+  s_7bf1344857a731::t_de1687b03b73bb 1
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/extend/middlewares/LoggingIAgentMiddleware.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-11
+agentforge-examples/agentforge-studio/agentforge-studio-web/src/main/java/cloud/changlu/agentforge/studio/stream/StudioStreamingMiddleware.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-14
+agentforge-model/agentforge-model-anthropic/src/test/java/cloud/changlu/agentforge/model/anthropic/AnthropicStreamingToolUseTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-13
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentMiddlewareTest.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-19
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/support/ScriptedChatModel.java
+  s_7bf1344857a731::t_de1687b03b73bb 1,3-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "459e4fe60ea384d47d906817c8748da2202cab80",
+  "prompts": {},
+  "sessions": {
+    "s_7bf1344857a731": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_efa01b38bffed011pTkry19IVK",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
