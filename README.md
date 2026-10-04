@@ -96,7 +96,7 @@ AgentForge
 > **推荐 JDK 17，兼容 JDK 8。**
 
 - 日常开发与 CI 默认推荐 **JDK 17**；公共模块编译目标为 **Java 8 bytecode**，JDK 8 可直接依赖运行；
-- 统一根包名与 `groupId` 均为 `io.github.agentforge`。
+- 统一根包名与 `groupId` 均为 `cloud.changlu.agentforge`。
 
 ### 构建与依赖
 
@@ -108,7 +108,7 @@ mvn clean install -DskipTests
 
 ```xml
 <dependency>
-    <groupId>io.github.agentforge</groupId>
+    <groupId>cloud.changlu.agentforge</groupId>
     <artifactId>agentforge-agent-core</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>

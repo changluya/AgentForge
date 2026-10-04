@@ -3,7 +3,7 @@
 > 更新日期：2026-09-13  
 > 适用版本：release_1.x  
 > 适用模块：`agentforge-model-api`  
-> 包前缀：`io.github.agentforge.model`  
+> 包前缀：`cloud.changlu.agentforge.model`  
 > 维护者：changlu
 
 本文件统一沉淀 AgentForge `agentforge-model-api` 的核心接口、请求响应模型、消息体系、HTTP SPI、异常边界与 release_1.x 演进约束。Provider 相关的 Wire Protocol 单独放在 `openai/` 与 `anthropic/` 目录中，避免 Core 设计与厂商协议混杂。
@@ -95,7 +95,7 @@ ChatResponse + TokenUsage + FinishReason
 ### 1.1 包结构
 
 ```text
-io.github.agentforge.model
+cloud.changlu.agentforge.model
 ├── tool
 │   ├── Tool.java / P.java / ReturnBehavior.java / ToolExecutor.java   // 核心契约
 │   ├── spec
@@ -930,10 +930,10 @@ Anthropic 与 OpenAI 共用同一套 Core 类型；上层 Agent Runtime 只需�
 ### 8.1 定位
 
 除 Provider 层的 Function Calling 之外，Model API 额外沉淀了一套 **Tool 执行层**（对应包
-`io.github.agentforge.model.tool`，拆分为顶层 + 三个子包）：
+`cloud.changlu.agentforge.model.tool`，拆分为顶层 + 三个子包）：
 
 ```text
-io.github.agentforge.model.tool            // 核心契约：注解 + 工具执行接口
+cloud.changlu.agentforge.model.tool            // 核心契约：注解 + 工具执行接口
 ├── Tool                        // @Tool 方法注解
 ├── P                           // @P 参数注解
 ├── ReturnBehavior              // TO_LLM / IMMEDIATE / IMMEDIATE_IF_LAST

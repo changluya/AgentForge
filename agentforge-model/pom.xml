@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.agentforge</groupId>
+        <groupId>cloud.changlu.agentforge</groupId>
         <artifactId>agentforge-ai-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../agentforge-ai-parent/pom.xml</relativePath>

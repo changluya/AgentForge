@@ -113,7 +113,7 @@ Parent 启用 `flatten-maven-plugin` 的 `resolveCiFriendliesOnly` 模式，发�
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>io.github.agentforge</groupId>
+            <groupId>cloud.changlu.agentforge</groupId>
             <artifactId>agentforge-ai-bom</artifactId>
             <version>${agentforge.version}</version>
             <type>pom</type>
@@ -128,11 +128,11 @@ Parent 启用 `flatten-maven-plugin` 的 `resolveCiFriendliesOnly` 模式，发�
 ```xml
 <dependencies>
     <dependency>
-        <groupId>io.github.agentforge</groupId>
+        <groupId>cloud.changlu.agentforge</groupId>
         <artifactId>agentforge-agent-core</artifactId>
     </dependency>
     <dependency>
-        <groupId>io.github.agentforge</groupId>
+        <groupId>cloud.changlu.agentforge</groupId>
         <artifactId>agentforge-model-openai</artifactId>
     </dependency>
 </dependencies>
