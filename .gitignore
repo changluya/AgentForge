@@ -34,4 +34,8 @@ logs/
 # Live-endpoint credentials (do not commit)
 **/live-endpoint.properties
 
+# Local Spring Boot config (use application.yml.example as template)
+**/src/main/resources/application.yml
+!**/src/main/resources/application.yml.example
+
 codes/
