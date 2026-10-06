@@ -12,6 +12,8 @@
     <artifactId>agentforge-framework</artifactId>
     <packaging>pom</packaging>
     <name>AgentForge :: Framework</name>
+    <!-- Required publishing metadata for this public framework aggregator POM. -->
+    <description>Core agent framework and runtime components for AgentForge.</description>
 
     <modules>
         <module>agentforge-agent-core</module>

@@ -19,6 +19,26 @@
         </license>
     </licenses>
 
+    <!-- Maven Central requires developer metadata in every published POM; child modules inherit it here. -->
+    <developers>
+        <developer>
+            <id>changlu</id>
+            <name>changlu</name>
+            <email>changluya@users.noreply.github.com</email>
+            <url>https://changlu.cloud</url>
+            <organization>AgentForge</organization>
+            <organizationUrl>https://github.com/changluya/AgentForge</organizationUrl>
+        </developer>
+    </developers>
+
+    <!-- Source-control coordinates displayed by Central and consumed by release tooling. -->
+    <scm>
+        <connection>scm:git:https://github.com/changluya/AgentForge.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/changluya/AgentForge.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/changluya/AgentForge</url>
+    </scm>
+
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,8 +52,15 @@
         <junit.version>4.13.2</junit.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <!-- Plugin versions used only by the release profile below. -->
+        <gpg.executable>gpg</gpg.executable>
+        <!-- Public fingerprint of the release signing key; using the full value avoids short key-id collisions. -->
+        <gpg.keyname>67F12531C4AC574B1B18ECC48713447BBB63A3CF</gpg.keyname>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+        <maven.javadoc.plugin.version>3.11.2</maven.javadoc.plugin.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+        <central.publishing.maven.plugin.version>0.11.0</central.publishing.maven.plugin.version>
         <spotless-maven-plugin.version>3.10.3</spotless-maven-plugin.version>
         <google-java-format.version>1.35.0</google-java-format.version>
     </properties>
@@ -144,4 +171,88 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- Opt-in publishing pipeline: normal development builds do not sign or upload artifacts. -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Attach the source JAR required by Maven Central for every published JAR module. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Attach the Javadoc JAR; doclint is relaxed so documentation warnings do not block a release. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Sign the POM and attached artifacts during verify; the passphrase comes from gpg-agent or MAVEN_GPG_PASSPHRASE. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <configuration>
+                            <!-- The release script resolves Homebrew/MacPorts automatically; plain Maven uses gpg from PATH. -->
+                            <executable>${gpg.executable}</executable>
+                            <keyname>${gpg.keyname}</keyname>
+                            <bestPractices>true</bestPractices>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Collect the reactor artifacts into one Central Portal deployment; the first release remains manual-publish. -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central.publishing.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <!-- Must match the Central User Token server id in settings.xml. -->
+                            <publishingServerId>central</publishingServerId>
+                            <!-- Keep the first release pending in Portal for manual review. -->
+                            <autoPublish>false</autoPublish>
+                            <!-- Examples are build consumers, not public library artifacts. -->
+                            <excludeArtifacts>
+                                <excludeArtifact>agentforge-examples</excludeArtifact>
+                                <excludeArtifact>agentforge-studio</excludeArtifact>
+                                <excludeArtifact>agentforge-studio-ui</excludeArtifact>
+                                <excludeArtifact>agentforge-studio-web</excludeArtifact>
+                            </excludeArtifacts>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

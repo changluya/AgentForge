@@ -12,6 +12,8 @@
     <artifactId>agentforge-model</artifactId>
     <packaging>pom</packaging>
     <name>AgentForge :: Model</name>
+    <!-- Required publishing metadata for this public model aggregator POM. -->
+    <description>Model provider abstractions and integrations for AgentForge.</description>
 
     <modules>
         <module>agentforge-model-api</module>
