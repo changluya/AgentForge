@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.changlu.agentforge</groupId>
+        <groupId>cloud.changlu.agentforge</groupId>
         <artifactId>agentforge-ai-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../agentforge-ai-parent/pom.xml</relativePath>
@@ -12,6 +12,8 @@
     <artifactId>agentforge-framework</artifactId>
     <packaging>pom</packaging>
     <name>AgentForge :: Framework</name>
+    <!-- Required publishing metadata for this public framework aggregator POM. -->
+    <description>Core agent framework and runtime components for AgentForge.</description>
 
     <modules>
         <module>agentforge-agent-core</module>

@@ -4,141 +4,117 @@
 
 # AgentForge
 
-> **Forge Intelligence into Action.**  
+> **Forge Intelligence into Action.**
 > **将智能锻造成行动。**
 
 AgentForge 是一个面向 Java 开发者、从 **LLM 最底层能力开始构建** 的开源 Agent Framework。
 
-它不会从一个已经高度封装的 Agent API 起步，而是先建立稳定、统一、可扩展的模型抽象，再逐层向上构造 Context、Memory、Tool、Skill、MCP、Reasoning、Agent Runtime 与 Multi-Agent 等能力。
-
-**AgentForge 的目标不是提供一个固定形态的 Agent，而是提供一套可以持续“锻造”不同 Agent 的底层能力。**
-
----
-
-## 1. 名称与立意
-
-**AgentForge = Agent + Forge**。
-
-`Agent` 代表能够理解目标、进行推理、调用工具并完成任务的智能体；`Forge` 原意是“锻造、熔炉、工坊”，强调把原始材料经过持续加工、塑形和强化，最终打造为真正可用的产品。
-
-AgentForge 想表达的是：
+它不从已经高度封装的 Agent API 起步，而是先建立稳定、统一、可扩展的模型抽象，再逐层向上构造
+Tool、Memory、Middleware、Reasoning 与 Agent Runtime 等能力。
 
 > **大模型提供原始智能，AgentForge 将这些智能能力逐层工程化，最终锻造成能够真正执行任务的 Agent。**
 
-从模型到智能体，中间并不是简单增加一个循环，而是一整套工程体系：
+`AgentForge = Agent + Forge`：`Agent` 代表能理解目标、进行推理、调用工具并完成任务的智能体；`Forge`
+强调把原始材料经过持续加工、塑形、强化，最终打造为真正可用的产品。
 
-```text
-LLM
- ↓
-Message / Request / Response
- ↓
-Context / Memory
- ↓
-Tool / Skill / MCP
- ↓
-Reasoning / Planning
- ↓
-Agent Runtime
- ↓
-Multi-Agent / Sandbox / Observability
- ↓
-Real Action
-```
-
-因此 AgentForge 的核心 Slogan 是：
-
-> **Forge Intelligence into Action.**  
-> **将智能锻造成行动。**
-
-### 为什么从 LLM 层开始？
-
-Agent 的上层能力最终都会落到模型调用上。如果最底层模型抽象不稳定，上层 Agent、Tool Calling、Memory、Context 乃至 Multi-Agent 都会被具体厂商协议绑住。
-
-所以 AgentForge 选择 **Bottom-up** 的构建方式：
-
-1. 先定义稳定、厂商无关的 `ChatModel` 核心接口；
-2. 再实现 OpenAI、Anthropic 等 Provider Adapter；
-3. 上层框架只依赖 AgentForge 自己的抽象，不直接依赖任何厂商 SDK；
-4. 最终逐层构造完整 Agent Runtime。
-
-这一设计思路参考了 LangChain4j 的“核心抽象 + Provider Integration”模块化方式，但 AgentForge 会从自己的 Agent Runtime 目标出发逐步演进 API。
+- 文档站：<https://changluya.github.io/AgentForge/>
+- GitHub：<https://github.com/changluya/AgentForge>
+- Gitee：<https://gitee.com/changluJava/agent-forge>
 
 ---
 
-## 2. 当前项目结构
+## 架构
 
-`agentforge-model` 已完成第一阶段模型抽象与 Provider Adapter；`agentforge-framework` 开始落地 Agent 基础层：
-`agentforge-model-registry` 提供 ChatModel 工厂，`agentforge-agent-core` 提供 ReAct Agent 运行时。
+AgentForge 采用 **Bottom-up** 的构建方式：先稳定最底层模型抽象，再逐层向上锻造 Agent 能力。
 
-`agentforge-model-api` 只定义接口与统一 req/vo，`agentforge-model-core` 提供无厂商依赖的默认实现与执行引擎。
+```text
+LLM
+ ↓  Message / Request / Response
+ ↓  Context / Memory
+ ↓  Tool / Skill / MCP
+ ↓  Reasoning / Planning
+ ↓  Agent Runtime
+ ↓  Multi-Agent / Sandbox / Observability
+Real Action
+```
+
+### 工程结构
 
 ```text
 AgentForge
-├── agentforge-ai-parent
-├── agentforge-ai-bom
-├── agentforge-model
-│   ├── agentforge-model-api
-│   ├── agentforge-model-core
-│   ├── agentforge-model-openai
-│   ├── agentforge-model-anthropic
-│   └── agentforge-model-registry
-│
+├── agentforge-ai-parent          # 统一依赖与插件版本管理
+├── agentforge-ai-bom             # 统一 BOM 坐标维护
+├── agentforge-model              # 模型层
+│   ├── agentforge-model-api      # Provider 无关的模型契约与统一 req/vo
+│   ├── agentforge-model-core     # 无厂商依赖的默认实现与执行引擎
+│   ├── agentforge-model-openai   # OpenAI / OpenAI-compatible Provider
+│   ├── agentforge-model-anthropic# Anthropic Provider
+│   └── agentforge-model-registry # 开箱即用的 ChatModel 工厂
 ├── agentforge-framework
-│   └── agentforge-agent-core
-│
+│   └── agentforge-agent-core     # ReAct Agent 运行时
 ├── agentforge-examples
-│   └── agentforge-studio
-│       ├── agentforge-studio-ui
-│       └── agentforge-studio-web
-│
+│   └── agentforge-studio         # Web 可视化示例（Vue 2 前端 + Spring Boot 后端）
 ├── pom.xml
 └── README.md
 ```
 
-### `agentforge-model-api`
+### 模块能力
 
-只定义 Provider 无关的模型契约与统一 req/vo，不含任何具体实现，也不依赖 OpenAI / Anthropic SDK 或第三方
-JSON / HTTP 库。
+| 模块 | 当前支持能力 |
+| --- | --- |
+| `agentforge-model-api` | 统一的 `ChatModel` / `StreamingChatModel` 契约，Message / Request / Response，工具契约与 HTTP Transport SPI |
+| `agentforge-model-core` | 零依赖 HTTP Transport、内置 JSON、`@Tool` 反射执行与推理-工具循环引擎 |
+| `agentforge-model-openai` | OpenAI Chat Completions 同步 / 流式、Function Calling、OpenAI-compatible endpoint |
+| `agentforge-model-anthropic` | Anthropic Messages API 同步 / 流式、Tool Use |
+| `agentforge-model-registry` | `LlmFactory` 按 provider 构建 ChatModel / StreamingChatModel |
+| `agentforge-agent-core` | ReAct 主循环（同步 / 流式）、窗口记忆、工具调用回合、Middleware 链路、重试与取消 |
+| `agentforge-studio` | 统一 SSE 协议的可视化对话示例 |
 
-当前提供：
+### 设计原则
 
-- `ChatModel` / `StreamingChatModel`：统一同步 / 流式模型调用入口；
-- `StreamingChatResponseHandler`：统一流式增量 / 完成 / 异常回调；
-- `ChatRequest` / `ChatRequestParameters`：统一请求对象与参数抽象；
-- `ChatMessage`：System / User / AI / ToolExecutionResult / Custom Message；
-- `ChatResponse` / `TokenUsage` / `FinishReason`：统一响应与结果元信息；
-- `ToolSpecification` / `ToolExecutor`：工具契约；
-- `HttpTransport` / `HttpRequest` / `HttpResponse`：可替换 HTTP Transport SPI 与 req/vo；
-- `ModelException`：统一异常。
+1. **Bottom-up** — 先稳定 LLM / Message / Request / Response 等基础抽象，再构建 Agent。
+2. **Provider-neutral** — 上层框架不被任何一家模型厂商协议绑定。
+3. **Modular** — 核心抽象与 Provider / Framework / Agent Runtime 分模块演进。
+4. **Lightweight** — 底层尽量减少不必要依赖，可被 Spring Boot、普通 Java、桌面端甚至嵌入式工程复用。
+5. **Production-oriented** — 目标不是 Demo Agent，而是可以真正进入生产环境的 Agent Runtime。
 
-核心 API：
+### Roadmap
 
-```java
-public interface ChatModel {
+| 阶段 | 状态 | 内容 |
+| --- | --- | --- |
+| Phase 1 — LLM Foundation | ✅ 已完成 | 模型契约与 OpenAI / Anthropic Provider，稳定 Message / Request / Response |
+| Phase 2 — LLM Capability | 🚧 进行中 | 流式、Tool Calling 已落地；Structured Output / Multimodal / Embedding / More Providers 规划中 |
+| Phase 3 — Agent Foundation | 🚧 当前 | `model-registry`、`agent-core`；ReAct 主循环、窗口记忆、工具调用回合、Middleware |
+| Phase 4 — Production Agent Runtime | ⏳ 规划中 | SubAgent / Multi-Agent / Sandbox / Human-in-the-loop / Tracing / Persistence |
 
-    ChatResponse chat(ChatRequest chatRequest);
+---
 
-    default String chat(String userMessage) {
-        // convenience API
-    }
-}
+## Quick Start
+
+### 环境要求
+
+> **推荐 JDK 17，兼容 JDK 8。**
+
+- 日常开发与 CI 默认推荐 **JDK 17**；公共模块编译目标为 **Java 8 bytecode**，JDK 8 可直接依赖运行；
+- 统一根包名与 `groupId` 均为 `cloud.changlu.agentforge`。
+
+### 构建与依赖
+
+```bash
+git clone https://github.com/changluya/AgentForge.git
+cd AgentForge
+mvn clean install -DskipTests
 ```
 
-上层 Agent Framework 只面向 `ChatModel`，而不关心底层实际使用 OpenAI、Anthropic 或其它模型服务。
+```xml
+<dependency>
+    <groupId>cloud.changlu.agentforge</groupId>
+    <artifactId>agentforge-agent-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
 
-### `agentforge-model-core`
-
-无厂商依赖的默认实现与执行引擎，实现 `agentforge-model-api` 的契约：
-
-- `JdkHttpTransport`：基于 JDK `HttpURLConnection` 的零依赖默认实现，流式请求通过后台守护线程持续消费响应；
-- `Json`：内置 JSON 实现，避免引入第三方 JSON 库；
-- `DefaultChatRequestParameters`：默认请求参数对象；
-- `DefaultToolExecutor` / `ToolService`：`@Tool` 反射执行与推理-工具循环引擎；
-- `ToolSpecifications`：从 `@Tool` 方法生成 `ToolSpecification`。
-
-### `agentforge-model-openai`
-
-实现 OpenAI Chat Completions 协议，同时提供同步与流式模型：
+### 调用模型
 
 ```java
 ChatModel model = OpenAiChatModel.builder()
@@ -149,89 +125,14 @@ ChatModel model = OpenAiChatModel.builder()
 String answer = model.chat("Hello AgentForge");
 ```
 
-流式调用：
+`baseUrl` 可配置，因此也可作为 OpenAI-compatible Provider 使用（DashScope / Ollama / Xinference 等）。
+需要流式输出时，使用 `StreamingChatModel` + `StreamingChatResponseHandler`。
 
-```java
-StreamingChatModel model = OpenAiStreamingChatModel.builder()
-        .apiKey(System.getenv("OPENAI_API_KEY"))
-        .modelName("gpt-4o-mini")
-        .build();
-
-model.chat("Hello AgentForge", new StreamingChatResponseHandler() {
-    @Override
-    public void onPartialResponse(String partialResponse) {
-        System.out.print(partialResponse);
-    }
-
-    @Override
-    public void onCompleteResponse(ChatResponse completeResponse) {
-        System.out.println("\nfinishReason=" + completeResponse.finishReason());
-    }
-
-    @Override
-    public void onError(Throwable error) {
-        error.printStackTrace();
-    }
-});
-```
-
-`OpenAiStreamingChatModel` 基于 OpenAI SSE Chat Completions 流式协议实现：请求固定开启 `stream=true`，同时请求 `stream_options.include_usage=true`，逐个转发 `delta.content`，并在流结束后聚合出统一 `ChatResponse`。这一接口设计参考 LangChain4j 的 `StreamingChatModel + StreamingChatResponseHandler` 分层思路，但保持 AgentForge 自己的 JDK 8 兼容 API 与 HTTP Transport 抽象。
-
-`baseUrl` 可配置，因此也可以作为 OpenAI-compatible Provider 的基础适配器：
-
-```java
-ChatModel model = OpenAiChatModel.builder()
-        .baseUrl("https://your-openai-compatible-endpoint/v1")
-        .apiKey(System.getenv("MODEL_API_KEY"))
-        .modelName("your-model")
-        .build();
-```
-
-### `agentforge-model-anthropic`
-
-实现 Anthropic Messages API：
-
-```java
-ChatModel model = AnthropicChatModel.builder()
-        .apiKey(System.getenv("ANTHROPIC_API_KEY"))
-        .modelName("your-claude-model")
-        .maxTokens(1024)
-        .build();
-
-String answer = model.chat("Hello AgentForge");
-```
-
-### `agentforge-model-registry`
-
-模型层开箱即用的工厂模块，屏蔽 Provider Adapter 构建细节，只暴露一个配置对象：
-
-```java
-LlmBasicConfig config = LlmBasicConfig.builder()
-        .provider(LlmEnum.OPENAI.getCode())
-        .url("https://your-openai-compatible-endpoint/v1")
-        .apiKey(System.getenv("MODEL_API_KEY"))
-        .modelName("your-model")
-        .prop(LlmConstant.TEMPERATURE, "0.0")
-        .prop(LlmConstant.MAX_TOKENS, "1024")
-        .prop(LlmConstant.TIMEOUT, "120")
-        .build();
-
-ChatModel chatModel = LlmFactory.buildChatModel(config);
-StreamingChatModel streamingChatModel = LlmFactory.buildStreamChatModel(config);
-```
-
-- `LlmFactory`：按 `provider` 编码路由到对应 `IModel` 实现；
-- `LlmBasicConfig`：provider / url / modelName / apiKey + `Properties` 扩展参数；
-- `LlmConstant`：`timeout`（秒）/ `temperature` / `topP` / `maxTokens`；
-- `OpenAiModel` / `AnthropicModel`：把公共参数映射到各 Provider Builder。
-
-### `agentforge-agent-core`
-
-第一版 ReAct Agent 运行时，`agentforge-model` 之上补齐 Context / Memory / Tool / Stream 与 Think-Act 主循环：
+### 构建 Agent
 
 ```java
 ToolService toolService = new ToolService();
-toolService.tools(new WeatherTools());
+toolService.tools(new WeatherTools());   // 扫描对象中所有 @Tool 方法
 
 ReActAgent agent = ReActAgent.builder()
         .agentName("weather-react-agent")
@@ -240,299 +141,74 @@ ReActAgent agent = ReActAgent.builder()
         .streamingChatModel(streamingChatModel)
         .chatMemoryProvider(ChatMemoryProvider.windowChatMemoryProvider(50))
         .toolService(toolService)
-        .agentSettings(AgentSettings.builder().maxSteps(5).build())
         .build();
 
-// 非流式：think -> act(工具) -> think
 ChatResult result = agent.run(AgentRequest.builder()
         .memoryId("demo")
         .question("北京今天的天气怎么样？")
         .build());
-
-// 流式：同样的请求，返回可持续订阅的 TokenStream
-TokenStream tokenStream = agent.runStream(AgentRequest.builder()
-        .memoryId("demo")
-        .question("北京今天的天气怎么样？")
-        .build());
-
-// 中间件：像 AOP 一样横切 think-act 主循环
-ReActAgent observedAgent = ReActAgent.builder()
-        .agentName("observed-agent")
-        .systemPrompt("你是一个天气助手。")
-        .chatModel(chatModel)
-        .chatMemoryProvider(ChatMemoryProvider.windowChatMemoryProvider(50))
-        .toolService(toolService)
-        .agentSettings(AgentSettings.builder().maxSteps(5).build())
-        .middleware(new LoggingIAgentMiddleware())   // 单个
-        .build();
 ```
 
-- `IAgent` / `BaseAgent` / `Agent` / `BaseReActAgent` / `ReActAgent`：分层主循环，模型回答不再要求工具时
-  （finishReason = STOP）退出，并以 `SUCCESS` / `MODEL_CALL_ERROR` / `CANCEL` / `MAX_STEPS` 收敛运行态；
-- `AgentChatContext`：单次运行上下文，由 `BaseAgent` 每次运行时构建，持有 `AgentRequest`、
-  `ChatMemory`、`ChatModel`，并自行维护 `extensions` 扩展业务字段；
-- `ChatMemory` / `WindowChatMemory` / `ChatMemoryProvider`：会话窗口记忆；
-- `AgentToolExecutor`：把 `agentforge-model` 的 `ToolService` 接入工具调用回合；
-- `TokenStream` / `ReActTokenStream`：模型文本 / 思考增量、中间响应（工具调用轮）、`[tool]` 事件与完成 / 异常回调。
-- `AgentMiddlewareManager` / `IAgentMiddleware` / `IStreamingIAgentMiddleware`：横切 Agent 主循环的中间件，
-  覆盖初始化、每轮 begin-end、模型调用前后、流式文本 / 思考增量（DeepSeek `reasoning_content`、
-  Anthropic `thinking_delta`）、中间响应、工具执行前后、重试、停止与异常等触发点；
-- `extend.middlewares.LoggingIAgentMiddleware`：内置的日志中间件示例，覆盖全部触发点。
+流式执行通过 `agent.runStream(request)` 返回 `TokenStream`，可订阅文本 / 思考增量、工具执行与完成事件；
+`agent.cancel(memoryId)` 用于取消任务。模型、记忆、工具与中间件均通过 Builder 注入，详见文档站。
 
----
+### 运行 AgentForge Studio
 
-## 3. ChatModel 设计
+```bash
+# 后端（Spring Boot，默认 8080）
+export AGENTFORGE_MODEL_API_KEY=your-api-key
+mvn package -pl agentforge-examples/agentforge-studio/agentforge-studio-web -am -DskipTests
+java -jar agentforge-examples/agentforge-studio/agentforge-studio-web/target/agentforge-studio-web-1.0.0-SNAPSHOT.jar
 
-AgentForge 第一版不会急着实现完整 Agent，而是先把模型调用边界稳定下来。
-
-### 统一请求
-
-```java
-ChatRequest request = ChatRequest.builder()
-        .message(SystemMessage.from("You are a helpful assistant."))
-        .message(UserMessage.from("What is AgentForge?"))
-        .parameters(DefaultChatRequestParameters.builder()
-                .temperature(0.2)
-                .maxTokens(1024)
-                .build())
-        .build();
-
-ChatResponse response = model.chat(request);
+# 前端（Vue 2 + Vite，默认 5173，代理 /api 到 8080）
+cd agentforge-examples/agentforge-studio/agentforge-studio-ui
+npm install && npm run dev
 ```
 
-### Provider 无关
+详见 [agentforge-studio/README.md](agentforge-examples/agentforge-studio/README.md)。
 
-业务与上层 Agent 只依赖：
-
-```java
-ChatModel
-```
-
-Provider 负责实现：
-
-```text
-ChatModel
-   ├── OpenAiChatModel
-   └── AnthropicChatModel
-```
-
-未来可以继续扩展：
-
-```text
-ChatModel
-   ├── OpenAiChatModel
-   ├── AnthropicChatModel
-   ├── DashScopeChatModel
-   ├── OllamaChatModel
-   ├── XinferenceChatModel
-   └── ...
-```
-
-### 请求级参数覆盖模型级默认参数
-
-模型可以配置默认参数：
-
-```java
-OpenAiChatModel.builder()
-        .modelName("gpt-4o-mini")
-        .temperature(0.7)
-        .build();
-```
-
-单次请求也可以覆盖：
-
-```java
-ChatRequest request = ChatRequest.builder()
-        .message(UserMessage.from("Explain ReAct."))
-        .parameters(DefaultChatRequestParameters.builder()
-                .temperature(0.1)
-                .build())
-        .build();
-```
-
-这样可以保持核心接口稳定，同时给不同调用场景保留足够灵活性。
-
----
-
-## 4. Java 版本策略
-
-AgentForge 的版本策略是：
-
-> **推荐 JDK 17，兼容 JDK 8。**
-
-具体策略：
-
-- 日常开发、CI 和新用户默认推荐 **JDK 17**；
-- 第一阶段公共模块编译目标为 **Java 8 bytecode**；
-- JDK 8 用户可以直接依赖和运行；
-- JDK 17 用户无需额外配置，可以直接使用；
-- Maven 编译级别固定为 `source/target 8`，并通过 JDK 8 / JDK 17 双版本 CI 持续验证兼容性；
-- 核心 LLM 层当前不依赖 Spring，也不依赖高版本 JDK HTTP Client。
-
-这意味着：
-
-```text
-JDK 8   ✅ Compatible
-JDK 17  ✅ Recommended
-```
-
-构建：
+### 测试
 
 ```bash
 mvn clean test
 ```
 
-### 包名与 Maven 坐标约定
-
-AgentForge 统一使用以下根包名：
-
-```text
-com.changlu.agentforge.xxx
-```
-
-例如：
-
-```text
-com.changlu.agentforge.model.chat
-com.changlu.agentforge.model.tool
-com.changlu.agentforge.model.http
-com.changlu.agentforge.model.openai
-com.changlu.agentforge.model.anthropic
-com.changlu.agentforge.model.registry
-com.changlu.agentforge.agent
-```
-
-Maven `groupId` 同样统一为：
-
-```text
-com.changlu.agentforge
-```
-
-### 单元测试
-
-当前各实现模块均已补充单元测试：
-
-```text
-agentforge-model-api        -> ChatModel / Message / Request / Response / HTTP SPI
-agentforge-model-core       -> Json / JdkHttpTransport / ToolService / 默认参数
-agentforge-model-openai     -> 请求映射 / 响应归一化 / 异常 / OpenAI-compatible
-agentforge-model-anthropic  -> System Message / Messages API / 响应归一化 / 异常
-agentforge-model-registry   -> LlmFactory / LlmEnum / 参数映射 / 配置对象
-agentforge-agent-core       -> ReAct 主循环 / 流式 / Memory / 取消 / maxSteps
-```
-
-单测默认不访问真实模型服务，而是通过可替换的 `HttpTransport` 使用 Fake/Capturing Transport、以及脚本化
-`ChatModel` / `StreamingChatModel` 验证请求与响应，因此 CI 中无需配置任何 API Key。
-
-`*LiveTest` 用于真实 endpoint 端到端验证：从 `src/test/resources/live-endpoint.properties`（已被 `.gitignore`
-忽略）读取 `provider` / `baseUrl` / `modelName` / `apiKey`，未配置时自动跳过，可参考同目录下的
-`live-endpoint.example.properties`。真实 Key 请勿写进 Java 源码，该文件会随仓库公开。
-
-当前共包含 **140 个单元测试用例**，并持续通过 JDK 8 / JDK 17 CI 执行：
-
-```bash
-mvn clean test
-```
+单测默认不访问真实模型服务，通过可替换的 `HttpTransport` 与脚本化模型验证请求与响应，CI 无需配置 API Key。
 
 ---
 
-## 5. Roadmap
+## Questions
 
-AgentForge 将按照“从底层模型能力逐层锻造 Agent”的顺序演进。
+如果使用中遇到问题，欢迎通过以下方式反馈：
 
-### Phase 1 — LLM Foundation（已完成）
+- GitHub Issue：<https://github.com/changluya/AgentForge/issues>
+- Gitee Issue：<https://gitee.com/changluJava/agent-forge/issues>
+- 文档站：<https://changluya.github.io/AgentForge/>
 
-```text
-agentforge-model-api
-agentforge-model-openai
-agentforge-model-anthropic
-```
-
-目标：稳定 `ChatModel`、`StreamingChatModel`、Message、Request、Response、Provider Adapter 等最底层模型抽象。当前消息层已补齐 `ToolExecutionResultMessage` 与 `CustomMessage`。
-
-当前 OpenAI Provider 已同时具备 `OpenAiChatModel` 与 `OpenAiStreamingChatModel`。
-
-### Phase 2 — LLM Capability（进行中）
-
-计划逐步增加：
-
-```text
-Anthropic StreamingChatModel
-Tool Calling
-Structured Output
-Multimodal Message
-Embedding Model
-Image Model
-Retry / Listener / Observability
-More Providers
-```
-
-其中 `Anthropic StreamingChatModel` 与 `Tool Calling`（阻塞 + 流式，OpenAI / Anthropic 双协议）已落地。
-
-### Phase 3 — Agent Foundation（当前）
-
-开始实现：
-
-```text
-agentforge-model-registry
-agentforge-agent-core
-```
-
-已完成 `LlmFactory` ChatModel 工厂、ReAct 主循环（流式 / 非流式）、窗口记忆、工具调用回合与
-Middleware 链路；Human-in-the-loop 审批与 Resume、External Tool / Stop-Tool 模式、子 Agent 与 Trace
-仍待从设计参考中逐步补齐。
-
-逐步加入：
-
-```text
-Context
-Memory
-Tool
-Skill
-MCP
-Prompt
-Reasoning
-Planning
-ReAct
-Agent Runtime
-```
-
-### Phase 4 — Production Agent Runtime
-
-最终目标：
-
-```text
-SubAgent
-Multi-Agent
-Sandbox
-State / Snapshot
-Human-in-the-loop
-Tracing
-Observability
-Persistence
-Production Runtime
-```
+提 Issue 时请尽量附上环境信息（JDK / Maven 版本）、复现步骤与完整报错日志，便于快速定位。
 
 ---
 
-## Design Principles
+## Contribution
 
-AgentForge 会长期坚持几个原则：
+欢迎参与 AgentForge 的建设，无论是代码、文档还是使用反馈。
 
-**1. Bottom-up**  
-先把 LLM、Message、Request、Response 等基础抽象做稳定，再构建 Agent。
+1. Fork 本仓库并从开发分支切出特性分支；
+2. 遵循项目代码规范（提交前会执行 Spotless 格式校验）；
+3. 新增或修改能力时同步补充单元测试，并确保 `mvn clean test` 通过；
+4. 提交 Pull Request，说明改动背景、方案与影响范围。
 
-**2. Provider-neutral**  
-上层框架不应该被某一家模型厂商协议绑定。
+> 请勿将真实 API Key 写入源码或提交到仓库。
 
-**3. Modular**  
-核心抽象与 Provider、Framework、Agent Runtime 分模块演进。
+---
 
-**4. Lightweight**  
-底层尽量减少不必要依赖，让 AgentForge 可以被 Spring Boot、普通 Java、桌面端甚至嵌入式 Java 工程复用。
+## Contributor
 
-**5. Production-oriented**  
-最终目标不是 Demo Agent，而是可以真正进入生产环境的 Agent Runtime。
+| Contributor | 说明 |
+| --- | --- |
+| [changlu](https://github.com/changluya) | 作者 / Maintainer |
+
+欢迎你的名字出现在这里。
 
 ---
 
@@ -542,8 +218,5 @@ AgentForge is released under the [MIT License](LICENSE).
 
 ---
 
-## AgentForge
-
 > **Models provide intelligence. AgentForge turns intelligence into action.**
-
-模型提供智能，AgentForge 负责将它一步步锻造成真正能够行动的 Agent。
+> 模型提供智能，AgentForge 负责将它一步步锻造成真正能够行动的 Agent。

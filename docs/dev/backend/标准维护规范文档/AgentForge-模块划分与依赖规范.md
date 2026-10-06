@@ -49,11 +49,11 @@ Provider 无关的模型**契约层**，是整个模型的公开边界。只定�
 具体实现，也不依赖 OpenAI / Anthropic SDK 或第三方 JSON / HTTP 库。
 
 ```text
-com.changlu.agentforge.model.chat             ChatModel / StreamingChatModel / Request / Response
-com.changlu.agentforge.model.chat.message     消息体系（接口与消息对象）
-com.changlu.agentforge.model.tool             工具契约（Tool / ToolExecutor / Spec / Result）
-com.changlu.agentforge.model.exception        ModelException
-com.changlu.agentforge.model.http             HttpTransport SPI 与 HttpRequest / HttpResponse
+cloud.changlu.agentforge.model.chat             ChatModel / StreamingChatModel / Request / Response
+cloud.changlu.agentforge.model.chat.message     消息体系（接口与消息对象）
+cloud.changlu.agentforge.model.tool             工具契约（Tool / ToolExecutor / Spec / Result）
+cloud.changlu.agentforge.model.exception        ModelException
+cloud.changlu.agentforge.model.http             HttpTransport SPI 与 HttpRequest / HttpResponse
 ```
 
 约束：
@@ -67,11 +67,11 @@ com.changlu.agentforge.model.http             HttpTransport SPI 与 HttpRequest 
 无厂商依赖的**默认实现与执行引擎**，依赖 `agentforge-model-api` 并实现其契约。
 
 ```text
-com.changlu.agentforge.model.internal.json    Json（内置 JSON 实现）
-com.changlu.agentforge.model.http             JdkHttpTransport（零依赖默认 Transport）
-com.changlu.agentforge.model.chat.request     DefaultChatRequestParameters
-com.changlu.agentforge.model.tool.execution   DefaultToolExecutor / ToolService
-com.changlu.agentforge.model.tool.spec        ToolSpecifications
+cloud.changlu.agentforge.model.internal.json    Json（内置 JSON 实现）
+cloud.changlu.agentforge.model.http             JdkHttpTransport（零依赖默认 Transport）
+cloud.changlu.agentforge.model.chat.request     DefaultChatRequestParameters
+cloud.changlu.agentforge.model.tool.execution   DefaultToolExecutor / ToolService
+cloud.changlu.agentforge.model.tool.spec        ToolSpecifications
 ```
 
 约束：
@@ -85,8 +85,8 @@ com.changlu.agentforge.model.tool.spec        ToolSpecifications
 每个实现模块依赖 `agentforge-model-api` 与 `agentforge-model-core`。
 
 ```text
-com.changlu.agentforge.model.openai       OpenAiChatModel / OpenAiStreamingChatModel
-com.changlu.agentforge.model.anthropic    AnthropicChatModel / AnthropicStreamingChatModel
+cloud.changlu.agentforge.model.openai       OpenAiChatModel / OpenAiStreamingChatModel
+cloud.changlu.agentforge.model.anthropic    AnthropicChatModel / AnthropicStreamingChatModel
 ```
 
 ### 3.4 agentforge-model-registry
@@ -102,11 +102,11 @@ StreamingChatModel streamingChatModel = LlmFactory.buildStreamChatModel(config);
 当前包结构：
 
 ```text
-com.changlu.agentforge.model.registry              LlmFactory
-com.changlu.agentforge.model.registry.config       配置对象
-com.changlu.agentforge.model.registry.constant     公共常量
-com.changlu.agentforge.model.registry.enums        Provider 枚举
-com.changlu.agentforge.model.registry.models       各 Provider 的装配实现
+cloud.changlu.agentforge.model.registry              LlmFactory
+cloud.changlu.agentforge.model.registry.config       配置对象
+cloud.changlu.agentforge.model.registry.constant     公共常量
+cloud.changlu.agentforge.model.registry.enums        Provider 枚举
+cloud.changlu.agentforge.model.registry.models       各 Provider 的装配实现
 ```
 
 ### 3.5 agentforge-agent-core
@@ -115,7 +115,7 @@ Agent 运行时，提供 ReAct 主循环、流式、Memory、Tool 回合、Middl
 `model-core` 编程，可以接收调用方手工传入的任意 `ChatModel` / `StreamingChatModel` 实现。
 
 ```text
-com.changlu.agentforge.agent     Agent / ReAct / Memory / Tool / Stream / Middleware
+cloud.changlu.agentforge.agent     Agent / ReAct / Memory / Tool / Stream / Middleware
 ```
 
 ## 4. 依赖关系
@@ -159,17 +159,17 @@ com.changlu.agentforge.agent     Agent / ReAct / Memory / Tool / Stream / Middle
 AgentForge 统一根包：
 
 ```text
-com.changlu.agentforge
+cloud.changlu.agentforge
 ```
 
 | 模块 | 包前缀 |
 | --- | --- |
-| `agentforge-model-api` | `com.changlu.agentforge.model` |
-| `agentforge-model-core` | `com.changlu.agentforge.model` |
-| `agentforge-model-openai` | `com.changlu.agentforge.model.openai` |
-| `agentforge-model-anthropic` | `com.changlu.agentforge.model.anthropic` |
-| `agentforge-model-registry` | `com.changlu.agentforge.model.registry` |
-| `agentforge-agent-core` | `com.changlu.agentforge.agent` |
+| `agentforge-model-api` | `cloud.changlu.agentforge.model` |
+| `agentforge-model-core` | `cloud.changlu.agentforge.model` |
+| `agentforge-model-openai` | `cloud.changlu.agentforge.model.openai` |
+| `agentforge-model-anthropic` | `cloud.changlu.agentforge.model.anthropic` |
+| `agentforge-model-registry` | `cloud.changlu.agentforge.model.registry` |
+| `agentforge-agent-core` | `cloud.changlu.agentforge.agent` |
 
 `model-api` 与 `model-core` 共用同一个根包：以包表达领域，以模块表达「契约 vs 实现」。二者对同一领域包
 形成「接口 / req/vo 在 api，默认实现在 core」的切分。

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.changlu.agentforge</groupId>
+        <groupId>cloud.changlu.agentforge</groupId>
         <artifactId>agentforge-model</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
@@ -15,22 +15,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.changlu.agentforge</groupId>
+            <groupId>cloud.changlu.agentforge</groupId>
             <artifactId>agentforge-model-api</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>com.changlu.agentforge</groupId>
+            <groupId>cloud.changlu.agentforge</groupId>
             <artifactId>agentforge-model-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>com.changlu.agentforge</groupId>
+            <groupId>cloud.changlu.agentforge</groupId>
             <artifactId>agentforge-model-openai</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>com.changlu.agentforge</groupId>
+            <groupId>cloud.changlu.agentforge</groupId>
             <artifactId>agentforge-model-anthropic</artifactId>
             <version>${revision}</version>
         </dependency>
