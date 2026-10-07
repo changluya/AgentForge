@@ -1,0 +1,384 @@
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/tool/AgentToolExecutorConcurrentTest.java
+  s_3a85b97498df88::t_469d7e98621bbf 1-11,14-19,21-137
+  s_3a85b97498df88::t_dc21ce8673483f 12-13,20
+agentforge-ai-bom/pom.xml
+  s_3a85b97498df88::t_917058baaf8c67 49-50
+  s_3a85b97498df88::t_720815b54e7fa1 51-53
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/constant/AgentPromptConstants.java
+  s_3a85b97498df88::t_85f1f0c42c1cb0 1-24
+website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/anthropic/Anthropic协议01、Anthropic底层协议快速理解.md
+  s_44f4e907028507::t_eaff01c58f3c90 1-521,523-526
+  s_95808c6b4c6c57::t_d14c59a871547e 522
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/ToolCallResult.java
+  s_3a85b97498df88::t_4586e201a1cf71 1
+agentforge-ai-parent/pom.xml
+  s_3a85b97498df88::t_d4ed6cd33a0a65 248-250
+"website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/openai/OpenAI协议02、AgentForge 适配OpenAI接入核心实践.md"
+  s_95808c6b4c6c57::t_d14c59a871547e 359
+  s_d21ddbb5346e52::t_3f40872289adbe 1-358,360-363
+"website/blog/01、model模型协议层/chatmodel/统一ChatModel协议层02、Function Calling 工具调用转换与执行扩展实现：Tool 契约 + ToolService 执行循环.md"
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-13,17-31,35-1041,1043-1151,1153-1178
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 15-16
+  s_95808c6b4c6c57::t_50ae400ba7310c 1152
+  s_95808c6b4c6c57::t_c99580c54e3d61 14
+  s_95808c6b4c6c57::t_8c7ce592d069c8 32-34,1042
+website/i18n/en/docusaurus-plugin-content-blog/02、通用ReActagent层/functioncall核心扩展业务tool/mcp/MCP协议转换FunctionCall协议02、MCP框架调研与AgentForge接入实现.md
+  s_242e769c9c59c8::t_0f08a72cb2e095 1-999
+agentforge-service/agentforge-service-web/src/test/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachClientTest.java
+  s_3a85b97498df88::t_a6a976c0089fd7 51
+  s_3a85b97498df88::t_cd6e98e0c0fcf3 7-8,12,32
+  s_3a85b97498df88::t_b7908177611728 35
+  s_3a85b97498df88::t_f35f3c41620879 1-6,9-11,13-31,33-34,36-50,52-63,65-97
+  s_3a85b97498df88::t_ae49187d787f0d 64
+website/i18n/en/docusaurus-plugin-content-blog/02、通用ReActagent层/functioncall核心扩展业务tool/mcp/MCP协议转换FunctionCall协议01、MCP协议详解-历史演进与底层原理.md
+  s_797f3ef08195d2::t_2fe55cd33afc89 1-1665
+"website/i18n/en/docusaurus-plugin-content-blog/02、通用ReActagent层/functioncall核心扩展业务tool/http/适配HTTP协议转换FunctionCall协议01、AgentForge HTTP工具模块核心设计原理.md"
+  s_95808c6b4c6c57::t_d14c59a871547e 506
+  s_a3337ffe8cd16c::t_50cab235af0f2b 1-505,507-510
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/web/ChatController.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,5,26,29,51
+agentforge-framework/agentforge-agent-core/src/test/java/cloud/changlu/agentforge/agent/ReActAgentTest.java
+  s_3a85b97498df88::t_082936fe0c9646 222-251
+website/blog/番外/工程化/开源项目之AgentForge发布到MavenCentral官方仓库实战.md
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 12-13
+  s_95808c6b4c6c57::t_c99580c54e3d61 11
+  s_95808c6b4c6c57::t_50ae400ba7310c 22,41,96,139,616,809,1135,1151,1166
+  s_95808c6b4c6c57::t_0c6987be00b05b 145,557,559,1056,1090,1106
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-10,14-21,23-40,42-95,97-138,140-144,146-556,558,560-615,617-808,810-1055,1057-1089,1091-1105,1107-1134,1136-1150,1152-1165,1167-1188
+"website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/统一ChatModel协议层01、ChatModel 核心协议层设计：统一 API 契约封装与多协议扩展实现.md"
+  s_587c2dd7ac9c0c::t_e175084cf6dfc7 42-51
+  s_3a07d7f5b3f828::t_033b223fea58f9 1-31,37-41,52-1755
+  s_95808c6b4c6c57::t_d14c59a871547e 32-36
+"website/i18n/en/docusaurus-plugin-content-blog/02、通用ReActagent层/functioncall核心扩展业务tool/local/Java代码转换FunctionCall协议01、AgentForge Local工具模块核心设计原理.md"
+  s_a3337ffe8cd16c::t_d1568643509ed8 1-401,403-406
+  s_95808c6b4c6c57::t_d14c59a871547e 402
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/web/ChatStreamRequest.java
+  s_3a85b97498df88::t_4586e201a1cf71 1
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/AiResponseProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3-4
+website/blog/01、model模型协议层/chatmodel/anthropic/Anthropic协议01、Anthropic底层协议快速理解.md
+  s_95808c6b4c6c57::t_50ae400ba7310c 20,61,135,175,227,261,500,514
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-12,16-19,21-60,62-134,136-174,176-226,228-260,262-499,501-513,515-521,523-526
+  s_95808c6b4c6c57::t_c99580c54e3d61 13
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 14-15
+  s_95808c6b4c6c57::t_e3f2eace6f1d96 522
+docs/dev/backend/标准维护规范文档/AgentForge-模块划分与依赖规范.md
+  s_3a85b97498df88::t_4efd04cb32b630 197
+  s_3a85b97498df88::t_c734eacd932490 123-143
+  s_3a85b97498df88::t_a868fc5d4c96cf 34-35
+  s_3a85b97498df88::t_361f8a04d08b78 44
+  s_3a85b97498df88::t_c0e046a7f4813c 196
+  s_3a85b97498df88::t_be634997b7b621 37-39
+  s_3a85b97498df88::t_380d374bafc3b1 36
+website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/openai/OpenAI协议01、OpenAI底层协议快速理解.md
+  s_d21ddbb5346e52::t_35ddf51030fcf5 1-482,484-487
+  s_95808c6b4c6c57::t_d14c59a871547e 483
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/AgentForgeServiceApplication.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,7,10
+"website/blog/01、model模型协议层/chatmodel/统一ChatModel协议层01、ChatModel 核心协议层设计：统一 API 契约封装与多协议扩展实现.md"
+  s_95808c6b4c6c57::t_50ae400ba7310c 1727
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-13,17-32,38-1726,1728-1739
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 15-16
+  s_95808c6b4c6c57::t_c99580c54e3d61 14
+  s_95808c6b4c6c57::t_4a42170ef84adc 33-37
+website/blog/01、model模型协议层/chatmodel/openai/OpenAI协议01、OpenAI底层协议快速理解.md
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 14-15
+  s_95808c6b4c6c57::t_50ae400ba7310c 20,58,125,162,210,248,463,475
+  s_95808c6b4c6c57::t_c99580c54e3d61 13
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-12,16-19,21-57,59-124,126-161,163-209,211-247,249-462,464-474,476-482,484-487
+  s_95808c6b4c6c57::t_a241c9df4a0941 483
+agentforge-service/pom.xml
+  s_3a85b97498df88::t_dc6311f4904a66 7,9,12,14
+  s_3a85b97498df88::t_c2051b81c3327c 15,18-19
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/component/middleware/AgentMiddlewareManager.java
+  s_3a85b97498df88::t_d07cc5ec5d687e 375
+  s_3a85b97498df88::t_3bd60a06cfd3d1 336-374,376-408
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/tool/AgentToolExecutor.java
+  s_3a85b97498df88::t_8189f9691f1c60 33-35
+  s_3a85b97498df88::t_e1a0cc12d615fe 56,75-78,82-109
+  s_3a85b97498df88::t_01cd948ea0ea55 16-21
+  s_3a85b97498df88::t_d07cc5ec5d687e 79-81,189,249
+  s_3a85b97498df88::t_b0d8ff007b8af2 110-114,188,190-248,250-345
+agentforge-service/agentforge-service-web/src/main/resources/application.yml.example
+  s_3a85b97498df88::t_2c2eb69df6980a 1-5,11,13
+  s_3a85b97498df88::t_90d266f8300df2 17-19
+  s_3a85b97498df88::t_b7ffbf35696d13 20
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/enums/StreamEventEnums.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/component/middleware/IAgentMiddleware.java
+  s_3a85b97498df88::t_d07cc5ec5d687e 120-121
+  s_3a85b97498df88::t_02fe63d6642425 10-11
+  s_3a85b97498df88::t_d4ce39b2665dc0 110-119,122-148
+pom.xml
+  s_3a85b97498df88::t_5c857d190a2742 27
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachTools.java
+  s_3a85b97498df88::t_cd6e98e0c0fcf3 9-10,34-35,37,56-57,59,85-86
+  s_3a85b97498df88::t_4a2a272cca5fd4 1-8,11-33,36,38-55,58,60-84,87-93
+agentforge-service/agentforge-service-ui/index.html
+  s_3a85b97498df88::t_b4edbc62f3de37 7
+README.zh-CN.md
+  s_3a85b97498df88::t_ac4ee770072ad1 76
+  s_3a85b97498df88::t_9f3d186fda3830 57-59
+  s_3a85b97498df88::t_f4d871f6ea934d 160,165-166,169,173
+  s_3a85b97498df88::t_e707a88ffffd9d 55-56
+  s_3a85b97498df88::t_635dee062e8b5d 75
+agentforge-service/agentforge-service-web/src/test/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachLiveTest.java
+  s_3a85b97498df88::t_08f3808bf84e2c 1-3,7-10,14-35,37-46,48-57,59-61,63-64,68-69
+  s_3a85b97498df88::t_d733f197339d30 4-6,11-13,36,47,58
+  s_3a85b97498df88::t_695ce6e0329321 62,65-67
+website/docusaurus.config.js
+  s_95808c6b4c6c57::t_ecc39cf59f0e83 13
+  s_95808c6b4c6c57::t_b19aacec86232f 9
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/StreamEventResponse.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,6
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/IStreamSceneProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1
+"website/blog/01、model模型协议层/chatmodel/anthropic/Anthropic协议02、AgentForge 适配Anthropic接入核心实践.md"
+  s_95808c6b4c6c57::t_50ae400ba7310c 22,62,74,241,293,343,353
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-14,18-21,23-61,63-73,75-240,242-292,294-342,344-352,354-358,360-363
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 16-17
+  s_95808c6b4c6c57::t_c99580c54e3d61 15
+  s_95808c6b4c6c57::t_4087f1b11c713e 359
+.gitignore
+  s_3a85b97498df88::t_475922cf429d9e 37
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/think/AiThinkProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3-5
+"website/blog/01、model模型协议层/chatmodel/openai/OpenAI协议02、AgentForge 适配OpenAI接入核心实践.md"
+  s_95808c6b4c6c57::t_c99580c54e3d61 15
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-14,18-21,23-77,79-114,116-254,256-328,330-344,346-352,354-358,360-363
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 16-17
+  s_95808c6b4c6c57::t_50ae400ba7310c 22,78,115,255,329,345,353
+  s_95808c6b4c6c57::t_5c24f7b940b5b0 359
+"website/blog/02、通用ReActagent层/functioncall核心扩展业务tool/local/Java代码转换FunctionCall协议01、AgentForge Local工具模块核心设计原理.md"
+  s_95808c6b4c6c57::t_50ae400ba7310c 21,61,136,227,344,384,394
+  s_95808c6b4c6c57::t_c99580c54e3d61 14
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 15-16
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-13,17-20,22-60,62-135,137-226,228-343,345-383,385-393,395-401,403-406
+  s_95808c6b4c6c57::t_da25be8439b423 402
+bin/local/release.sh
+  s_3a85b97498df88::t_79b823e634ef20 4
+bin/local/README.md
+  s_3a85b97498df88::t_0a04a4fe21a26d 3
+"website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/统一ChatModel协议层02、Function Calling 工具调用转换与执行扩展实现：Tool 契约 + ToolService 执行循环.md"
+  s_ed435b51c79ec8::t_63b0b71be0dc86 77-81
+  s_95808c6b4c6c57::t_d14c59a871547e 30-32,1025
+  s_ed435b51c79ec8::t_974402c126b0ff 1-29,33-37,47-76,82-251,253,256,262,267-277,283-301,304,307,310-1024,1026-1160
+  s_587c2dd7ac9c0c::t_e175084cf6dfc7 38-46
+  s_ed435b51c79ec8::t_9fdfd3e121185d 278-282
+  s_ed435b51c79ec8::t_903cf16a0c01ec 302-303,305-306,308-309
+  s_ed435b51c79ec8::t_c0a514759257fa 252,254-255,257-261,263-266
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachClient.java
+  s_3a85b97498df88::t_cd6e98e0c0fcf3 15-16
+  s_3a85b97498df88::t_72fb803ccdb388 1-14,17-123
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/ReActAgent.java
+  s_3a85b97498df88::t_01d7288a8bd06e 80-81
+  s_3a85b97498df88::t_c4f2eb3ba4270c 58,67-71,77-79,82-100
+  s_3a85b97498df88::t_d9ea7745914d4e 261-262
+  s_3a85b97498df88::t_80a4fb59238940 5
+  s_3a85b97498df88::t_8d34f807939816 101-102
+"website/blog/02、通用ReActagent层/functioncall核心扩展业务tool/http/适配HTTP协议转换FunctionCall协议01、AgentForge HTTP工具模块核心设计原理.md"
+  s_95808c6b4c6c57::t_50ae400ba7310c 21,63,106,250,449,484,494
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-13,17-20,22-62,64-105,107-249,251-448,450-483,485-493,495-505,507-510
+  s_95808c6b4c6c57::t_c99580c54e3d61 14
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 15-16
+  s_95808c6b4c6c57::t_2cc7d41d2e1a12 506
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/AiSessionProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3-4
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/domain/AgentSettings.java
+  s_3a85b97498df88::t_38b747ba4866aa 16-17,24-27,42-45,58,77-78
+  s_3a85b97498df88::t_aef81632486191 79-81
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachException.java
+  s_3a85b97498df88::t_85e4371001881f 1-17
+website/blog/02、通用ReActagent层/functioncall核心扩展业务tool/mcp/MCP协议转换FunctionCall协议01、MCP协议详解-历史演进与底层原理.md
+  s_95808c6b4c6c57::t_c99580c54e3d61 11
+  s_95808c6b4c6c57::t_50ae400ba7310c 1513
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 12-13
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-10,14-1512,1514-1665
+agentforge-framework/pom.xml
+  s_3a85b97498df88::t_828fa1a09fe730 20
+agentforge-service/agentforge-service-ui/pom.xml
+  s_3a85b97498df88::t_9609061b5fdcb3 7,12,14-15
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/stream/ServiceStreamingMiddleware.java
+  s_3a85b97498df88::t_05bcaa38d5e320 117-128,145-148,150-152
+  s_3a85b97498df88::t_3acb76884ed4c5 129-144,149
+  s_3a85b97498df88::t_4586e201a1cf71 1,8-14,25,28,116
+  s_3a85b97498df88::t_5616c67097c00a 227
+  s_3a85b97498df88::t_eb30e55f2a73ad 19
+  s_3a85b97498df88::t_fb67271e10c9d5 93
+  s_3a85b97498df88::t_b4f044a292417b 195-197,199-204
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/config/AgentConfiguration.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,14,22,27-28,32,38,55-56,72,86
+  s_3a85b97498df88::t_71908de47ba277 6,9,11-13,20-21
+  s_3a85b97498df88::t_9449e925e5baa1 37,58-61,65,75-82,84-85
+  s_3a85b97498df88::t_cd6e98e0c0fcf3 83
+agentforge-service/agentforge-service-ui/src/App.vue
+  s_3a85b97498df88::t_0dcbf166843b7f 93
+  s_3a85b97498df88::t_06b690d69c0d31 119
+  s_3a85b97498df88::t_80dd3c79e43c34 78
+  s_3a85b97498df88::t_fe15624958aff1 158-160,164-166,255
+  s_3a85b97498df88::t_6eabc15c4c9e90 163
+  s_3a85b97498df88::t_a7f2c5d94b386c 213
+  s_3a85b97498df88::t_8cd79908378359 231-234,249-253
+  s_3a85b97498df88::t_bccabbedfb5401 161-162
+  s_3a85b97498df88::t_6b1d8aa287ecdd 9
+  s_1561181b8490fc::t_0e2526d5a56554 254
+agentforge-framework/agentforge-agent-core/src/main/java/cloud/changlu/agentforge/agent/stream/ReActTokenStream.java
+  s_3a85b97498df88::t_5777226a61befc 275-276
+agentforge-framework/agentforge-harness-agent/pom.xml
+  s_3a85b97498df88::t_ae51cee0329d73 1-23
+website/i18n/en/docusaurus-plugin-content-blog/番外/工程化/开源项目之AgentForge发布到MavenCentral官方仓库实战.md
+  s_2e95d93cb7bff6::t_598e993b8641bf 1-1188
+docs/dev/backend/AgentForge核心模块设计原理文章系列/AgentForge未来详细博客专栏规划.md
+  s_3a85b97498df88::t_42ab004aaa20a5 138-139
+  s_3a85b97498df88::t_c02592163accce 9-10,25-26
+  s_3a85b97498df88::t_12e19882636696 80-90
+  s_3a85b97498df88::t_49d823c864db16 66-67,72-73,124-125,130-131,135-137
+  s_3a85b97498df88::t_a18eada359f610 126
+  s_3a85b97498df88::t_bbb67288aa0dfc 132
+  s_3a85b97498df88::t_d536d3feb0d5ff 63-65
+  s_3a85b97498df88::t_2dc761d735b512 68-71
+  s_3a85b97498df88::t_6b21a1ca5708a8 74-79
+  s_3a85b97498df88::t_7c1da9530425b0 91-93
+  s_3a85b97498df88::t_5411d6011847d6 121-123
+  s_3a85b97498df88::t_b50c13bfb641d0 127-129
+  s_3a85b97498df88::t_ae0d61dba6af5d 133-134
+  s_3a85b97498df88::t_509977e66957f6 140-142
+agentforge-service/agentforge-service-web/pom.xml
+  s_3a85b97498df88::t_c5a3802029feea 7,12-14
+  s_3a85b97498df88::t_0a076c6e6c6c94 36-40
+agentforge-service/README.md
+  s_3a85b97498df88::t_6ba3ff64ff201b 6-10,18
+  s_3a85b97498df88::t_d9ee9bb02d4594 27,40-42
+  s_3a85b97498df88::t_8dded7776fdf1f 19-26,43
+  s_3a85b97498df88::t_4057b70189961b 28-39
+  s_3a85b97498df88::t_4064b66c07ddb0 1,12-13,47
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/tool/AiToolCallProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3-6
+agentforge-service/agentforge-service-ui/package.json
+  s_3a85b97498df88::t_1f3e11f1f798ea 2
+agentforge-service/agentforge-service-web/src/main/java/cloud/changlu/agentforge/service/protocol/processor/AiErrorProcessor.java
+  s_3a85b97498df88::t_4586e201a1cf71 1,3-4
+README.md
+  s_3a85b97498df88::t_e5bf5e8c4035c4 74
+  s_3a85b97498df88::t_0f4a6d945068c3 156,161-162,165,169
+  s_3a85b97498df88::t_3e0572e981eb0a 73
+  s_3a85b97498df88::t_2913654d2e4650 53-54
+  s_3a85b97498df88::t_0ef170c2747c98 55-57
+"website/i18n/en/docusaurus-plugin-content-blog/01、model模型协议层/chatmodel/anthropic/Anthropic协议02、AgentForge 适配Anthropic接入核心实践.md"
+  s_44f4e907028507::t_9845a6b5e3a6b0 1-358,360-363
+  s_95808c6b4c6c57::t_d14c59a871547e 359
+website/blog/02、通用ReActagent层/functioncall核心扩展业务tool/mcp/MCP协议转换FunctionCall协议02、MCP框架调研与AgentForge接入实现.md
+  s_95808c6b4c6c57::t_50ae400ba7310c 20,59,103,255,566,788,951,963
+  s_95808c6b4c6c57::t_c99580c54e3d61 11
+  s_95808c6b4c6c57::t_dbcdfb2cabb1ab 12-13
+  s_95808c6b4c6c57::t_aa58c61f4a1e89 1-10,14-19,21-58,60-102,104-254,256-565,567-787,789-950,952-962,964-999
+agentforge-service/agentforge-service-web/src/test/java/cloud/changlu/agentforge/service/plugins/openreach/OpenReachToolsTest.java
+  s_3a85b97498df88::t_cd6e98e0c0fcf3 6-7,15,26-27
+  s_3a85b97498df88::t_5e043eb11c2c67 1-5,8-14,16-25,28-42
+agentforge-service/agentforge-service-ui/package-lock.json
+  s_3a85b97498df88::t_eb34c0fdefa9cb 2,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2cb8d91b11e7ad655b27f9040be09f952e6faab1",
+  "prompts": {},
+  "sessions": {
+    "s_1561181b8490fc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eeadb9f25ffejNmjZ8H6orbFBl",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_242e769c9c59c8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895a627ffeT78Kg49lPA5p91",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_2e95d93cb7bff6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee8959cbeffeyN1BwQhEkS0HOG",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_3a07d7f5b3f828": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895e614ffekR6s1eFEXLqHqe",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_3a85b97498df88": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eeb4a226cffeSNdfeFrOUl11vB",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_44f4e907028507": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895c521ffem7QDxc5HPwJ6Zj",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_587c2dd7ac9c0c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a11777-277f-76c0-b757-4b723836ab40",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_797f3ef08195d2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895a991ffejtnTB84ge40xb4",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_95808c6b4c6c57": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee89f3287ffe1uKXiApwAcCNkM",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_a3337ffe8cd16c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895b1f5fferB4Qs3kFia5evK",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_d21ddbb5346e52": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895cf9dffeFIQKTLqXGs3JpY",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_ed435b51c79ec8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee895dbb4ffe3Iqvl4IU1tUioK",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
