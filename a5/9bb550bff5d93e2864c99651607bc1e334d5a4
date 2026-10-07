@@ -1,0 +1,75 @@
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_mixins.scss
+  s_0c19fdd2b201ff::t_eee3554f03fd5b 1-96
+agentforge-service/agentforge-service-ui/.gitignore
+  s_0c19fdd2b201ff::t_01e0ac63e4f5fa 3
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_workspace.scss
+  s_0c19fdd2b201ff::t_4f9b82632e78f1 350-354,359
+  s_0c19fdd2b201ff::t_a5fef9620ebc07 1-143,148-319,321-349,355-358,360-396,407-509
+  s_0c19fdd2b201ff::t_ca130038a43a88 397-406
+  s_0c19fdd2b201ff::t_f8ed8ef87cfeee 320
+  s_0c19fdd2b201ff::t_64829580007124 144-147
+website/src/theme/BlogSidebar/index.js
+  s_587c2dd7ac9c0c::t_dbbc509e0b2e68 1-222
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_sidebar.scss
+  s_0c19fdd2b201ff::t_408c0031009f51 86-88
+  s_0c19fdd2b201ff::t_99290f7c47263a 1-85,89-200
+agentforge-service/agentforge-service-ui/src/pages/models/styles/models.scss
+  s_0c19fdd2b201ff::t_f7e39ff807b0ab 16
+  s_0c19fdd2b201ff::t_fe1cf95764ac44 1-15
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_tokens.scss
+  s_0c19fdd2b201ff::t_730987acdee118 1-89
+website/src/theme/BlogSidebar/styles.module.css
+  s_587c2dd7ac9c0c::t_dbbc509e0b2e68 1-125
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_toast.scss
+  s_0c19fdd2b201ff::t_841f2ad82f5b5c 1-26
+agentforge-service/agentforge-service-ui/package.json
+  s_0c19fdd2b201ff::t_7f9ef9c0e21b22 8-12
+  s_0c19fdd2b201ff::t_e177e6a5b51311 22
+agentforge-service/agentforge-service-ui/vite.config.js
+  s_0c19fdd2b201ff::t_73781d2260cf8b 1-2,4-8
+website/docusaurus.config.js
+  s_587c2dd7ac9c0c::t_dbbc509e0b2e68 9
+agentforge-service/agentforge-service-ui/src/pages/models/styles/_base.scss
+  s_0c19fdd2b201ff::t_02a468a8cc9a23 1-55
+agentforge-service/agentforge-service-ui/build/vite.factory.js
+  s_0c19fdd2b201ff::t_13516397f6febe 1-2,4-21,23-26
+  s_0c19fdd2b201ff::t_87177c34b004d9 3,22
+agentforge-service/agentforge-service-ui/models.html
+  s_0c19fdd2b201ff::t_0b3ef22cf8fe1f 1-13
+website/src/theme/BlogPostItem/Header/Title/index.js
+  s_587c2dd7ac9c0c::t_dd27dd4e1f6293 1-23
+agentforge-service/agentforge-service-ui/src/pages/models/ModelsPage.vue
+  s_0c19fdd2b201ff::t_ed7a5a6faa9cac 1-421
+website/src/theme/BlogPostItem/Header/Title/styles.module.css
+  s_587c2dd7ac9c0c::t_dd27dd4e1f6293 1-26
+agentforge-service/agentforge-service-ui/vite.models.config.js
+  s_0c19fdd2b201ff::t_db9085a5c9a2f6 1-10
+agentforge-service/agentforge-service-ui/src/pages/models/main.js
+  s_0c19fdd2b201ff::t_907a8e3f78d2a7 1-6
+agentforge-service/agentforge-service-ui/package-lock.json
+  s_0c19fdd2b201ff::t_eb9c9dec3a5bc8 18,476-763,1178-1193,1217-1227,1320-1351,1422-1429,1442-1455,1509-1522,1581-1601
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a59bb550bff5d93e2864c99651607bc1e334d5a4",
+  "prompts": {},
+  "sessions": {
+    "s_0c19fdd2b201ff": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ee876ea6effeePMSy9i31Hs7Q1",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_587c2dd7ac9c0c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a11777-277f-76c0-b757-4b723836ab40",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
