@@ -1,0 +1,25 @@
+# AgentForge Service configuration template.
+# Copy this file before running the service:
+#   cp application.yml.example application.yml
+# Then adjust the values below (or override them with environment variables).
+
+server:
+  port: ${SERVER_PORT:8080}
+
+agentforge:
+  model:
+    # OpenAI-compatible endpoint (also works for DashScope / Ollama / Xinference, etc.)
+    base-url: ${AGENTFORGE_MODEL_BASE_URL:https://tokenrhythm.studio/v1}
+    # Required at call time; leave empty and pass AGENTFORGE_MODEL_API_KEY via environment.
+    api-key: ${AGENTFORGE_MODEL_API_KEY:}
+    name: ${AGENTFORGE_MODEL_NAME:deepseek-flash}
+    temperature: ${AGENTFORGE_MODEL_TEMPERATURE:0.3}
+  # OpenReach web tools (webSearch / webImageSearch / webRead / webCurl).
+  # Leave empty to disable the web tools.
+  openreach:
+    base-url: ${OPENREACH_BASE_URL:http://openreach.changlu.cloud}
+
+spring:
+  mvc:
+    async:
+      request-timeout: 0

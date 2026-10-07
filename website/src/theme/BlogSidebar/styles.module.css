@@ -1,0 +1,125 @@
+.sidebar {
+  max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+  overflow-y: auto;
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 2rem);
+  padding-right: 0.75rem;
+}
+
+.title {
+  color: var(--ifm-heading-color);
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.title:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.tree {
+  border-left: 1px solid var(--ifm-toc-border-color);
+  font-size: 0.86rem;
+  padding-left: 0.5rem;
+}
+
+.group {
+  margin: 0.15rem 0;
+}
+
+.groupLabel {
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 0.36rem 0.35rem;
+}
+
+.groupLabel:hover {
+  background: var(--ifm-menu-color-background-hover);
+  color: var(--ifm-color-primary);
+}
+
+.depth0 {
+  color: var(--ifm-heading-color);
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.depth1 {
+  color: var(--ifm-font-color-base);
+}
+
+.depth2,
+.depth3 {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.82rem;
+}
+
+.groupContent {
+  margin-left: 0.45rem;
+  padding-left: 0.45rem;
+}
+
+.articleList {
+  list-style: none;
+  margin: 0.15rem 0 0.35rem;
+  padding: 0;
+}
+
+.articleLink {
+  border-left: 2px solid transparent;
+  color: var(--ifm-font-color-base);
+  display: block;
+  line-height: 1.4;
+  margin: 0.12rem 0;
+  padding: 0.34rem 0.45rem;
+}
+
+.articleLink:hover {
+  background: var(--ifm-menu-color-background-hover);
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.articleLinkActive {
+  background: var(--ifm-menu-color-background-active);
+  border-left-color: var(--ifm-color-primary);
+  border-radius: 0.25rem;
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.plannedNode {
+  align-items: center;
+  color: var(--ifm-color-emphasis-600);
+  display: flex;
+  gap: 0.4rem;
+  justify-content: space-between;
+  margin: 0.25rem 0;
+  padding: 0.38rem 0.35rem;
+}
+
+.badge {
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.1rem 0.38rem;
+  white-space: nowrap;
+}
+
+.mobile {
+  max-height: none;
+  overflow: visible;
+  padding: 0.75rem;
+  position: static;
+}
+
+@media (max-width: 996px) {
+  .sidebar:not(.mobile) {
+    display: none;
+  }
+}

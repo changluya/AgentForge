@@ -1,0 +1,55 @@
+// ---------------------------------------------------------------------------
+// 基础重置与页面骨架
+// ---------------------------------------------------------------------------
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#models-app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: $font-sans;
+  color: $color-text;
+  background: $color-bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  font-family: inherit;
+}
+
+// 全局滚动条
+* {
+  @include scrollbar;
+}
+
+.af-models {
+  @include flex(flex-start, stretch);
+  height: 100vh;
+  overflow: hidden;
+  background: $color-bg;
+}
+
+.af-fade-enter-active,
+.af-fade-leave-active {
+  transition: opacity 0.18s $ease;
+}
+
+.af-fade-enter,
+.af-fade-leave-to {
+  opacity: 0;
+}

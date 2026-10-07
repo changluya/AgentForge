@@ -1,0 +1,200 @@
+// ---------------------------------------------------------------------------
+// 左侧导航栏
+// ---------------------------------------------------------------------------
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+.af-sidebar {
+  width: $sidebar-width;
+  flex-shrink: 0;
+  height: 100%;
+  @include flex(flex-start, stretch, column);
+  background: $color-sidebar;
+  border-right: 1px solid $color-border;
+  z-index: $z-sidebar;
+}
+
+.af-sidebar__head {
+  padding: $space-4 $space-3 $space-3;
+  border-bottom: 1px solid $color-border;
+}
+
+.af-brand {
+  @include flex(flex-start, center);
+  gap: $space-2 + 2px;
+
+  &__logo {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-lg;
+    background: $color-brand-softer;
+    @include flex(center, center);
+    overflow: hidden;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $color-text;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    font-size: 11px;
+    color: $color-text-muted;
+  }
+}
+
+.af-sidebar__scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-2 + 2px $space-2 $space-5;
+}
+
+.af-nav-group {
+  margin-bottom: $space-3;
+
+  &__head {
+    @include button-reset;
+    width: 100%;
+    @include flex(space-between, center);
+    gap: $space-2;
+    padding: 6px $space-2;
+    color: $color-text-muted;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-radius: $radius-sm;
+    transition: $transition;
+
+    &:hover {
+      color: $color-text-secondary;
+      background: $color-hover;
+    }
+  }
+
+  &__chevron {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.18s $ease;
+
+    &--collapsed {
+      transform: rotate(-90deg);
+    }
+  }
+
+  &__body {
+    margin-top: 2px;
+  }
+}
+
+.af-nav-item {
+  @include button-reset;
+  position: relative;
+  width: 100%;
+  @include flex(flex-start, center);
+  gap: $space-2 + 2px;
+  padding: 9px $space-2 + 2px;
+  border-radius: $radius-md;
+  font-size: 13px;
+  color: $color-text-secondary;
+  transition: $transition;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: $color-text-muted;
+  }
+
+  &__label {
+    @include truncate;
+    flex: 1;
+    text-align: left;
+  }
+
+  &__badge {
+    font-size: 11px;
+    color: $color-text-muted;
+    background: rgba(152, 162, 179, 0.14);
+    border-radius: $radius-pill;
+    padding: 1px 7px;
+    line-height: 1.5;
+  }
+
+  &:hover {
+    background: $color-hover;
+    color: $color-text;
+  }
+
+  &--active {
+    color: $color-brand-dark;
+    background: $color-brand-soft;
+    font-weight: 600;
+
+    svg {
+      color: $color-brand;
+    }
+
+    .af-nav-item__badge {
+      color: $color-brand-dark;
+      background: rgba(75, 142, 247, 0.16);
+    }
+  }
+}
+
+.af-sidebar__footer {
+  padding: $space-3;
+  border-top: 1px solid $color-border;
+}
+
+.af-user {
+  @include flex(flex-start, center);
+  gap: $space-2 + 2px;
+  padding: $space-1 + 2px;
+  border-radius: $radius-lg;
+  transition: $transition;
+
+  &:hover {
+    background: $color-hover;
+  }
+
+  &__avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: $radius-pill;
+    background: $gradient-brand;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    @include flex(center, center);
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $color-text;
+    @include truncate;
+  }
+
+  &__plan {
+    font-size: 11px;
+    color: $color-text-muted;
+  }
+}

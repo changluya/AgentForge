@@ -1,0 +1,25 @@
+{
+  "name": "agentforge-service-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev:models": "vite --config vite.models.config.js",
+    "build:models": "vite build --config vite.models.config.js",
+    "preview:models": "vite preview --config vite.models.config.js",
+    "build:all": "npm run build && npm run build:models"
+  },
+  "dependencies": {
+    "element-ui": "^2.15.14",
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.0",
+    "vue": "^2.7.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue2": "^2.3.3",
+    "sass": "^1.105.1",
+    "vite": "^5.4.20"
+  }
+}

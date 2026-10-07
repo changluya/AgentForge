@@ -1,0 +1,96 @@
+// ---------------------------------------------------------------------------
+// AgentForge SCSS Mixins & 工具函数
+// ---------------------------------------------------------------------------
+@use 'sass:map';
+@use 'tokens' as *;
+
+// 断点
+$breakpoints: (
+  'sm': 640px,
+  'md': 960px,
+  'lg': 1200px,
+  'xl': 1440px,
+);
+
+@mixin respond($bp) {
+  $width: map.get($breakpoints, $bp);
+  @if $width {
+    @media (max-width: $width) {
+      @content;
+    }
+  } @else {
+    @error '未知断点 `#{$bp}`，可选值：#{map.keys($breakpoints)}';
+  }
+}
+
+@mixin flex($justify: flex-start, $align: center, $direction: row) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+  flex-direction: $direction;
+}
+
+@mixin card($radius: $radius-xl) {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  box-shadow: $shadow-xs;
+}
+
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@mixin scrollbar($size: 8px, $thumb: #d4dae3, $hover: #bcc4d0) {
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: $size * 0.5;
+
+    &:hover {
+      background: $hover;
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@mixin focus-ring($color: rgba(75, 142, 247, 0.28)) {
+  outline: none;
+  box-shadow: 0 0 0 3px $color;
+}
+
+@mixin button-reset() {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+// 品牌渐变按钮
+@mixin brand-gradient {
+  background: $gradient-brand;
+  color: #fff;
+  box-shadow: $shadow-brand;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: $shadow-brand-hover;
+  }
+}

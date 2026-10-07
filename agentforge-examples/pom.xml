@@ -13,8 +13,4 @@
     <packaging>pom</packaging>
     <name>AgentForge :: Examples</name>
     <description>Example applications built with AgentForge.</description>
-
-    <modules>
-        <module>agentforge-studio</module>
-    </modules>
 </project>

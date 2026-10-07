@@ -50,9 +50,12 @@ AgentForge
 │   ├── agentforge-model-anthropic# Anthropic provider
 │   └── agentforge-model-registry # Out-of-the-box ChatModel factory
 ├── agentforge-framework
-│   └── agentforge-agent-core     # ReAct Agent runtime
+│   ├── agentforge-agent-core     # ReAct Agent runtime
+│   └── agentforge-harness-agent  # Harness runtime (permission / approval / sandbox / resumable execution)
+├── agentforge-service            # Out-of-the-box service (Vue frontend + Spring Boot backend)
+│   ├── agentforge-service-ui     # Vue 2 + Vite frontend
+│   └── agentforge-service-web    # Spring Boot backend
 ├── agentforge-examples
-│   └── agentforge-studio         # Web visualization example (Vue 2 frontend + Spring Boot backend)
 ├── pom.xml
 └── README.md
 ```
@@ -67,7 +70,8 @@ AgentForge
 | `agentforge-model-anthropic` | Anthropic Messages API sync / streaming, Tool Use |
 | `agentforge-model-registry` | `LlmFactory` builds ChatModel / StreamingChatModel per provider |
 | `agentforge-agent-core` | ReAct main loop (sync / streaming), window memory, tool-calling rounds, Middleware chain, retry & cancellation |
-| `agentforge-studio` | Visual chat example over a unified SSE protocol |
+| `agentforge-harness-agent` | Harness runtime on top of the core Agent: permission, tool approval, human-in-the-loop, sandbox, trace, resumable execution |
+| `agentforge-service` | Out-of-the-box service over the unified SSE protocol (Vue frontend + Spring Boot backend) |
 
 ### Design Principles
 
@@ -149,20 +153,20 @@ ChatResult result = agent.run(AgentRequest.builder()
 
 For streaming, `agent.runStream(request)` returns a `TokenStream` that lets you subscribe to text / thinking deltas, tool executions, and completion events; `agent.cancel(memoryId)` cancels a task. Models, memory, tools, and middleware are all injected through the builder — see the documentation site for details.
 
-### Run AgentForge Studio
+### Run AgentForge Service
 
 ```bash
 # Backend (Spring Boot, default 8080)
 export AGENTFORGE_MODEL_API_KEY=your-api-key
-mvn package -pl agentforge-examples/agentforge-studio/agentforge-studio-web -am -DskipTests
-java -jar agentforge-examples/agentforge-studio/agentforge-studio-web/target/agentforge-studio-web-1.0.0-SNAPSHOT.jar
+mvn package -pl agentforge-service/agentforge-service-web -am -DskipTests
+java -jar agentforge-service/agentforge-service-web/target/agentforge-service-web-1.0.0-SNAPSHOT.jar
 
 # Frontend (Vue 2 + Vite, default 5173, proxies /api to 8080)
-cd agentforge-examples/agentforge-studio/agentforge-studio-ui
+cd agentforge-service/agentforge-service-ui
 npm install && npm run dev
 ```
 
-See [agentforge-studio/README.md](agentforge-examples/agentforge-studio/README.md) for details.
+See [agentforge-service/README.md](agentforge-service/README.md) for details.
 
 ### Testing
 
