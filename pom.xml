@@ -24,6 +24,7 @@
         <module>agentforge-ai-bom</module>
         <module>agentforge-model</module>
         <module>agentforge-framework</module>
+        <module>agentforge-service</module>
         <module>agentforge-examples</module>
     </modules>
 

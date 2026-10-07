@@ -272,7 +272,8 @@ public class ReActTokenStream implements TokenStream {
                 aiMessage.toolExecutionRequests(),
                 chatContext,
                 toolExecutedHandler,
-                middlewareManager);
+                middlewareManager,
+                agentSettings != null && agentSettings.isEnableConcurrentToolExecution());
         if (middlewareManager != null) {
             // 中间响应：本轮的模型响应携带工具调用请求，工具执行完成后在下一轮思考前触发
             middlewareManager.triggerOnIntermediateResponse(currentStep, response, chatContext);

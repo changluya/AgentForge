@@ -7,6 +7,8 @@ import cloud.changlu.agentforge.model.chat.message.ToolExecutionRequest;
 import cloud.changlu.agentforge.model.chat.request.ChatRequest;
 import cloud.changlu.agentforge.model.chat.response.ChatResponse;
 
+import java.util.List;
+
 /**
  * @description Agent中间件接口，用于在Agent执行的不同阶段插入自定义逻辑，参考LangChain的AgentMiddleware设计
  * @author changlu
@@ -104,6 +106,45 @@ public interface IAgentMiddleware {
      */
     default void onToolExecutionError(
             ToolExecutionRequest toolRequest, Throwable error, AgentChatContext chatContext) {}
+
+    /**
+     * 在并发工具执行之前调用（一组工具）
+     *
+     * @param toolRequests 工具执行请求列表
+     * @param chatContext 聊天上下文
+     */
+    default void beforeConcurrentToolExecution(
+            List<ToolExecutionRequest> toolRequests, AgentChatContext chatContext) {}
+
+    /**
+     * 并发批次中的某一个工具执行完成时调用。该回调仅用于观测，结果的改写与消息顺序由 {@link #afterConcurrentToolExecution(List, List,
+     * AgentChatContext)} 负责。
+     *
+     * @param toolRequest 工具执行请求
+     * @param toolResult 工具执行结果
+     * @param error 执行异常（成功时为 null）
+     * @param chatContext 聊天上下文
+     */
+    default void onConcurrentToolExecutionComplete(
+            ToolExecutionRequest toolRequest,
+            String toolResult,
+            Throwable error,
+            AgentChatContext chatContext) {}
+
+    /**
+     * 在并发工具执行之后调用（一组工具），结果会沿中间件链依次传递
+     *
+     * @param toolRequests 工具执行请求列表
+     * @param toolResults 工具执行结果列表（与 toolRequests 一一对应）
+     * @param chatContext 聊天上下文
+     * @return 处理后的结果列表（长度必须与 toolRequests 相同）
+     */
+    default List<String> afterConcurrentToolExecution(
+            List<ToolExecutionRequest> toolRequests,
+            List<String> toolResults,
+            AgentChatContext chatContext) {
+        return toolResults;
+    }
 
     // ===================== 模型调用相关回调 ===================== //
 

@@ -220,6 +220,36 @@ public class ReActAgentTest {
     }
 
     @Test
+    public void shouldAppendConcurrentPromptWhenMultipleToolsAndSwitchOn() {
+        ReActAgent agent =
+                agent(
+                        new ScriptedChatModel(),
+                        toolService(new WeatherTools()),
+                        ChatMemoryProvider.windowChatMemoryProvider(10),
+                        defaultSettings());
+
+        assertTrue(agent.getSystemPrompt().contains("Concurrent Tool Execution"));
+    }
+
+    @Test
+    public void shouldNotAppendConcurrentPromptWhenSwitchOff() {
+        AgentSettings settings =
+                AgentSettings.builder()
+                        .aiCallRetry(0)
+                        .aiCallRetryDelay(0)
+                        .enableConcurrentToolExecution(false)
+                        .build();
+        ReActAgent agent =
+                agent(
+                        new ScriptedChatModel(),
+                        toolService(new WeatherTools()),
+                        ChatMemoryProvider.windowChatMemoryProvider(10),
+                        settings);
+
+        assertFalse(agent.getSystemPrompt().contains("Concurrent Tool Execution"));
+    }
+
+    @Test
     public void shouldClearContextAndValidateRequest() {
         ChatMemoryProvider memoryProvider = ChatMemoryProvider.windowChatMemoryProvider(100);
         ReActAgent agent =

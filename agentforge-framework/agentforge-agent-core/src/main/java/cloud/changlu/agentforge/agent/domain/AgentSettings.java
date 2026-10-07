@@ -13,12 +13,18 @@ public class AgentSettings {
     private final int aiCallRetry;
     // ai call 首次重试等待时间，后续按指数退避，默认 2 秒
     private final long aiCallRetryDelay;
+    // 是否启用并发执行工具，默认为 true
+    private final boolean enableConcurrentToolExecution;
 
     private AgentSettings(Builder builder) {
         this.maxSteps = builder.maxSteps == null ? 10 : builder.maxSteps;
         this.aiCallRetry = builder.aiCallRetry == null ? 3 : builder.aiCallRetry;
         this.aiCallRetryDelay =
                 builder.aiCallRetryDelay == null ? 2 * 1000L : builder.aiCallRetryDelay;
+        this.enableConcurrentToolExecution =
+                builder.enableConcurrentToolExecution == null
+                        ? true
+                        : builder.enableConcurrentToolExecution;
     }
 
     public int getMaxSteps() {
@@ -33,6 +39,10 @@ public class AgentSettings {
         return aiCallRetryDelay;
     }
 
+    public boolean isEnableConcurrentToolExecution() {
+        return enableConcurrentToolExecution;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -45,6 +55,7 @@ public class AgentSettings {
         private Integer maxSteps;
         private Integer aiCallRetry;
         private Long aiCallRetryDelay;
+        private Boolean enableConcurrentToolExecution;
 
         private Builder() {}
 
@@ -60,6 +71,11 @@ public class AgentSettings {
 
         public Builder aiCallRetryDelay(long aiCallRetryDelay) {
             this.aiCallRetryDelay = aiCallRetryDelay;
+            return this;
+        }
+
+        public Builder enableConcurrentToolExecution(boolean enableConcurrentToolExecution) {
+            this.enableConcurrentToolExecution = enableConcurrentToolExecution;
             return this;
         }
 

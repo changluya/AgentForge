@@ -333,6 +333,79 @@ public class AgentMiddlewareManager {
         }
     }
 
+    // ===================== 并发工具执行相关方法 ===================== //
+
+    /** 触发并发工具执行前的中间件（一组工具） */
+    public void triggerBeforeConcurrentToolExecution(
+            List<ToolExecutionRequest> toolRequests, AgentChatContext chatContext) {
+        if (sortedMiddlewares.isEmpty() || toolRequests == null || toolRequests.isEmpty()) {
+            return;
+        }
+
+        log.fine("触发并发工具执行前的中间件，工具数量: " + toolRequests.size());
+        for (IAgentMiddleware middleware : sortedMiddlewares) {
+            try {
+                middleware.beforeConcurrentToolExecution(toolRequests, chatContext);
+            } catch (Exception e) {
+                log.log(
+                        Level.SEVERE,
+                        "中间件 " + name(middleware) + " 执行 beforeConcurrentToolExecution 时出错",
+                        e);
+            }
+        }
+    }
+
+    /** 触发并发批次中单个工具执行完成回调（观测用） */
+    public void triggerConcurrentToolExecutionComplete(
+            ToolExecutionRequest toolRequest,
+            String toolResult,
+            Throwable error,
+            AgentChatContext chatContext) {
+        if (sortedMiddlewares.isEmpty()) {
+            return;
+        }
+
+        for (IAgentMiddleware middleware : sortedMiddlewares) {
+            try {
+                middleware.onConcurrentToolExecutionComplete(
+                        toolRequest, toolResult, error, chatContext);
+            } catch (Exception e) {
+                log.log(
+                        Level.SEVERE,
+                        "中间件 " + name(middleware) + " 执行 onConcurrentToolExecutionComplete 时出错",
+                        e);
+            }
+        }
+    }
+
+    /** 触发并发工具执行后的中间件（一组工具），结果会沿中间件链依次传递 */
+    public List<String> triggerAfterConcurrentToolExecution(
+            List<ToolExecutionRequest> toolRequests,
+            List<String> toolResults,
+            AgentChatContext chatContext) {
+        if (sortedMiddlewares.isEmpty() || toolRequests == null) {
+            return toolResults;
+        }
+
+        log.fine("触发并发工具执行后的中间件，工具数量: " + toolRequests.size());
+        List<String> res = toolResults;
+        for (IAgentMiddleware middleware : sortedMiddlewares) {
+            try {
+                List<String> processed =
+                        middleware.afterConcurrentToolExecution(toolRequests, res, chatContext);
+                if (processed != null) {
+                    res = processed;
+                }
+            } catch (Exception e) {
+                log.log(
+                        Level.SEVERE,
+                        "中间件 " + name(middleware) + " 执行 afterConcurrentToolExecution 时出错",
+                        e);
+            }
+        }
+        return res;
+    }
+
     // ===================== 模型调用相关方法 ===================== //
 
     /**
