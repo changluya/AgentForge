@@ -1,10 +1,9 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue2'
+// 正式对话页面（chat）——独立构建，产物输出到 dist/
+import { createAppConfig } from './build/vite.factory.js'
 
-export default defineConfig({
-  plugins: [vue()],
-  server: {
-    port: 5173,
-    proxy: { '/api': { target: 'http://localhost:8080', changeOrigin: true } }
-  }
+export default createAppConfig({
+  entry: './index.html',
+  outDir: 'dist',
+  port: 5173,
+  proxy: { '/api': { target: 'http://localhost:8080', changeOrigin: true } }
 })

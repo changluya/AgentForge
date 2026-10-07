@@ -1,0 +1,26 @@
+// ---------------------------------------------------------------------------
+// 轻量吐司提示
+// ---------------------------------------------------------------------------
+@use 'tokens' as *;
+
+.af-toast {
+  position: fixed;
+  left: 50%;
+  bottom: $space-8;
+  transform: translateX(-50%) translateY(8px);
+  padding: 9px $space-4;
+  border-radius: $radius-lg;
+  background: rgba(31, 41, 55, 0.94);
+  color: #fff;
+  font-size: 13px;
+  box-shadow: $shadow-lg;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s $ease, transform 0.2s $ease;
+  z-index: $z-drawer;
+
+  &--show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

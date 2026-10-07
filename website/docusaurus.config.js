@@ -6,7 +6,7 @@ const config = {
   url: 'https://changluya.github.io', baseUrl: '/AgentForge/', organizationName: 'changluya', projectName: 'AgentForge', deploymentBranch: 'gh-pages', trailingSlash: false,
   onBrokenLinks: 'throw', markdown: {hooks: {onBrokenMarkdownLinks: 'throw'}},
   i18n: {defaultLocale: 'zh-Hans', locales: ['zh-Hans', 'en'], localeConfigs: {'zh-Hans': {label: '简体中文', htmlLang: 'zh-Hans'}, en: {label: 'English', htmlLang: 'en'}}},
-  presets: [['classic', {docs: {sidebarPath: './sidebars.js', editUrl: 'https://github.com/changluya/AgentForge/tree/main/website/', showLastUpdateAuthor: true, showLastUpdateTime: true, versions: {current: {label: 'Next', path: 'next'}, '1.0': {label: 'v1.0', path: ''}}}, blog: {showReadingTime: true, routeBasePath: 'blog', blogTitle: 'AgentForge 博客', blogDescription: 'AgentForge 核心模块设计原理系列，从零构建 Agent 框架。', postsPerPage: 10}, theme: {customCss: './src/css/custom.css'}}]],
+  presets: [['classic', {docs: {sidebarPath: './sidebars.js', editUrl: 'https://github.com/changluya/AgentForge/tree/main/website/', showLastUpdateAuthor: true, showLastUpdateTime: true, versions: {current: {label: 'Next', path: 'next'}, '1.0': {label: 'v1.0', path: ''}}}, blog: {showReadingTime: true, routeBasePath: 'blog', blogTitle: 'AgentForge 博客', blogDescription: 'AgentForge 核心模块设计原理系列，从零构建 Agent 框架。', postsPerPage: 10, blogSidebarCount: 'ALL', blogSidebarTitle: 'AgentForge 专栏'}, theme: {customCss: './src/css/custom.css'}}]],
   themeConfig: {
     colorMode: {defaultMode: 'dark', disableSwitch: false, respectPrefersColorScheme: true},
     navbar: {title: 'AgentForge', logo: {alt: 'AgentForge logo', src: 'img/agentforge-logo.webp'}, items: [

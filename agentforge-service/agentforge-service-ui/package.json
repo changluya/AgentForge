@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:models": "vite --config vite.models.config.js",
+    "build:models": "vite build --config vite.models.config.js",
+    "preview:models": "vite preview --config vite.models.config.js",
+    "build:all": "npm run build && npm run build:models"
   },
   "dependencies": {
     "element-ui": "^2.15.14",
@@ -15,6 +19,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue2": "^2.3.3",
+    "sass": "^1.105.1",
     "vite": "^5.4.20"
   }
 }
