@@ -52,9 +52,12 @@ AgentForge
 │   ├── agentforge-model-anthropic# Anthropic Provider
 │   └── agentforge-model-registry # 开箱即用的 ChatModel 工厂
 ├── agentforge-framework
-│   └── agentforge-agent-core     # ReAct Agent 运行时
+│   ├── agentforge-agent-core     # ReAct Agent 运行时
+│   └── agentforge-harness-agent  # Harness 运行时（权限 / 审批 / 沙箱 / 可恢复执行）
+├── agentforge-service            # 开箱即用服务（Vue 前端 + Spring Boot 后端）
+│   ├── agentforge-service-ui     # Vue 2 + Vite 前端
+│   └── agentforge-service-web    # Spring Boot 后端
 ├── agentforge-examples
-│   └── agentforge-studio         # Web 可视化示例（Vue 2 前端 + Spring Boot 后端）
 ├── pom.xml
 └── README.md
 ```
@@ -69,7 +72,8 @@ AgentForge
 | `agentforge-model-anthropic` | Anthropic Messages API 同步 / 流式、Tool Use |
 | `agentforge-model-registry` | `LlmFactory` 按 provider 构建 ChatModel / StreamingChatModel |
 | `agentforge-agent-core` | ReAct 主循环（同步 / 流式）、窗口记忆、工具调用回合、Middleware 链路、重试与取消 |
-| `agentforge-studio` | 统一 SSE 协议的可视化对话示例 |
+| `agentforge-harness-agent` | 基于核心 Agent 的 Harness 运行时：权限、工具审批、Human-in-the-loop、沙箱、Trace、可恢复执行 |
+| `agentforge-service` | 统一 SSE 协议的开箱即用服务（Vue 前端 + Spring Boot 后端） |
 
 ### 设计原则
 
@@ -153,20 +157,20 @@ ChatResult result = agent.run(AgentRequest.builder()
 流式执行通过 `agent.runStream(request)` 返回 `TokenStream`，可订阅文本 / 思考增量、工具执行与完成事件；
 `agent.cancel(memoryId)` 用于取消任务。模型、记忆、工具与中间件均通过 Builder 注入，详见文档站。
 
-### 运行 AgentForge Studio
+### 运行 AgentForge Service
 
 ```bash
 # 后端（Spring Boot，默认 8080）
 export AGENTFORGE_MODEL_API_KEY=your-api-key
-mvn package -pl agentforge-examples/agentforge-studio/agentforge-studio-web -am -DskipTests
-java -jar agentforge-examples/agentforge-studio/agentforge-studio-web/target/agentforge-studio-web-1.0.0-SNAPSHOT.jar
+mvn package -pl agentforge-service/agentforge-service-web -am -DskipTests
+java -jar agentforge-service/agentforge-service-web/target/agentforge-service-web-1.0.0-SNAPSHOT.jar
 
 # 前端（Vue 2 + Vite，默认 5173，代理 /api 到 8080）
-cd agentforge-examples/agentforge-studio/agentforge-studio-ui
+cd agentforge-service/agentforge-service-ui
 npm install && npm run dev
 ```
 
-详见 [agentforge-studio/README.md](agentforge-examples/agentforge-studio/README.md)。
+详见 [agentforge-service/README.md](agentforge-service/README.md)。
 
 ### 测试
 

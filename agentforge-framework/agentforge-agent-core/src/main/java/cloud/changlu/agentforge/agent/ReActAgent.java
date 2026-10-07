@@ -2,6 +2,7 @@ package cloud.changlu.agentforge.agent;
 
 import cloud.changlu.agentforge.agent.component.middleware.AgentMiddlewareManager;
 import cloud.changlu.agentforge.agent.component.middleware.IAgentMiddleware;
+import cloud.changlu.agentforge.agent.constant.AgentPromptConstants;
 import cloud.changlu.agentforge.agent.domain.AgentChatContext;
 import cloud.changlu.agentforge.agent.domain.AgentRunState;
 import cloud.changlu.agentforge.agent.domain.AgentSettings;
@@ -54,7 +55,7 @@ public class ReActAgent extends BaseReActAgent {
     protected ReActAgent(ReActAgentBuilder builder) {
         this.agentName = builder.agentName;
         this.description = builder.description;
-        this.systemPrompt = builder.systemPrompt;
+
         this.chatModel = builder.chatModel;
         this.streamingChatModel = builder.streamingChatModel;
         this.chatMemoryProvider = builder.chatMemoryProvider;
@@ -63,9 +64,40 @@ public class ReActAgent extends BaseReActAgent {
                 builder.agentSettings == null
                         ? AgentSettings.defaultSettings()
                         : builder.agentSettings;
+
+        // 构建系统提示词：工具数量 > 1 且并发开关开启（默认开启）时，追加并发调用提示语
+        this.systemPrompt =
+                buildSystemPrompt(builder.systemPrompt, builder.toolService, this.agentSettings);
+
         this.toolExecutor = new AgentToolExecutor(builder.toolService);
         this.middlewareManager = new AgentMiddlewareManager();
         this.middlewareManager.registerAll(builder.middlewares);
+    }
+
+    /**
+     * 构建最终的系统提示词。
+     *
+     * <p>并发调用提示的追加条件为「工具数量 &gt; 1」**且**「{@link AgentSettings#isEnableConcurrentToolExecution()}
+     * 开关开启（默认开启）」，两者同时满足才会提示模型 可以在同一轮并发调用多个工具；任一条件不满足则保持原始提示词不变。
+     *
+     * @param basePrompt 调用方传入的原始系统提示词
+     * @param toolService 工具服务，用于统计可并发的工具数量
+     * @param agentSettings Agent 配置，用于读取并发执行开关
+     * @return 可能追加了并发提示语后的系统提示词
+     */
+    private static String buildSystemPrompt(
+            String basePrompt, ToolService toolService, AgentSettings agentSettings) {
+        // 可并发的工具数量：仅当工具数量大于 1 时才存在并发调用的可能
+        int toolCount = toolService == null ? 0 : toolService.toolSpecifications().size();
+        // 并发开关：默认开启；关闭时即使工具数量大于 1 也不追加提示
+        boolean concurrentEnabled =
+                agentSettings != null && agentSettings.isEnableConcurrentToolExecution();
+
+        if (toolCount > 1 && concurrentEnabled) {
+            return (basePrompt == null ? "" : basePrompt)
+                    + AgentPromptConstants.CONCURRENT_TOOL_EXECUTION_PROMPT;
+        }
+        return basePrompt;
     }
 
     public static ReActAgentBuilder builder() {
@@ -226,7 +258,8 @@ public class ReActAgent extends BaseReActAgent {
                                 curActTools,
                                 chatContext,
                                 null,
-                                getMiddlewareManager());
+                                getMiddlewareManager(),
+                                getAgentSettings().isEnableConcurrentToolExecution());
         return StepResult.toFinished(toolMessages.toString());
     }
 

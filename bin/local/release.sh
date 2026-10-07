@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly RELEASE_MODULES='agentforge-ai-parent,agentforge-ai-bom,agentforge-model,agentforge-model/agentforge-model-api,agentforge-model/agentforge-model-core,agentforge-model/agentforge-model-openai,agentforge-model/agentforge-model-anthropic,agentforge-model/agentforge-model-registry,agentforge-framework,agentforge-framework/agentforge-agent-core'
+readonly RELEASE_MODULES='agentforge-ai-parent,agentforge-ai-bom,agentforge-model,agentforge-model/agentforge-model-api,agentforge-model/agentforge-model-core,agentforge-model/agentforge-model-openai,agentforge-model/agentforge-model-anthropic,agentforge-model/agentforge-model-registry,agentforge-framework,agentforge-framework/agentforge-agent-core,agentforge-framework/agentforge-harness-agent'
 
 usage() {
     cat <<'EOF'

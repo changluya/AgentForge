@@ -1,6 +1,6 @@
 # AgentForge 本地发布工具
 
-`release.sh` 用于一键构建、GPG 签名并将 AgentForge 正式版构件推送到 Maven Central Portal。脚本只处理公开库模块，不发布 examples / studio。
+`release.sh` 用于一键构建、GPG 签名并将 AgentForge 正式版构件推送到 Maven Central Portal。脚本只处理公开库模块，不发布 examples / service。
 
 ## 前置条件
 

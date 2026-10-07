@@ -1,0 +1,509 @@
+// ---------------------------------------------------------------------------
+// 主工作区：顶栏 / 页头 / 工具栏 / 统计 / 模型卡片
+// ---------------------------------------------------------------------------
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+.af-workspace {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  @include flex(flex-start, stretch, column);
+  background: $color-bg;
+}
+
+// ------------------------------ 顶栏 ------------------------------
+.af-topbar {
+  flex-shrink: 0;
+  height: $topbar-height;
+  @include flex(space-between, center);
+  padding: 0 $space-6;
+  border-bottom: 1px solid $color-border;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(12px);
+}
+
+.af-crumb {
+  @include flex(flex-start, center);
+  gap: $space-2;
+  font-size: 13px;
+  color: $color-text-muted;
+
+  &__sep {
+    color: $color-text-faint;
+  }
+
+  &__current {
+    color: $color-text;
+    font-weight: 600;
+  }
+}
+
+.af-topbar__actions {
+  @include flex(flex-end, center);
+  gap: $space-2;
+}
+
+// ------------------------------ 滚动内容 ------------------------------
+.af-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-6 $space-6 $space-10;
+}
+
+.af-content__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.af-page-head {
+  @include flex(space-between, flex-end);
+  gap: $space-4;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+
+  &__text {
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0 0 $space-2;
+    font-size: 22px;
+    font-weight: 700;
+    color: $color-text;
+    letter-spacing: -0.01em;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 13.5px;
+    color: $color-text-muted;
+    line-height: 1.7;
+  }
+
+  &__actions {
+    @include flex(flex-end, center);
+    gap: $space-2 + 2px;
+    flex-shrink: 0;
+  }
+}
+
+// ------------------------------ 按钮 ------------------------------
+.af-btn {
+  @include button-reset;
+  @include flex(center, center);
+  gap: 6px;
+  height: 34px;
+  padding: 0 $space-3 + 2px;
+  border-radius: $radius-lg;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid $color-border-strong;
+  background: $color-bg;
+  color: $color-text-secondary;
+  transition: $transition;
+  white-space: nowrap;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover:not(:disabled) {
+    background: $color-brand-softer;
+    border-color: #9cc0f5;
+    color: $color-brand-dark;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    border: none;
+    @include brand-gradient;
+  }
+
+  &--ghost {
+    border-color: transparent;
+    background: transparent;
+
+    &:hover:not(:disabled) {
+      background: $color-hover;
+      border-color: transparent;
+      color: $color-text;
+    }
+  }
+
+  &--icon {
+    width: 34px;
+    padding: 0;
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &--sm {
+    height: 30px;
+    padding: 0 $space-3;
+    font-size: 12.5px;
+    border-radius: $radius-md;
+  }
+}
+
+// ------------------------------ 工具栏 ------------------------------
+.af-toolbar {
+  @include flex(space-between, center);
+  gap: $space-3;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+}
+
+.af-search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 380px;
+
+  svg {
+    position: absolute;
+    left: $space-3;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: $color-text-muted;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    height: 36px;
+    padding: 0 $space-3 0 34px;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    font-size: 13px;
+    color: $color-text;
+    transition: $transition;
+
+    &::placeholder {
+      color: $color-text-faint;
+    }
+
+    &:focus {
+      border-color: #9cc0f5;
+      @include focus-ring;
+    }
+  }
+}
+
+.af-chips {
+  @include flex(flex-start, center);
+  gap: 4px;
+  padding: 3px;
+  background: $color-sidebar;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+}
+
+.af-chip {
+  @include button-reset;
+  height: 28px;
+  padding: 0 $space-3;
+  border-radius: $radius-md;
+  font-size: 12.5px;
+  color: $color-text-secondary;
+  transition: $transition;
+
+  &:hover {
+    color: $color-text;
+  }
+
+  &--active {
+    background: $color-bg;
+    color: $color-brand-dark;
+    font-weight: 600;
+    box-shadow: $shadow-xs;
+  }
+}
+
+// ------------------------------ 统计卡 ------------------------------
+.af-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-3 + 2px;
+  margin-bottom: $space-5;
+
+  @include respond('md') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.af-stat {
+  @include card;
+  @include flex(flex-start, center);
+  gap: $space-3 + 2px;
+  padding: $space-4;
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-lg;
+    @include flex(center, center);
+    background: $color-brand-soft;
+    color: $color-brand;
+    flex-shrink: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &--green {
+      background: $color-success-soft;
+      color: $color-success;
+    }
+
+    &--amber {
+      background: $color-warning-soft;
+      color: $color-warning;
+    }
+  }
+
+  &__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: $color-text;
+    line-height: 1.2;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $color-text-muted;
+  }
+}
+
+// ------------------------------ 模型卡片 ------------------------------
+.af-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $space-4;
+}
+
+.af-model-card {
+  @include card;
+  @include flex(flex-start, stretch, column);
+  padding: $space-4;
+  transition: transform 0.18s $ease, box-shadow 0.18s $ease;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    border-color: #dde5f0;
+  }
+
+  &--disabled {
+    .af-model-card__avatar,
+    .af-model-card__title {
+      opacity: 0.6;
+    }
+  }
+
+  &__head {
+    @include flex(flex-start, center);
+    gap: $space-3;
+    margin-bottom: $space-3;
+    padding-right: 64px;
+  }
+
+  &__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: $radius-lg;
+    @include flex(center, center);
+    flex-shrink: 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    background: var(--provider, #{$color-brand});
+    box-shadow: 0 4px 12px rgba(23, 43, 77, 0.14);
+  }
+
+  &__heading {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    @include flex(flex-start, center);
+    gap: 6px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: $color-text;
+    line-height: 1.3;
+  }
+
+  &__name {
+    @include truncate;
+    min-width: 0;
+  }
+
+  &__star {
+    width: 13px;
+    height: 13px;
+    color: $color-warning;
+    flex-shrink: 0;
+  }
+
+  &__provider {
+    font-size: 12px;
+    color: $color-text-muted;
+    margin-top: 2px;
+  }
+
+  &__desc {
+    @include truncate(2);
+    font-size: 13px;
+    color: $color-text-secondary;
+    line-height: 1.65;
+    margin-bottom: $space-3;
+    min-height: 42px;
+  }
+
+  &__tags {
+    @include flex(flex-start, center);
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: $space-4;
+  }
+
+  &__footer {
+    @include flex(space-between, center);
+    gap: $space-2;
+    margin-top: auto;
+    padding-top: $space-3;
+    border-top: 1px solid $color-border;
+  }
+
+  &__meta {
+    @include flex(flex-start, center);
+    gap: 6px;
+    font-size: 12px;
+    color: $color-text-muted;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__dot {
+    color: $color-text-faint;
+  }
+
+  &__ops {
+    @include flex(flex-end, center);
+    gap: 4px;
+  }
+}
+
+.af-tag {
+  font-size: 11.5px;
+  line-height: 1.6;
+  padding: 1px 8px;
+  border-radius: $radius-sm;
+  background: $color-sidebar;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+
+  &--brand {
+    background: $color-brand-softer;
+    border-color: rgba(75, 142, 247, 0.18);
+    color: $color-brand-dark;
+  }
+}
+
+.af-status {
+  @include flex(flex-start, center);
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: $radius-pill;
+    background: $color-success;
+    box-shadow: 0 0 0 3px $color-success-soft;
+  }
+
+  &--off {
+    color: $color-text-muted;
+
+    .af-status__dot {
+      background: $color-text-faint;
+      box-shadow: 0 0 0 3px rgba(152, 162, 179, 0.16);
+    }
+  }
+
+  &--on {
+    color: $color-success;
+  }
+}
+
+// 卡片右上角状态
+.af-model-card__badge {
+  position: absolute;
+  top: $space-4;
+  right: $space-4;
+}
+
+// ------------------------------ 空状态 ------------------------------
+.af-empty {
+  @include card;
+  @include flex(center, center, column);
+  gap: $space-3;
+  padding: $space-10 $space-6;
+  color: $color-text-muted;
+  text-align: center;
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-pill;
+    background: $color-sidebar;
+    @include flex(center, center);
+    color: $color-text-faint;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $color-text-secondary;
+  }
+}
+
+// ------------------------------ 响应式 ------------------------------
+@include respond('md') {
+  .af-sidebar {
+    display: none;
+  }
+
+  .af-content {
+    padding: $space-4;
+  }
+
+  .af-topbar {
+    padding: 0 $space-4;
+  }
+}

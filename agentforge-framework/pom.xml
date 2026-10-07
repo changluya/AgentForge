@@ -17,6 +17,7 @@
 
     <modules>
         <module>agentforge-agent-core</module>
+        <module>agentforge-harness-agent</module>
     </modules>
 
     <dependencies>

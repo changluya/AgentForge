@@ -31,15 +31,17 @@ AgentForge
 │   └── agentforge-model-registry     开箱即用的模型创建入口
 │
 ├── agentforge-framework
-│   └── agentforge-agent-core         Agent 运行时（ReAct / Memory / Tool / Stream）
+│   ├── agentforge-agent-core         Agent 运行时（ReAct / Memory / Tool / Stream）
+│   └── agentforge-harness-agent      Harness 运行时（权限 / 审批 / 沙箱 / 可恢复执行）
+│
+├── agentforge-service                开箱即用服务（聚合 POM）
+│   ├── agentforge-service-ui         前端（Vue 2 + Vite）
+│   └── agentforge-service-web        后端（Spring Boot + SSE）
 │
 └── agentforge-examples
-    └── agentforge-studio
-        ├── agentforge-studio-ui
-        └── agentforge-studio-web
 ```
 
-`agentforge-model` 与 `agentforge-framework` 都是聚合 POM，本身不产出 JAR。
+`agentforge-model`、`agentforge-framework` 与 `agentforge-service` 都是聚合 POM，本身不产出 JAR。
 
 ## 3. 各模块职责
 
@@ -118,6 +120,27 @@ Agent 运行时，提供 ReAct 主循环、流式、Memory、Tool 回合、Middl
 cloud.changlu.agentforge.agent     Agent / ReAct / Memory / Tool / Stream / Middleware
 ```
 
+### 3.6 agentforge-service
+
+开箱即用的服务层，聚合前端与后端两个子模块，直接把 `agent-core` 与模型 Provider 组装为可运行的
+Spring Boot + Vue 应用：
+
+```text
+agentforge-service
+├── agentforge-service-ui   Vue 2 + Vite 前端
+└── agentforge-service-web  Spring Boot 后端 + 统一 SSE 协议
+```
+
+```text
+cloud.changlu.agentforge.service   Service / Stream / Protocol / Web
+```
+
+约束：
+
+- `agentforge-service` 只是聚合 POM，不产出 JAR；`service-web` 依赖 `agent-core` 与具体 Provider；
+- 前端 `service-ui` 为占位 POM，通过 `npm run dev` 独立启动，Maven 不参与其构建；
+- `service-ui` / `service-web` 属于可运行产品，不发布到 Maven Central。
+
 ## 4. 依赖关系
 
 ```text
@@ -170,6 +193,8 @@ cloud.changlu.agentforge
 | `agentforge-model-anthropic` | `cloud.changlu.agentforge.model.anthropic` |
 | `agentforge-model-registry` | `cloud.changlu.agentforge.model.registry` |
 | `agentforge-agent-core` | `cloud.changlu.agentforge.agent` |
+| `agentforge-harness-agent` | `cloud.changlu.agentforge.harness` |
+| `agentforge-service-web` | `cloud.changlu.agentforge.service` |
 
 `model-api` 与 `model-core` 共用同一个根包：以包表达领域，以模块表达「契约 vs 实现」。二者对同一领域包
 形成「接口 / req/vo 在 api，默认实现在 core」的切分。

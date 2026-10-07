@@ -1,0 +1,89 @@
+// ---------------------------------------------------------------------------
+// AgentForge Design Tokens
+// 统一的设计变量，供各组件样式引用，保证全站视觉一致。
+// ---------------------------------------------------------------------------
+
+// 颜色 · 基底
+$color-bg:              #ffffff;
+$color-sidebar:         #f7f8fb;
+$color-border:          #eceff4;
+$color-border-strong:   #e2e7ef;
+$color-hover:           #f0f3f8;
+
+// 颜色 · 文本
+$color-text:            #1f2937;
+$color-text-secondary:  #4b5563;
+$color-text-muted:      #98a2b3;
+$color-text-faint:      #b0b8c4;
+
+// 颜色 · 品牌
+$color-brand:           #4b8ef7;
+$color-brand-light:     #7cb0ff;
+$color-brand-dark:      #3b6fb6;
+$color-brand-soft:      #eaf1fd;
+$color-brand-softer:    #eef5ff;
+$gradient-brand:        linear-gradient(135deg, #7cb0ff, #4b8ef7);
+
+// 颜色 · 语义
+$color-success:         #2ea043;
+$color-success-soft:    #e9f7ec;
+$color-warning:         #d29922;
+$color-warning-soft:    #fdf5e6;
+$color-danger:          #d64545;
+$color-danger-soft:     #fff0f0;
+
+// 颜色 · 供应商
+$provider-deepseek:     #4d6bfe;
+$provider-openai:       #10a37f;
+$provider-anthropic:    #d97757;
+$provider-qwen:         #6f42c1;
+$provider-zhipu:        #2f6bff;
+$provider-google:       #4285f4;
+$provider-meta:         #0668e1;
+
+// 圆角
+$radius-xs:             4px;
+$radius-sm:             6px;
+$radius-md:             8px;
+$radius-lg:             10px;
+$radius-xl:             14px;
+$radius-2xl:            18px;
+$radius-pill:           999px;
+
+// 阴影
+$shadow-xs:             0 1px 2px rgba(23, 43, 77, 0.04);
+$shadow-sm:             0 2px 10px rgba(23, 43, 77, 0.05);
+$shadow-md:             0 6px 24px rgba(23, 43, 77, 0.08);
+$shadow-lg:             0 14px 40px rgba(23, 43, 77, 0.12);
+$shadow-brand:          0 2px 10px rgba(96, 158, 255, 0.28);
+$shadow-brand-hover:    0 4px 14px rgba(96, 158, 255, 0.4);
+
+// 间距
+$space-1:               4px;
+$space-2:               8px;
+$space-3:               12px;
+$space-4:               16px;
+$space-5:               20px;
+$space-6:               24px;
+$space-8:               32px;
+$space-10:              40px;
+
+// 尺寸
+$sidebar-width:         268px;
+$topbar-height:         60px;
+
+// 字体
+$font-sans:             -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                        'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+                        sans-serif;
+$font-mono:             'SFMono-Regular', Menlo, Consolas, 'Liberation Mono',
+                        monospace;
+
+// 层级
+$z-sidebar:             10;
+$z-topbar:              20;
+$z-drawer:              100;
+
+// 动效
+$ease:                  cubic-bezier(0.4, 0, 0.2, 1);
+$transition:            all 0.16s #{$ease};

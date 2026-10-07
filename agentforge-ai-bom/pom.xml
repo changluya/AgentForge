@@ -46,6 +46,11 @@
                 <artifactId>agentforge-agent-core</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>cloud.changlu.agentforge</groupId>
+                <artifactId>agentforge-harness-agent</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
